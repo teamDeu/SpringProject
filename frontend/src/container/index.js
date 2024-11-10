@@ -7,6 +7,7 @@ const Index = () => {
   return (
     <>
       Home
+      Test를 위한 코드변경
     </>
   );
 };
