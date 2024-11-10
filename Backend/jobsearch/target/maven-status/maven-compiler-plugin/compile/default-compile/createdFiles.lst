@@ -1,6 +1,0 @@
-com\example\jobsearch\config\WebConfig.class
-com\example\jobsearch\repository\CompanyRepository.class
-com\example\jobsearch\model\Company.class
-com\example\jobsearch\controller\CompanyController.class
-com\example\jobsearch\JobsearchApplication.class
-com\example\jobsearch\service\CompanyService.class
