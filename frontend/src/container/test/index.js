@@ -8,11 +8,10 @@ function Index() {
     useEffect(() => {
         axios.get('http://localhost:8080/api/data')
             .then(response => setData(response.data))
-            .catch(error => console.error('Error fetching data:', error));
-        
-            console.log(data)
+            .catch(error => console.error('Error fetching data:', error));    
     }, []);
 
+    console.log(data)
     return (
         <div>
             <h1>My Data</h1>
