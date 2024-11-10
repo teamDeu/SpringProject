@@ -23,3 +23,5 @@ public class CompanyService {
 
     // 다른 비즈니스 로직 추가 가능
 }
+
+//테스트를 위한 주석

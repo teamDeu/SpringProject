@@ -16,7 +16,7 @@ function Index() {
             .then(response => setData(response.data))
             .catch(error => console.error('Error fetching data:', error));    
     }, []);
-
+    // 테스트를 위한 주석
     const handlePostRequest = () => {
         // POST 요청으로 새로운 데이터를 서버에 저장합니다.
         axios.post('http://localhost:8080/api/company', company)
