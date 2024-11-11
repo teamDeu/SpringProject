@@ -1,3 +1,7 @@
+<h1>설치파일</h1>
+<h2>Git https://git-scm.com/downloads/win</h2>
+<h2>Node.js https://nodejs.org/en</h2>
+<h2>
 <h1>Git Clone 하는법</h1>
 
 ![image](https://github.com/user-attachments/assets/e3dd543c-a05c-4a5f-a92b-40f4c4bfa503)
