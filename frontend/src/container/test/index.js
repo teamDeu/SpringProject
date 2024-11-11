@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FilledButton from '../../components/FilledButton';
+import MainText from '../../components/MainText';
 
 function Index() {
     const [data, setData] = useState([]);
@@ -29,7 +30,7 @@ function Index() {
 
     return (
         <div>
-            <h1>My Data</h1>
+            <MainText>My Data</MainText>
             <ul>
                 {data.map(item => (
                     <li key={item.id}>{item.name} / {item.logoUrl}</li>
