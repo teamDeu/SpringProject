@@ -1,3 +1,7 @@
+<h1>설치파일</h1>
+<h2>Git https://git-scm.com/downloads/win</h2>
+<h2>Node.js https://nodejs.org/en</h2>
+<h2>
 <h1>Git Clone 하는법</h1>
 
 ![image](https://github.com/user-attachments/assets/e3dd543c-a05c-4a5f-a92b-40f4c4bfa503)
@@ -5,6 +9,12 @@
 원하는 경로에서 InteliJ 나 VisualStudioCode 이용해서 터미널을 연뒤
 git clone https://github.com/teamDeu/SpringProject.git 명령어 수행
 
+
+![image](https://github.com/user-attachments/assets/081c197d-8c0b-435a-83b2-b0d666746e80)
+frontend 폴더의 터미널에서 npm install 명령어 수행해서 외부 라이브러리 설치
+
+npm install 명령어 수행이 안될시
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser 명령 실행 후 재실행 해보세여
 
 <h1>작업방식</h1>
 
