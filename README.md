@@ -13,6 +13,9 @@ git clone https://github.com/teamDeu/SpringProject.git 명령어 수행
 ![image](https://github.com/user-attachments/assets/081c197d-8c0b-435a-83b2-b0d666746e80)
 frontend 폴더의 터미널에서 npm install 명령어 수행해서 외부 라이브러리 설치
 
+npm install 명령어 수행이 안될시
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser 명령 실행 후 재실행 해보세여
+
 <h1>작업방식</h1>
 
 SpringProject 폴더 터미널에서 git checout -b feature/"기능이름" 으로 branch 생성
