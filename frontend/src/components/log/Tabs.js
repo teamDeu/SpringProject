@@ -1,29 +1,35 @@
-//로그인 폼 상단 "게인회원", "기업회원 " 탭 
-
-// Tabs.js
 import React from 'react';
+import styled from 'styled-components';
 
-function Tabs({activeTab, onTabClick }) {
+const TabContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+`;
+
+const Tab = styled.button`
+    flex: 1;
+    padding: 10px;
+    font-size: 24px;
+    font-weight: ${props => (props.active ? 'bold' : 'normal')};
+    color: ${props => (props.active ? '#003366' : '#888')};
+    border: none;
+    border-bottom: ${props => (props.active ? '2px solid #003366' : '1px solid #ddd')};
+    background: none;
+    cursor: pointer;
+`;
+
+const Tabs = ({ activeTab, onTabClick }) => {
     return (
-        <Tab>
-            <Textbutton 
-                className={activeTab === 'individual' ? 'active-tab' : ''}
-                onClick={() => onTabClick('individual')}
-            >
+        <TabContainer>
+            <Tab active={activeTab === 'individual'} onClick={() => onTabClick('individual')}>
                 개인회원
-            </Textbutton>
-            <button 
-                className={activeTab === 'company' ? 'active-tab' : ''}
-                onClick={() => onTabClick('company')}
-            >
+            </Tab>
+            <Tab active={activeTab === 'business'} onClick={() => onTabClick('business')}>
                 기업회원
-            </button>
-        </Tab>
+            </Tab>
+        </TabContainer>
     );
-}
+};
 
 export default Tabs;
-
-const Tab = styled.div`
-
-`
