@@ -7,7 +7,8 @@ import Login from './container/login';
 import Member from './container/member';
 import Member2 from './container/member2';
 import Findid from './container/findid';
-
+import Findpwd from './container/findpwd';
+import Rpwd from './container/rpwd';
 function App() {
 
   return (
@@ -19,6 +20,8 @@ function App() {
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
             <Route path="findid" element={<Findid/>}/>
+            <Route path='findpwd' element={<Findpwd/>}/>
+            <Route path="rpwd" element={<Rpwd/>}/>
           </Routes>
         </BrowserRouter>
   );
