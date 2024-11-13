@@ -12,6 +12,6 @@ function ContentTitle({children}) {
 
 export default ContentTitle;
 
-const Container = styled.span`c
+const Container = styled.span`
     font-size : 35px;
 `
