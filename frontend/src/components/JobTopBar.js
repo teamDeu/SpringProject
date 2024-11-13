@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import searchIcon from './search_icon.png';
-
+import searchIcon from '../assets/Img/searchIcon.png'; 
 
 const JobTopBar = () => {
     return (
@@ -67,6 +66,7 @@ export default JobTopBar;
 
 const Container = styled.div`
     width: 100%;
+    font-weight: 400;
     font-family: 'Nanum Square Neo', sans-serif;
 `;
 
@@ -93,31 +93,36 @@ const LogoSearch = styled.div`
 
 const Logo = styled.span`
     font-size: 45px;
-    font-weight: 700;
+    font-weight: 800;
     color: #000000;
+    display: flex;
+    align-items: center;
 `;
 
 const SearchContainer = styled.div`
     display: flex;
     align-items: center;
     position: relative;
+    margin-top: 10px;
 `;
 
 const SearchInput = styled.input`
     width: 380px;
-    height: 28px;
-    padding: 8px 15px;
+    height: 25px;
+    padding: 6px 15px;
     border: 1.2px solid #7A6E6E;
     border-radius: 50px;
-    font-size: 18px;
+    font-size: 15px;
     color: #4D4D4D;
     outline: none;
+    font-family: 'Nanum Square Neo', sans-serif;
 `;
 
 const SearchIcon = styled.img`
     position: absolute;
-    right: 14px;
-    font-size: 16px;
+    right: 12px;
+    width: 26px;  
+    height: 24px; 
     cursor: pointer;
 `;
 
@@ -141,7 +146,6 @@ const NavButton = styled.button`
     cursor: pointer;
     padding: 0;
     font-family: 'Nanum Square Neo', sans-serif;
-    
     &:hover {
         color: #00257A;
         font-weight: 700;
@@ -152,7 +156,7 @@ const DropdownContent = styled.div`
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 10px;
     z-index: 1;
     min-width: 160px;
@@ -169,9 +173,12 @@ const DropdownButton = styled.button`
     text-align: left;
     width: 100%;
     cursor: pointer;
-    
+    font-size: 14px;
+    font-family: 'Nanum Square Neo', sans-serif;
     &:hover {
-        background-color: #f1f1f1;
+        background-color: #F0F4FF;
+        color: #00257A;
+        font-weight: 700;
     }
 `;
 
@@ -188,4 +195,7 @@ const AuthLink = styled.button`
     background: none;
     border: none;
     font-family: 'Nanum Square Neo', sans-serif;
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
 `;
