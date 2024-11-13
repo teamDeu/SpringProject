@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './container';
 import Test from './container/test';
-
+import JobPosting from './container/jobPosting';
 
 function App() {
 
@@ -12,6 +12,7 @@ function App() {
           <Routes>
             <Route index element={<Home />} />
             <Route path="test" element={<Test />} />
+            <Route path="jobposting" element={<JobPosting />} />
           </Routes>
         </BrowserRouter>
   );
