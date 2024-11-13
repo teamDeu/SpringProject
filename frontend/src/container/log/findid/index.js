@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Tabs from '../../components/log/Tabs';
-import InputField from '../../components/log/InputField2';
-import LoginButton from '../../components/log/LoginButton';
-import SmallButton from '../../components/log/SmallButton';
+import Tabs from '../../../components/log/Tabs';
+import InputField from '../../../components/log/InputField2';
+import LoginButton from '../../../components/log/LoginButton';
+import SmallButton from '../../../components/log/SmallButton';
 import styled from 'styled-components';
 
 const Container = styled.div`
