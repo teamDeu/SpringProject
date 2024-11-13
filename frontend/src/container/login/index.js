@@ -1,10 +1,42 @@
 import React, { useState } from 'react';
-import Tabs from '../components/log/Tabs';
-import InputField from '../components/log/InputField';
-import CheckboxGroup from '../components/log/CheckboxGroup';
-import SocialLoginButtons from '../components/log/SocialButtons';
-import Links from '../components/log/Links';
+import Tabs from '../../components/log/Tabs';
+import InputField from '../../components/log/InputField';
+import CheckboxGroup from '../../components/log/CheckboxGroup';
+import LoginButton from '../../components/log/LoginButton';
+import Links from '../../components/log/Links';
+import SocialButtons from '../../components/log/SocialButtons';
 import styled from 'styled-components';
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed; /* 화면 중앙에 고정 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: -70px;
+    zoom:0.6;
+`;
+
+const Title = styled.h2`
+    margin-bottom: 20px;
+    font-size: 55px;
+    color: #003366;
+`;
+
+const Form = styled.div`
+    box-sizing: border-box;
+    width: 779px;
+    height: 680px;
+    background: #FFFFFF;
+    border: 1px solid #B5B5B5;
+    border-radius: 50px;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
 
 const Index = () => {
     const [form, setForm] = useState({
@@ -47,47 +79,16 @@ const Index = () => {
                     options={[
                         { name: 'rememberLogin', label: '로그인 유지', checked: form.rememberLogin },
                         { name: 'saveId', label: '아이디 저장', checked: form.saveId },
-                        { name: 'simpleLogin', label: '관리자 로그인', checked: form.simpleLogin },
+                        { name: 'simpleLogin', label: '간편로그인', checked: form.simpleLogin },
                     ]} 
                     onChange={handleChange} 
                 />
                 <LoginButton>로그인</LoginButton>
                 <Links />
-                <SocialLoginButtons />
+                <SocialButtons />
             </Form>
         </Container>
     );
 };
 
 export default Index;
-
-// 스타일 정의
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-`;
-
-const Title = styled.h2`
-    margin-bottom: 20px;
-`;
-
-const Form = styled.div`
-    width: 300px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const LoginButton = styled.button`
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #003366;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-`;
