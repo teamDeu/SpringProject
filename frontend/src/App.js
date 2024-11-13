@@ -5,6 +5,10 @@ import JobPosting from './container/jobPosting';
 
 import Home from './container';
 import Test from './container/test';
+
+import JobPosting from './container/jobPosting';
+
+
 import Login from './container/login';
 import Member from './container/member';
 import Member2 from './container/member2';
@@ -16,12 +20,17 @@ import Faq from './container/admin/faq';
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
 
+import GlobalStyle from './GlobalStyles';
+import GlobalFont from './GlobalFont';
+import InputCompanyInfo from './container/inputCompanyInfo'
 
 function App() {
 
   return (
     
         <BrowserRouter basename={process.env.PUBLIC_URL}>
+          <GlobalStyle/>
+          <GlobalFont/>
           <Routes>
             <Route index element={<Home />} />
             <Route path="test" element={<Test />} />
@@ -36,6 +45,8 @@ function App() {
             <Route path="announcements" element={<Announcements/>}/>
             <Route path="areview" element={<Areview/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
+            <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
+            <Route path="jobposting" element={<JobPosting />} />
           </Routes>
         </BrowserRouter>
   );
