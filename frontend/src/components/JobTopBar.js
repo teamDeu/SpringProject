@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 
-const JobTopBar = () => {
+const JobTopBar = ({ onResumeClick }) => {
     return (
         <Container>
             <Navbar>
@@ -25,7 +25,7 @@ const JobTopBar = () => {
                         <NavItem>
                             <NavButton>이력서</NavButton>
                             <DropdownContent>
-                                <DropdownButton>이력서 작성</DropdownButton>
+                            <DropdownButton onClick={onResumeClick}>이력서 작성</DropdownButton>
                                 <DropdownButton>My 이력서</DropdownButton>
                             </DropdownContent>
                         </NavItem>
@@ -74,7 +74,7 @@ const Navbar = styled.nav`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 200px;
+    padding: 20px 300px;
     border-bottom: 1.2px solid #B5B5B5;
     background-color: #FFFFFF;
 `;
