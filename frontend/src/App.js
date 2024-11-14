@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import JobPosting from './container/jobPosting';
-
 import Home from './container';
 import Test from './container/test';
 
@@ -16,8 +15,6 @@ import Findid from './container/log/findid';
 import Findpwd from './container/log/findpwd';
 import Rpwd from './container/log/rpwd';
 import Basic from './container/log/basic';
-
-
 import Admin from './container/admin';
 import Amember from './container/admin/amember';
 import Job from './container/admin/job';
@@ -53,7 +50,6 @@ function App() {
             <Route path="findpwd" element={<Findpwd/>}/>
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="basic" element={<Basic/>}/>
-
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
           </Routes>
         </BrowserRouter>
