@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Tabs from '../../components/log/Tabs';
-import SocialButtons from '../../components/log/SocialButtons';
-import LoginButton from '../../components/log/LoginButton';
+import Tabs from '../../../components/log/Tabs';
+import SocialButtons from '../../../components/log/SocialButtons';
+import LoginButton from '../../../components/log/LoginButton';
 import styled from 'styled-components';
 
 const Container = styled.div`

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import Tabs from '../../components/log/Tabs';
-import InputField from '../../components/log/InputField2';
-import LoginButton from '../../components/log/LoginButton';
-import SmallButton from '../../components/log/SmallButton';
+import Tabs from '../../../components/log/Tabs';
+import InputField from '../../../components/log/InputField2';
+import LoginButton from '../../../components/log/LoginButton';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -36,9 +35,11 @@ const FormContainer = styled.div`
 `;
 
 const InnerForm = styled.div`
-    width: 68%;
+    width: 100%; /* 전체 너비로 설정 */
+    max-width: 535px; /* 최대 너비를 설정하여 중앙 정렬 효과 */
     display: flex;
     flex-direction: column;
+    align-items: center; /* 중앙 정렬 */
     gap: 10px;
     margin-top: 20px;
 `;
@@ -47,6 +48,7 @@ const FormRow = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
+    justify-content: center; /* 중앙 정렬 */
 `;
 
 const InputWithButton = styled.div`
@@ -89,7 +91,7 @@ const Index = () => {
                 alert('회원가입 클릭됨');
                 break;
             case 'findPassword':
-                alert('비밀번호 찾기 클릭됨');
+                alert('아이디 찾기 클릭됨');
                 break;
             default:
                 break;
@@ -103,31 +105,26 @@ const Index = () => {
                 <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
                 <InnerForm>
                     <FormRow>
-                        <InputField placeholder="이름" />
-                    </FormRow>
-                    <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="전화번호" />
+                                <InputField placeholder="새 비밀번호" />
                             </InputWrapper>
-                            <SmallButton>인증번호</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="인증번호" />
+                                <InputField placeholder="비밀번호 확인" />
                             </InputWrapper>
-                            <SmallButton>재전송</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
-                        <LoginButton>아이디 찾기</LoginButton>
+                        <LoginButton>비밀번호 재설정</LoginButton>
                     </FormRow>
                     <LinkText>
                         <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
                         <Link onClick={() => handleLinkClick('signup')}>회원가입</Link> | 
-                        <Link onClick={() => handleLinkClick('findPassword')}>비밀번호 찾기</Link>
+                        <Link onClick={() => handleLinkClick('findPassword')}>아이디 찾기</Link>
                     </LinkText>
                 </InnerForm>
             </FormContainer>
