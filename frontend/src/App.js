@@ -5,7 +5,6 @@ import JobPosting from './container/jobPosting';
 import Home from './container';
 import Test from './container/test';
 
-import JobPosting from './container/jobPosting';
 
 
 import Login from './container/log/login';
@@ -22,6 +21,10 @@ import Faq from './container/admin/faq';
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
 
+import Mp1 from './container/mypage/mp1';
+import Mp2 from "./container/mypage/mp2";
+import Mp3 from "./container/mypage/mp3";
+import Mp4 from "./container/mypage/mp4";
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
 import InputCompanyInfo from './container/inputCompanyInfo'
@@ -50,6 +53,10 @@ function App() {
             <Route path="findpwd" element={<Findpwd/>}/>
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="basic" element={<Basic/>}/>
+            <Route path="mp1" element={<Mp1/>}/>
+            <Route path="mp2" element={<Mp2/>}/>
+            <Route path="mp3" element={<Mp3/>}/>
+            <Route path="mp4" element={<Mp4/>}/>
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
           </Routes>
         </BrowserRouter>

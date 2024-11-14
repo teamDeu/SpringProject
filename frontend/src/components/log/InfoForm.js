@@ -24,7 +24,7 @@ const FormContainer = styled.div`
     width: 100%;
     padding: 20px;
     background-color: #ffffff;
-    border: 1px solid #ddd;
+    border: 1px solid #B5B5B5;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 `;
