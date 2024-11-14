@@ -2,13 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import JobPosting from './container/jobPosting';
-
 import Home from './container';
 import Test from './container/test';
-
-import JobPosting from './container/jobPosting';
-
-
 import Login from './container/login';
 import Member from './container/member';
 import Member2 from './container/member2';
@@ -44,7 +39,6 @@ function App() {
             <Route path="faq" element={<Faq />} />
             <Route path="announcements" element={<Announcements/>}/>
             <Route path="areview" element={<Areview/>}/>
-            <Route path="jobposting" element={<JobPosting/>}/>
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
             <Route path="jobposting" element={<JobPosting />} />
           </Routes>
