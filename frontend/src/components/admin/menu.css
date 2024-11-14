@@ -1,0 +1,56 @@
+@font-face {
+    font-family: 'Nanum Square Neo';
+    src: url('../../fonts/NanumSquareNeo-aLt.ttf') format('truetype');
+    font-style: normal;
+  }
+
+.menu-container {
+    width: 200px;
+    height: 100vh;
+    background-color: #003366;
+    color: white;
+    padding: 20px;
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-weight: bolder;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-container h2 {
+    margin-left:0px;
+    margin-bottom: 30px;
+    font-size: 22px;
+    color: white;
+    margin-left:10px;
+}
+
+.menu-button {
+    width:200px;
+    height:65px;
+    margin-left:-20px;
+    display: flex;
+    align-items: center;
+    background-color: #003366; /* 기본 배경색 설정 */
+    border: none;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px; /* 버튼의 높이를 조절하는 패딩 */
+    font-weight: lighter;
+}
+
+.menu-button:hover {
+    background-color: #ffffff; /* 호버 시 배경색 변경 */
+    color: #000000; /* 호버 시 글자색 변경 */
+    font-weight: bold;
+
+}
+
+.menu-icon {
+    margin-right: 10px; /* 아이콘과 텍스트 간격 */
+    margin-left : 10px;
+    transform: scale(0.8);
+}
