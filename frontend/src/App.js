@@ -9,6 +9,7 @@ import Member2 from './container/log/member2';
 import Findid from './container/log/findid';
 import Findpwd from './container/log/findpwd';
 import Rpwd from './container/log/rpwd';
+import Basic from './container/log/basic';
 
 
 import GlobalStyle from './GlobalStyles';
@@ -28,9 +29,9 @@ function App() {
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
             <Route path="findid" element={<Findid/>}/>
-
             <Route path="findpwd" element={<Findpwd/>}/>
             <Route path="rpwd" element={<Rpwd/>}/>
+            <Route path="basic" element={<Basic/>}/>
 
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
 
