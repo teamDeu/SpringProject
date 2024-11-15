@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import JobTopBar from '../../components/JobTopBar';
-import ResumeForm from '../../container/Resume/ResumeForm';
+import JobSearch from '../../container/jobPosting/JobSearch';
 
 function JobPosting() {
-    const [showResumeForm, setShowResumeForm] = useState(false);
+    const [showJobSearch, setShowJobSearch] = useState(false);
 
-    const handleResumeButtonClick = () => {
-        setShowResumeForm(true);
+    const handleJobSearchClick = () => {
+        setShowJobSearch(!showJobSearch);
     };
 
     return (
         <div>
-            <JobTopBar onResumeClick={handleResumeButtonClick} />
-            {showResumeForm ? <ResumeForm /> : null}
+            <JobTopBar onJobSearchClick={handleJobSearchClick} />
+            {showJobSearch && <JobSearch />}
+            
         </div>
     );
 }
