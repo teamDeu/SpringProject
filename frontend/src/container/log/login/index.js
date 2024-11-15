@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Tabs from '../../components/log/Tabs';
-import InputField from '../../components/log/InputField';
-import CheckboxGroup from '../../components/log/CheckboxGroup';
-import LoginButton from '../../components/log/LoginButton';
-import Links from '../../components/log/Links';
-import SocialButtons from '../../components/log/SocialButtons';
+import Tabs from '../../../components/log/Tabs';
+import InputField from '../../../components/log/InputField';
+import CheckboxGroup from '../../../components/log/CheckboxGroup';
+import LoginButton from '../../../components/log/LoginButton';
+import Links from '../../../components/log/Links';
+import SocialButtons from '../../../components/log/SocialButtons';
 import styled from 'styled-components';
 
 const Container = styled.div`
