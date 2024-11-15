@@ -48,6 +48,7 @@ function App() {
             <Route path="admin" element={<Admin/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
+            <Route path="amember" element={<Amember />} />
             <Route path="announcements" element={<Announcements/>}/>
             <Route path="areview" element={<Areview/>}/>
             <Route path="faqwrite" element={<Faqwrite/>}/>
