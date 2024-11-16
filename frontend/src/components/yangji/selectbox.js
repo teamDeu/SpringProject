@@ -27,6 +27,8 @@ const OptionList = styled.div`
     position: absolute;
     top: 40px;
     left: 0;
+    height : 300px;
+    overflow-y : scroll;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     z-index: 1;

@@ -20,14 +20,15 @@ export default FilledButton;
 
 const ButtonContainer = styled.button`
   cursor: pointer;
-  background-color: #00257A;
+  background-color: ${props => props.color};
   color : white;
   border-radius: 10px;
+  border:none;
+  padding : 5px;
   width : ${props => props.size};
-  height : 50px;
-  :hover {
+  &:hover {
     opacity: 0.8;
-  },
-  font-size : 25px;
+  };
+  font-size : 16px;
   font-weight : bold;
 `;
