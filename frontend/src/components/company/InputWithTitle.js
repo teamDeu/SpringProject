@@ -15,12 +15,16 @@ function InputWithTitle({title,placeholder}) {
 export default InputWithTitle;
 
 const Container = styled.div`
-    width:600px;
+    width:49.5%;
+    box-sizing:border-box;
+    margin-bottom : 20px;
     display:flex;
     flex-direction : column;
 `
 
 const Input = styled.input`
     border-radius : 10px;
+    width : 100%;
+    box-sizing:border-box;
     padding : 10px;
 `

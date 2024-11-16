@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Header from '../../components/common/Header/Header';
-import JobTopBar from '../../components/JobTopBar';
-import InputWithTitle from '../../components/company/InputWithTitle';
-import ContentTitle from '../../components/common/ContentTitle';
+import Header from '../../../components/common/Header/Header';
+import JobTopBar from '../../../components/JobTopBar';
+import InputWithTitle from '../../../components/company/InputWithTitle';
+import ContentTitle from '../../../components/common/ContentTitle';
+import InputTitle from '../../../components/company/InputTitle';
+import FilledButton from '../../../components/FilledButton';
+import MainContent from '../../../components/common/MainContent';
 
 const InputArray = [
     { 
@@ -47,7 +50,9 @@ const Index = () => {
         <Container>
             <JobTopBar/>
             <MainContent>
-                <ContentTitle>서비스 이용을 위해 기업정보를 등록해주세요.</ContentTitle>
+                <TitleSection>
+                    <ContentTitle>서비스 이용을 위해 기업정보를 등록해주세요.</ContentTitle>
+                </TitleSection>
                 <InputSection>
                     {InputArray.map((input, index) => (
                     <InputWithTitle 
@@ -57,7 +62,15 @@ const Index = () => {
                     />
                 ))}
                 </InputSection>
+                <FileSection>
+                    <InputTitle>기업 로고 등록</InputTitle>
+                </FileSection>
+                <ButtonSection>
+                    <FilledButton>기업정보 등록</FilledButton>
+                </ButtonSection>
+                
             </MainContent>
+            
         </Container>
     );
 };
@@ -67,13 +80,21 @@ export default Index;
 const Container = styled.div`
 
 `
-const MainContent = styled.main`
-    padding: 20px 300px;
-    
+const TitleSection = styled.section`
+    width : 100%;
 `
-
 const InputSection = styled.section`
     display:flex;
     flex-wrap : wrap;
-    gap : 40px;
+    justify-content : space-between;
+    width:100%;
+    margin-bottom : 50px;
+`
+
+const FileSection = styled.section`
+    width : 100%;
+`
+const ButtonSection = styled.section`
+    display:flex;
+    justify-content : center;
 `

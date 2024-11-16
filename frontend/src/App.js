@@ -10,15 +10,6 @@ import ResumeForm from './container/Resume/ResumeForm';
 
 import Home from './container';
 import Test from './container/test';
-import Login from './container/login';
-import Member from './container/member';
-import Member2 from './container/member2';
-import Findid from './container/findid';
-import Home from './container';
-import Test from './container/test';
-
-
-
 import Login from './container/log/login';
 import Member from './container/log/member';
 import Member2 from './container/log/member2';
@@ -41,8 +32,8 @@ import Mp3 from "./container/mypage/mp3";
 import Mp4 from "./container/mypage/mp4";
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
-import InputCompanyInfo from './container/inputCompanyInfo'
-
+import InputCompanyInfo from './container/company/inputCompanyInfo'
+import UserSearch from './container/company/UserSearch'
 function App() {
 
   return (
@@ -78,6 +69,7 @@ function App() {
             <Route path="mp3" element={<Mp3/>}/>
             <Route path="mp4" element={<Mp4/>}/>
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
+            <Route path="usersearch" element ={<UserSearch/>}/>
           </Routes>
         </BrowserRouter>
   );
