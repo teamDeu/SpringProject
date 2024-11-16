@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import InputTitle from './InputTitle';
 
 
 function InputWithTitle({title,placeholder}) {
@@ -17,9 +18,6 @@ const Container = styled.div`
     width:600px;
     display:flex;
     flex-direction : column;
-`
-const InputTitle = styled.span`
-    margin-bottom : 15px;
 `
 
 const Input = styled.input`

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from '../../components/common/Header/Header';
 import JobTopBar from '../../components/JobTopBar';
 import InputWithTitle from '../../components/company/InputWithTitle';
+import ContentTitle from '../../components/common/ContentTitle';
 
 const InputArray = [
     { 
@@ -46,6 +47,7 @@ const Index = () => {
         <Container>
             <JobTopBar/>
             <MainContent>
+                <ContentTitle>서비스 이용을 위해 기업정보를 등록해주세요.</ContentTitle>
                 <InputSection>
                     {InputArray.map((input, index) => (
                     <InputWithTitle 

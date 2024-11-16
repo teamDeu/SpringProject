@@ -1,14 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-const ContentTitle = ({children}) => {
+const InputTitle = ({children}) => {
   return (
     <Title>{children}</Title>
   )
 }
 
-export default ContentTitle
+export default InputTitle
 
 const Title = styled.div`
-  font-size:35px;
-  padding-bottom : 50px;
+    margin-bottom : 15px;
 `

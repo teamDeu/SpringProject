@@ -4,10 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import JobPosting from './container/jobPosting';
 import Home from './container';
 import Test from './container/test';
-
-import JobPosting from './container/jobPosting';
-
-
 import Login from './container/log/login';
 import Member from './container/log/member';
 import Member2 from './container/log/member2';
