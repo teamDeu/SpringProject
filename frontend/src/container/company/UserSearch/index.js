@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import JobTopBar from '../../../components/JobTopBar';
 import MainContent from '../../../components/common/MainContent';
+import DropdownSelect from '../../../components/yangji/selectbox';
+
 
 
 const Index = () => {
@@ -11,8 +13,13 @@ const Index = () => {
             <MainContent>
                 <SearchSection>
                     <SearchTitle>
-                        안녕하세요
+                        <ColorFont>원하는 조건의 인재</ColorFont>를 지금 바로 검색해 보세요!
                     </SearchTitle>
+                    <>
+                        <DropdownSelect>
+
+                        </DropdownSelect>
+                    </>
                 </SearchSection>
             </MainContent>
             
@@ -32,8 +39,15 @@ const SearchSection = styled.section`
     width : 100%;
     display:flex;
     flex-direction : column;
+    align-items:center;
+    padding : 30px 0px;
 `
 
 const SearchTitle = styled.div`
+    font-size : 24px;
+`
 
+const ColorFont = styled.span`
+    color : #FF8447;
+    font-weight : bold;
 `
