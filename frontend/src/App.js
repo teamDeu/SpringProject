@@ -6,7 +6,6 @@ import JobPosting from './container/jobPosting';
 import Home from './container';
 import Test from './container/test';
 
-import JobPosting from './container/jobPosting';
 
 
 import Login from './container/login';
@@ -23,6 +22,10 @@ import Areview from './container/admin/areview';
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
 import InputCompanyInfo from './container/inputCompanyInfo'
+
+import Test_Review_Home from './container/yangji/test_review_home'
+import Ceo_Review_Home from './container/yangji/ceo_review_home'
+import Test_Review_Write from './container/yangji/test_review_write'
 
 function App() {
 
@@ -47,6 +50,9 @@ function App() {
             <Route path="jobposting" element={<JobPosting/>}/>
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
             <Route path="jobposting" element={<JobPosting />} />
+            <Route path="test_review_home1" element={<Test_Review_Home />} />
+            <Route path="test_review_home2" element={<Ceo_Review_Home />} />
+            <Route path="test_review_home3" element={<Test_Review_Write />} />
           </Routes>
         </BrowserRouter>
   );

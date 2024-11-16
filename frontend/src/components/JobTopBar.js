@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 
 const JobTopBar = ({ onResumeClick }) => {
@@ -32,7 +33,9 @@ const JobTopBar = ({ onResumeClick }) => {
                         <NavItem>
                             <NavButton>합격 후기</NavButton>
                             <DropdownContent>
-                                <DropdownButton>면접 후기</DropdownButton>
+                                <DropdownButton>
+                                    면접 후기
+                                </DropdownButton>
                                 <DropdownButton>기업 리뷰</DropdownButton>
                                 <DropdownButton>My 리뷰</DropdownButton>
                             </DropdownContent>
