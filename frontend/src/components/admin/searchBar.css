@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Nanum Square Neo';
+    src: url('../../fonts/NanumSquareNeo-aLt.ttf') format('truetype');
+    font-style: normal;
+}
+
+.search-bar {
+    margin-left:10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #959595;
+    padding: 5px 10px;
+    width: 300px;
+    height: 40px;
+  }
+  
+  .search-bar input {
+    font-family: 'Nanum Square Neo', sans-serif;
+    border: none;
+    flex: 1;
+    outline: none;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .search-bar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .search-bar img {
+    width: 18px;
+    height: 18px;
+  }
+  
