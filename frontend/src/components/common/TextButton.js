@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const TextButton = ({ children, onclick, fontsize = "25px" }) => {
+const TextButton = ({ color,children, onclick, fontsize = "25px" }) => {
     return (
-        <Button onClick={onclick} fontsize={fontsize}>
+        <Button color ={color} onClick={onclick} fontsize={fontsize}>
             {children}
         </Button>
     );
@@ -17,6 +17,7 @@ const Button = styled.button`
     cursor: pointer;
     &:hover {
         opacity: 0.8;
-    }
+    };
+    color : ${props => props.color};
     font-size: ${props => props.fontsize};
 `;

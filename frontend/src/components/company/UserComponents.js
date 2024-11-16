@@ -9,7 +9,6 @@ const skillsIcon = process.env.PUBLIC_URL + '/icons/skillsIcon.png';
 function timeDifference(targetString) {
     // 문자열을 Date 객체로 변환
     console.log("targetString : "  + targetString)
-    const [datePart, timePart] = targetString.split(' '); // 날짜와 시간을 분리
     const targetDate = new Date(targetString); // ISO 형식으로 변환
     console.log("targetDate : " + targetDate);
     const targetTimestamp = targetDate.getTime(); // 밀리초로 변환
@@ -39,7 +38,7 @@ const UserComponents = ({image,data}) => {
                 경력
             </ExpBox>
             <ExpBox>
-            {data.userExp  == 0 ? "신입" : data.userExp + "년"}
+            {data.userExp  === 0 ? "신입" : data.userExp + "년"}
             </ExpBox>
         </ImageSection>
         <InfoSection>
@@ -51,7 +50,7 @@ const UserComponents = ({image,data}) => {
             <InfoWithIcon icon ={skillsIcon} info ={data.userSkills}/>
         </InfoSection>
         <DateSection>
-            {updateTime.days == 0 ? updateTime.hours == 0 ? updateTime.minutes + "분 전 수정" : `${updateTime.hours}시간 전 수정` : updateTime.days + "일 전 수정"}
+            {updateTime.days === 0 ? updateTime.hours === 0 ? updateTime.minutes + "분 전 수정" : `${updateTime.hours}시간 전 수정` : updateTime.days + "일 전 수정"}
         </DateSection>
     </Container>
   )

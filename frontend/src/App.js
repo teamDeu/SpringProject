@@ -38,6 +38,7 @@ import Test_Review_Write from './container/yangji/test_review_write'
 
 import InputCompanyInfo from './container/company/inputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
+import CompanyManagePost from './container/company/CompanyManagePost'
 function App() {
 
   return (
@@ -77,6 +78,7 @@ function App() {
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
             <Route path="test_review_home3" element={<Test_Review_Write />} />
             <Route path="usersearch" element ={<UserSearch/>}/>
+            <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>
           </Routes>
         </BrowserRouter>
   );

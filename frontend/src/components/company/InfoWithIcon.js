@@ -9,7 +9,7 @@ const InfoWithIcon = ({info,icon}) => {
         </Imgbox>
         <InfoBox>
             {info.map((item,index) => {
-                if(index == info.length -1){
+                if(index === info.length -1){
                     return item;
                 }
                 else
