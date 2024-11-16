@@ -1,9 +1,12 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 
-const JobTopBar = ({ onResumeClick }) => {
+const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
+    const location = useLocation();
+
     return (
         <Container>
             <Navbar>
@@ -19,15 +22,15 @@ const JobTopBar = ({ onResumeClick }) => {
                         <NavItem>
                             <NavButton>채용 정보</NavButton>
                             <DropdownContent>
-                                <DropdownButton>지역/산업별 채용 정보</DropdownButton>
+                                <DropdownButton onClick={onJobSearchClick}>지역/산업별 채용 정보</DropdownButton>
                                 <DropdownButton>관심 채용 정보 보기</DropdownButton>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
-                            <NavButton>이력서</NavButton>
+                            <NavButton isActive={location.pathname === '/resume'}>이력서</NavButton>
                             <DropdownContent>
-                            <DropdownButton onClick={onResumeClick}>이력서 작성</DropdownButton>
-                                <DropdownButton>My 이력서</DropdownButton>
+                                <DropdownButton onClick={onResumeClick}>이력서 작성</DropdownButton>
+                                <DropdownButton onClick={onMyResumeClick}>My 이력서</DropdownButton>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
@@ -145,10 +148,12 @@ const NavButton = styled.button`
     background: none;
     border: none;
     font-size: 17px;
-    color: #000000;
+    color: ${(props) => (props.isActive ? '#00257A' : '#000000')};
+    font-weight: ${(props) => (props.isActive ? '700' : '400')};
     cursor: pointer;
     padding: 0;
     font-family: 'Nanum Square Neo', sans-serif;
+
     &:hover {
         color: #00257A;
         font-weight: 700;
@@ -178,6 +183,7 @@ const DropdownButton = styled.button`
     cursor: pointer;
     font-size: 14px;
     font-family: 'Nanum Square Neo', sans-serif;
+
     &:hover {
         background-color: #F0F4FF;
         color: #00257A;
