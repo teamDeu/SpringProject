@@ -1,8 +1,8 @@
-// EmailAndCareerInput.js
+// IDinput.js
 import React from 'react';
 import styled from 'styled-components';
 
-const EmailAndCareerInput = ({ label, placeholder }) => {
+const IDInput = ({ label, placeholder }) => {
     return (
         <Container>
             <Label>{label}</Label>
@@ -12,19 +12,23 @@ const EmailAndCareerInput = ({ label, placeholder }) => {
     );
 };
 
+
+
 const Container = styled.div`
-    width: 1060px;
     display: flex;
     align-items: center;
     padding: 10px;
     border: 1px solid #B5B5B5;
     border-radius: 4px;
-    background-color: #fff; /* Container 배경색을 흰색으로 설정 */
+    background-color: #ffffff;
     margin-bottom: 15px;
+    width: 100%; /* 전체 너비 설정 */
+    max-width: 1060px; /* 원하는 최대 너비 */
+    
 `;
 
 const Label = styled.label`
-    width: 80px;
+    width: 60px; /* 레이블 너비 */
     font-size: 16px;
     color: #333;
 `;
@@ -38,12 +42,11 @@ const Input = styled.input`
     flex: 1;
     padding: 8px;
     border: none;
-    border-radius: 4px; /* Input에만 라운드 효과 */
-    background-color: #F1F1F1; /* Input 배경색을 회색으로 설정 */
-    color: #888;
+    color: #333;
+    font-size: 16px;
     &::placeholder {
-        color: #ccc;
+        color: #bbb;
     }
 `;
 
-export default EmailAndCareerInput;
+export default IDInput;

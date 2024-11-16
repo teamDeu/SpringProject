@@ -18,11 +18,10 @@
 }
 
 .menu-container h2 {
-    margin-left:0px;
     margin-bottom: 30px;
     font-size: 22px;
     color: white;
-    margin-left:10px;
+    margin-left:20px;
 }
 
 .menu-button {
@@ -48,6 +47,13 @@
     font-weight: bold;
 
 }
+
+.menu-button.active {
+    background-color: #ffffff; 
+    color: #000000; 
+    font-weight: bold;
+}
+
 
 .menu-icon {
     margin-right: 10px; /* 아이콘과 텍스트 간격 */
