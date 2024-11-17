@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import JobTopBar from '../../../components/JobTopBar'
 import Tab from '../../../components/company/Tab'
 import PostComponents from '../../../components/company/PostComponents'
+import FilledButton from '../../../components/FilledButton'
 
 const tabOptions = [
   {
@@ -83,6 +84,9 @@ const index = () => {
             </TitleSection>
             <TabSection>
               <Tab options={tabOptions}/>
+              <ButtonArticle>
+              <FilledButton>채용 공고 등록</FilledButton>
+              </ButtonArticle>
             </TabSection>
             <ComponetsSection>
               {postComponents.map((postComponent) => <PostComponents data ={postComponent}/>)}
@@ -103,8 +107,16 @@ const TitleSection  = styled.section`
 `
 
 const TabSection = styled.section`
-    width : 100%;
+  display:flex;
+  align-items:center;
+  position : relative;
+  width : 100%;
 `
 const ComponetsSection = styled.section`
   width:100%;
+`
+
+const ButtonArticle = styled.article`
+  position : absolute;
+  right : 0px;
 `
