@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Header from '../../../components/common/Header/Header';
 import JobTopBar from '../../../components/JobTopBar';
 import InputWithTitle from '../../../components/company/InputWithTitle';
 import ContentTitle from '../../../components/common/ContentTitle';
