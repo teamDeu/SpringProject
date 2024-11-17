@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Link 컴포넌트 추가
 import Tabs from '../../../components/log/Tabs';
 import SocialButtons from '../../../components/log/SocialButtons';
-import LoginButton from '../../../components/log/LoginButton';
+import LoginButton from '../../../components/log/LoginButton'; // 기존 버튼 컴포넌트 사용
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -13,7 +14,7 @@ const Container = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
     margin-top: -70px;
-    zoom:0.6;
+    zoom: 0.6;
 `;
 
 const Title = styled.h1`
@@ -52,14 +53,21 @@ const Text = styled.span`
     margin-right: 8px;
 `;
 
-const LoginLinkButton = styled.button`
+const LoginLinkButton = styled(Link)` 
     background: none;
     border: none;
     color: #003366;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: underline; /* 밑줄 유지 */
+`;
+
+const StyledLink = styled(Link)`
+    width: 100%; 
+    display: flex; 
+    justify-content: center; /* 버튼이 가운데 정렬되도록 설정 */
+    text-decoration: none; 
 `;
 
 const Index = () => {
@@ -73,10 +81,12 @@ const Index = () => {
                 <Separator />
                 <div>소셜 계정으로 간편 로그인</div>
                 <SocialButtons />
-                <LoginButton>회원가입</LoginButton>
+                <StyledLink to="/member2">
+                    <LoginButton>회원가입</LoginButton>
+                </StyledLink>
                 <LinkTextContainer>
                     <Text>이미 계정이 있나요?</Text>
-                    <LoginLinkButton onClick={() => alert('로그인 버튼 클릭됨')}>로그인</LoginLinkButton>
+                    <LoginLinkButton to="/login">로그인</LoginLinkButton> {/* 링크 추가 */}
                 </LinkTextContainer>
             </Form>
         </Container>

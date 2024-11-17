@@ -1,7 +1,7 @@
-// PasswordInput.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaEye } from 'react-icons/fa';
+import { Link } from 'react-router-dom'; // Link 추가
 
 const PasswordInput = ({ label, placeholder }) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -17,16 +17,15 @@ const PasswordInput = ({ label, placeholder }) => {
             <Input
                 type={isPasswordVisible ? 'text' : 'password'}
                 placeholder={placeholder}
+                readOnly
             />
             <IconContainer onClick={togglePasswordVisibility}>
                 <FaEye />
             </IconContainer>
-            <ChangeButton>변경</ChangeButton>
+            <ChangeButton to="/mp4">변경</ChangeButton>
         </Container>
     );
 };
-
-
 
 const Container = styled.div`
     display: flex;
@@ -70,7 +69,7 @@ const IconContainer = styled.div`
     font-size: 18px;
 `;
 
-const ChangeButton = styled.button`
+const ChangeButton = styled(Link)` // Link로 변경
     padding: 5px 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -79,10 +78,14 @@ const ChangeButton = styled.button`
     cursor: pointer;
     color: #333;
     margin-left: 10px;
+    text-decoration: none; // 밑줄 제거
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     &:hover {
         background-color: #f1f1f1;
     }
 `;
-
 
 export default PasswordInput;

@@ -1,16 +1,14 @@
+// EditButton.js
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
-const EditButton = () => {
-    return (
-        <StyledLink to="/mp2">수정</StyledLink>
-    );
+const EditButton2 = () => {
+    return <Button>저장</Button>;
 };
 
-export default EditButton;
+export default EditButton2;
 
-const StyledLink = styled(Link)`
+const Button = styled.button`
     width: 77px;
     height: 43px;
     border: 1px solid #B5B5B5;
@@ -22,7 +20,6 @@ const StyledLink = styled(Link)`
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none; /* 밑줄 제거 */
     &:hover {
         background-color: #f1f1f1;
     }

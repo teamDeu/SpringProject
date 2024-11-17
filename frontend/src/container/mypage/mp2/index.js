@@ -1,10 +1,10 @@
 // index.js
 import React from 'react';
 import styled from 'styled-components';
-import JobTopBar from '../../../components/JobTopBar';
+import JobTopBar from '../../../components/JobTopBar2';
 import EmailAndCareerInput from '../../../components/log/EmailAndCareerInput';
 import PasswordInput from '../../../components/mypage/PasswordInput';
-import EditButton from '../../../components/mypage/EditButton';
+import EditButton from '../../../components/mypage/EditButton2';
 import IDInput from '../../../components/mypage/IDinput';
 import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
@@ -25,7 +25,7 @@ const Index = () => {
                     <Section>
                         <SectionTitleWrapper>
                             <SectionTitle>로그인 정보</SectionTitle>
-                            <EditButton>수정</EditButton>
+                            <EditButton></EditButton>
                         </SectionTitleWrapper>
                         <Row>
                             <IDInput label="아이디" placeholder="1234" />
@@ -47,7 +47,7 @@ const Index = () => {
                     <Section>
                         <SectionTitleWrapper>
                             <SectionTitle>기본 정보</SectionTitle>
-                            <EditButton>수정</EditButton>
+                            <EditButton></EditButton>
                         </SectionTitleWrapper>
                         <Row>
                             <EmailAndCareerInput label="이메일" placeholder="1234@naver.com" />

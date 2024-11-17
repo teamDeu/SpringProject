@@ -30,6 +30,8 @@ import Mp1 from './container/mypage/mp1';
 import Mp2 from "./container/mypage/mp2";
 import Mp3 from "./container/mypage/mp3";
 import Mp4 from "./container/mypage/mp4";
+import Mp5 from "./container/mypage/mp5";
+import Mp6 from "./container/mypage/mp6";
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
 import Test_Review_Home from './container/yangji/test_review_home'
@@ -73,6 +75,8 @@ function App() {
             <Route path="mp2" element={<Mp2/>}/>
             <Route path="mp3" element={<Mp3/>}/>
             <Route path="mp4" element={<Mp4/>}/>
+            <Route path="mp5" element={<Mp5/>}/>
+            <Route path="mp6" element={<Mp6/>}/>
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
             <Route path="test_review_home1" element={<Test_Review_Home />} />
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
@@ -81,6 +85,7 @@ function App() {
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>
           </Routes>
         </BrowserRouter>
+        
   );
 }
 

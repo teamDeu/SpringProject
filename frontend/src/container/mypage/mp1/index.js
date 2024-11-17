@@ -1,8 +1,8 @@
 // index.js
 import React from 'react';
 import styled from 'styled-components';
-import JobTopBar from '../../../components/JobTopBar';
-import IDInput from '../../../components/mypage/IDinput';
+import JobTopBar from '../../../components/JobTopBar2';
+import IDInput from '../../../components/mypage/IDinput3';
 import PasswordInput from '../../../components/mypage/PasswordInput';
 import EditButton from '../../../components/mypage/EditButton';
 
