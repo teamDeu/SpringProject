@@ -162,11 +162,13 @@ const DataTable = () => {
   return (
     <Table>
         <HeaderRow>
+            <HeaderCell><ContentBox><input type="checkbox"></input></ContentBox></HeaderCell>
         {Object.keys(tempData[0]).map((title) => <HeaderCell><ContentBox>{title}</ContentBox></HeaderCell>)}
         </HeaderRow>
         {tempData.map((item) => {
             return(
                 <ContentRow>
+                    <ContentCell><ContentBox><input type="checkbox"></input></ContentBox></ContentCell>
                     <ContentCell><ContentBox>{item.지원자명}</ContentBox></ContentCell>
                     <ContentCell><ContentBox>{item.경력}</ContentBox></ContentCell>
                     <ContentCell><ContentBox>{item.최종학력}</ContentBox></ContentCell>
