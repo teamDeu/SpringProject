@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate import
 import Tabs from '../../../components/log/Tabs';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
@@ -78,18 +79,18 @@ const Link = styled.span`
 `;
 
 const Index = () => {
-    const [activeTab, setActiveTab] = useState('individual');
+    const navigate = useNavigate(); // useNavigate 훅 사용
 
     const handleLinkClick = (type) => {
-        switch(type) {
+        switch (type) {
             case 'login':
-                alert('로그인 클릭됨');
+                navigate('/login'); // 로그인 페이지로 이동
                 break;
             case 'signup':
-                alert('회원가입 클릭됨');
+                navigate('/member'); // 회원가입 페이지로 이동
                 break;
             case 'findPassword':
-                alert('비밀번호 찾기 클릭됨');
+                navigate('/findpwd'); // 비밀번호 찾기 페이지로 이동
                 break;
             default:
                 break;
@@ -100,7 +101,7 @@ const Index = () => {
         <Container>
             <Title>구인구직</Title>
             <FormContainer>
-                <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
+                <Tabs />
                 <InnerForm>
                     <FormRow>
                         <InputField placeholder="이름" />
@@ -118,7 +119,7 @@ const Index = () => {
                             <InputWrapper>
                                 <InputField placeholder="인증번호" />
                             </InputWrapper>
-                            <SmallButton>재전송</SmallButton>
+                            <SmallButton>확인</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>

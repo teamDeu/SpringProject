@@ -40,7 +40,6 @@ import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 
 import InputCompanyInfo from './container/company/InputCompanyInfo'
-
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
@@ -67,7 +66,7 @@ function App() {
             <Route path="faqwrite" element={<Faqwrite/>}/>
             <Route path="Awrite" element={<Awrite/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
-            <Route path="/jobPosting/jobSearch" element={<JobSearch />} />
+            <Route path="jobSearch" element={<JobSearch />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />

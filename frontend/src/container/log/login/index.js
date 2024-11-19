@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Tabs from '../../../components/log/Tabs';
 import InputField from '../../../components/log/InputField';
 import CheckboxGroup from '../../../components/log/CheckboxGroup';
 import LoginButton from '../../../components/log/LoginButton';
-import Links from '../../../components/log/Links';
 import SocialButtons from '../../../components/log/SocialButtons';
+import Links from '../../../components/log/Links';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: fixed; /* 화면 중앙에 고정 */
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     margin-top: -70px;
-    zoom:0.6;
+    zoom: 0.6;
 `;
 
 const Title = styled.h2`
@@ -47,6 +49,7 @@ const Index = () => {
         simpleLogin: false,
     });
     const [activeTab, setActiveTab] = useState('individual');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -56,35 +59,72 @@ const Index = () => {
         }));
     };
 
+const handleLogin = async () => {
+    if (!form.id || !form.password) {
+        alert('아이디와 비밀번호를 입력해주세요.');
+        return;
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8080/api/login', {
+            id: form.id,
+            password: form.password,
+        });
+
+        if (response.status === 200) {
+            alert('로그인 성공');
+            localStorage.setItem('userId', form.id); // userId 저장
+
+            // 기본 정보 입력 여부 확인
+            const checkBasicResponse = await axios.get(
+                `http://localhost:8080/api/check-user-basic?id=${form.id}`
+            );
+
+            if (checkBasicResponse.data) {
+                // 기본 정보가 입력되어 있다면 대시보드로 이동
+                navigate('/dashboard');
+            } else {
+                // 기본 정보가 입력되어 있지 않다면 basic 페이지로 이동
+                navigate('/basic');
+            }
+        }
+    } catch (error) {
+        console.error('로그인 실패: ', error);
+        alert('로그인 실패. 아이디와 비밀번호를 확인해주세요.');
+    }
+};
+
     return (
         <Container>
             <Title>구인구직</Title>
             <Form>
                 <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
-                <InputField 
-                    type="text" 
-                    placeholder="아이디" 
-                    value={form.id} 
-                    onChange={handleChange} 
-                    name="id" 
+                <InputField
+                    type="text"
+                    placeholder="아이디"
+                    value={form.id}
+                    onChange={handleChange}
+                    name="id"
                 />
-                <InputField 
-                    type="password" 
-                    placeholder="비밀번호" 
-                    value={form.password} 
-                    onChange={handleChange} 
-                    name="password" 
+                <InputField
+                    type="password"
+                    placeholder="비밀번호"
+                    value={form.password}
+                    onChange={handleChange}
+                    name="password"
                 />
-                <CheckboxGroup 
+                <CheckboxGroup
                     options={[
                         { name: 'rememberLogin', label: '로그인 유지', checked: form.rememberLogin },
                         { name: 'saveId', label: '아이디 저장', checked: form.saveId },
-                        { name: 'simpleLogin', label: '간편로그인', checked: form.simpleLogin },
-                    ]} 
-                    onChange={handleChange} 
+                        { name: 'simpleLogin', label: '관리자 로그인', checked: form.simpleLogin },
+                    ]}
+                    onChange={handleChange}
                 />
-                <LoginButton>로그인</LoginButton>
-                <Links />
+                <LoginButton type="button" onClick={handleLogin}>
+                    로그인
+                </LoginButton>
+                <Links/>
                 <SocialButtons />
             </Form>
         </Container>
