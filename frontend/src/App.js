@@ -67,7 +67,7 @@ function App() {
             <Route path="faqwrite" element={<Faqwrite/>}/>
             <Route path="Awrite" element={<Awrite/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
-            <Route path="/jobPosting/jobSearch" element={<JobSearch />} />
+            <Route path="jobSearch" element={<JobSearch />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
