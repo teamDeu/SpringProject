@@ -95,44 +95,49 @@ const StatusImage = styled.img`
     cursor: pointer;
 `;
 const LargeBox = styled.div`
-    width: 800px;
-    height: 400px;
-    border: 2px solid #000;
-    border-radius: 20px;
-    position: relative;
-    margin: 20px auto;
-    background: #f9f9f9;
+    width: 1170px;
+    height: 90px;
+    position: absolute;
+    left: 50px;
+    top: 128px;
+    background: #F5F7FA;
 `;
 
 const LargeText = styled.div`
-    font-size: 32px;
-    font-weight: bold;
+    font-size: 18px;
+    font-weight: 700;
     position: absolute;
-    top: 30px;
-    left: 30px;
-    color: #333;
+    top: 20px;
+    left: 50px;
+    color: ${({ textType }) =>
+        textType === '현직원'
+            ? '#92D2D4'
+            : textType === '전직원'
+            ? '#788AEC'
+            : '#333'}; /* 텍스트 색상 */
 `;
 
 const SmallText = styled.div`
-    font-size: 18px;
-    font-weight: normal;
+    font-size: 16px;
+    font-weight: 700;
     position: absolute;
-    bottom: 30px;
-    left: 30px;
+    top: 50px;
+    left: 50px;
     color: #666;
 `;
 
 const BoxImage = styled.img`
-    width: 120px;
-    height: 120px;
+    width: 20px;
+    height: 20px;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 29px;
+    left: 120px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 `;
 
-const CeoBox = ({ companyImage, companyName, hiringCount, date, onDelete, registrationStatus }) => {
+const CeoBox = ({ companyImage, companyName, hiringCount, date, onDelete, registrationStatus,textType ,textType1}) => {
+    const boxImageSrc = textType === '현직원' ? '/img/realceo.png' : '/img/beforeceo.png';
     return (
         <Container>
             <Image src={companyImage} alt="No Image" />
@@ -151,9 +156,9 @@ const CeoBox = ({ companyImage, companyName, hiringCount, date, onDelete, regist
                 {registrationStatus}
             </RegistrationStatus>
             <LargeBox>
-                <LargeText>큰 글씨 텍스트</LargeText>
-                <BoxImage src="/img/sample.png" alt="Box Image" />
-                <SmallText>작은 글씨 텍스트</SmallText>
+                <LargeText textType={textType}>{textType}</LargeText>
+                <BoxImage src={boxImageSrc} alt="Box Image" />
+                <SmallText textType1={textType1}>{textType1}</SmallText>
             </LargeBox>
         </Container>
     );

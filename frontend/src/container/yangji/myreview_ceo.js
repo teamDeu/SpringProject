@@ -20,11 +20,10 @@ const TestBoxContainer = styled.div`
     align-items: center; /* 가운데 정렬 */
 `;
 
-
-
 const Review2 = () => {
     const numberOfBoxes = 8; // 데이터베이스에서 가져온 값
     const statusOptions = ['등록대기중', '등록완료', '등록취소'];
+    const textTypeOptions = ['현직원', '전직원'];
     const [dummyData, setDummyData] = useState(
         Array.from({ length: numberOfBoxes }, (_, index) => ({
             id: index + 1, // 고유 id 추가
@@ -32,7 +31,9 @@ const Review2 = () => {
             companyName: `회사 이름 ${index + 1}`,
             hiringCount: Math.floor(Math.random() * 10) + 1,
             date: `2024.10.${27 - index}`,
-            registrationStatus:statusOptions[Math.floor(Math.random() * statusOptions.length)]
+            registrationStatus: statusOptions[Math.floor(Math.random() * statusOptions.length)],
+            textType: textTypeOptions[Math.floor(Math.random() * textTypeOptions.length)], // 현직원 또는 전직원 랜덤 설정
+            textType1:"밥이 존맛탱",
         }))
     );
 
@@ -54,6 +55,8 @@ const Review2 = () => {
                         date={data.date}
                         onDelete={() => handleDelete(data.id)} // 삭제 기능 연결
                         registrationStatus={data.registrationStatus}
+                        textType={data.textType} // textType 전달
+                        textType1={data.textType1}
                     />
                 ))}
             </TestBoxContainer>
