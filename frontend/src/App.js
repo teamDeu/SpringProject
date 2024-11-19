@@ -40,11 +40,12 @@ import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 
-import InputCompanyInfo from './container/company/inputCompanyInfo'
+import InputCompanyInfo from './container/company/InputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
 import CompanyManageCandidate from './container/company/CompanyManageCandidate'
+import ManageCompanyInfo from './container/company/ManageCompanyInfo'
 function App() {
 
   return (
@@ -59,7 +60,6 @@ function App() {
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
             <Route path="findid" element={<Findid/>}/>
-            <Route path="admin" element={<Admin/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
             <Route path="amember" element={<Amember />} />
@@ -90,6 +90,7 @@ function App() {
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>
             <Route path="CompanyRegPost" element ={<CompanyRegPost/>}/>
             <Route path="CompanyManageCandidate" element ={<CompanyManageCandidate/>}/>
+            <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
           </Routes>
         </BrowserRouter>
         

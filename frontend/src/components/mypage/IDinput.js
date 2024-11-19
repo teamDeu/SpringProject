@@ -2,12 +2,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const IDInput = ({ label, placeholder }) => {
+const IDInput = ({ label, placeholder,value }) => {
     return (
         <Container>
             <Label>{label}</Label>
             <Divider>|</Divider>
-            <Input placeholder={placeholder} />
+            <Input placeholder={placeholder} value = {value} />
         </Container>
     );
 };
@@ -28,7 +28,7 @@ const Container = styled.div`
 `;
 
 const Label = styled.label`
-    width: 60px; /* 레이블 너비 */
+    width: 80px; /* 레이블 너비 */
     font-size: 16px;
     color: #333;
 `;

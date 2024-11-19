@@ -13,6 +13,8 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-const LoginButton = ({ children }) => <Button>{children}</Button>;
+const LoginButton = ({ children, onClick }) => (
+    <Button onClick={onClick}>{children}</Button>
+);
 
 export default LoginButton;

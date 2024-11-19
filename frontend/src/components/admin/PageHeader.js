@@ -1,11 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const HeaderTitle = styled.h1`
+    font-size: 30px;
+    font-weight: bold;
+    font-family: 'Nanum Square Neo', sans-serif;
+`;
 
 const PageHeader = ({ title }) => {
     return (
         <div style={{ padding: '20px' }}>
-            <h1 style={{ fontSize: '30px', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>
-                {title}
-            </h1>
+            <HeaderTitle>{title}</HeaderTitle>
         </div>
     );
 };

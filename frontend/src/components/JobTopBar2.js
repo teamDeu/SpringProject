@@ -62,7 +62,7 @@ const JobTopBar2 = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
                             <NavButton>마이페이지</NavButton>
                             <DropdownContent>
                                 <DropdownButton to="/mp5">스크랩/관심기업</DropdownButton>
-                                <DropdownButton>지원내역</DropdownButton>
+                                <DropdownButton to="/mp6">지원내역</DropdownButton>
                             </DropdownContent>
                         </NavItem>
                     </NavLinks>

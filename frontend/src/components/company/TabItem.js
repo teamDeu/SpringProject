@@ -10,7 +10,7 @@ const TabItem = ({children,tabActive = false,onClick}) => {
 export default TabItem
 
 const Container = styled.div`
-    padding : 15px 0px;
+    padding : 15px;
     cursor : pointer;
     &:hover{
         color : #00257A;
