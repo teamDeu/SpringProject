@@ -44,6 +44,7 @@ import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
 import CompanyManageCandidate from './container/company/CompanyManageCandidate'
+import ManageCompanyInfo from './container/company/ManageCompanyInfo'
 function App() {
 
   return (
@@ -88,6 +89,7 @@ function App() {
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>
             <Route path="CompanyRegPost" element ={<CompanyRegPost/>}/>
             <Route path="CompanyManageCandidate" element ={<CompanyManageCandidate/>}/>
+            <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
           </Routes>
         </BrowserRouter>
         

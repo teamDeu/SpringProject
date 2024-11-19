@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FaEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; // Link 추가
 
-const PasswordInput = ({ label, placeholder }) => {
+const PasswordInput = ({ label, placeholder , value }) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -18,6 +18,7 @@ const PasswordInput = ({ label, placeholder }) => {
                 type={isPasswordVisible ? 'text' : 'password'}
                 placeholder={placeholder}
                 readOnly
+                value ={value}
             />
             <IconContainer onClick={togglePasswordVisibility}>
                 <FaEye />
