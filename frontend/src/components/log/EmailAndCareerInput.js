@@ -1,13 +1,16 @@
-// EmailAndCareerInput.js
 import React from 'react';
 import styled from 'styled-components';
 
-const EmailAndCareerInput = ({ label, placeholder }) => {
+const EmailAndCareerInput = ({ label, placeholder, value, onChange }) => {
     return (
         <Container>
             <Label>{label}</Label>
             <Divider>|</Divider>
-            <Input placeholder={placeholder} />
+            <Input
+                placeholder={placeholder}
+                value={value} // 입력된 값 반영
+                onChange={onChange} // 상위 컴포넌트로 이벤트 전달
+            />
         </Container>
     );
 };
@@ -19,7 +22,7 @@ const Container = styled.div`
     padding: 10px;
     border: 1px solid #B5B5B5;
     border-radius: 4px;
-    background-color: #fff; /* Container 배경색을 흰색으로 설정 */
+    background-color: #fff;
     margin-bottom: 15px;
 `;
 
@@ -38,8 +41,8 @@ const Input = styled.input`
     flex: 1;
     padding: 8px;
     border: none;
-    border-radius: 4px; /* Input에만 라운드 효과 */
-    background-color: #F1F1F1; /* Input 배경색을 회색으로 설정 */
+    border-radius: 4px;
+    background-color: #F1F1F1;
     color: #888;
     &::placeholder {
         color: #ccc;

@@ -1,21 +1,35 @@
-// EducationSelect.js
 import React from 'react';
 import styled from 'styled-components';
 
-const EducationSelect = ({ label }) => {
+const EducationSelect = ({ label, value, onChange }) => {
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        onChange(name, value); // 이름과 값을 상위 컴포넌트로 전달
+    };
+
     return (
         <Container>
             <Label>{label}</Label>
             <Divider>|</Divider>
-            <Select>
-                <option>고등학교</option>
-                <option>대학교</option>
-                <option>대학원</option>
+            <Select
+                name="educationLevel"
+                value={value.educationLevel || ''}
+                onChange={handleSelectChange}
+            >
+                <option value="">학력</option>
+                <option value="고등학교">고등학교</option>
+                <option value="대학교">대학교</option>
+                <option value="대학원">대학원</option>
             </Select>
-            <Select>
-                <option>졸업</option>
-                <option>중퇴</option>
-                <option>재학중</option>
+            <Select
+                name="educationStatus"
+                value={value.educationStatus || ''}
+                onChange={handleSelectChange}
+            >
+                <option value="">학력</option>
+                <option value="졸업">졸업</option>
+                <option value="중퇴">중퇴</option>
+                <option value="재학중">재학중</option>
             </Select>
         </Container>
     );
@@ -44,18 +58,14 @@ const Divider = styled.span`
 `;
 
 const Select = styled.select`
-    width: 100px; /* 작은 칸으로 표시 */
+    width: 100px;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
     color: #333;
     cursor: pointer;
-    appearance: none; /* 기본 화살표 스타일을 없애고 */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E"); /* 커스텀 화살표 */
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px 6px;
+    appearance: none;
     margin-left: 10px;
 `;
 
