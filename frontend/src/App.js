@@ -59,7 +59,6 @@ function App() {
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
             <Route path="findid" element={<Findid/>}/>
-            <Route path="admin" element={<Admin/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
             <Route path="amember" element={<Amember />} />
