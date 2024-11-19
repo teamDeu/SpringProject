@@ -1,14 +1,17 @@
+// Select.js
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-const DropdownContainer = styled.div`
+// 스타일 컴포넌트들을 export하여 외부에서 참조 가능하게 합니다.
+export const DropdownContainer = styled.div`
     width: ${({ width }) => width || '130px'};
     margin: ${({ margin }) => margin || '0'};
     position: relative;
     font-family: 'Nanum Square Neo';
 `;
 
-const SelectBox = styled.div`
+export const SelectBox = styled.div`
     font-family: 'Nanum Square Neo', sans-serif;
     font-weight: bold;
     background: #ffffff;
@@ -23,7 +26,7 @@ const SelectBox = styled.div`
     cursor: default;
 `;
 
-const OptionList = styled.div`
+export const OptionList = styled.div`
     font-family: 'Nanum Square Neo', sans-serif;
     background: #ffffff;
     border: 1px solid #959595;
@@ -38,15 +41,14 @@ const OptionList = styled.div`
     overflow-y: auto;
 `;
 
-const ArrowIcon = styled.img`
+export const ArrowIcon = styled.img`
     width: 20px;
     height: 20px;
     margin-left: 8px;
-    transition: transform 0.3s ease;
     cursor: pointer;
 `;
 
-const Option = styled.div`
+export const Option = styled.div`
     padding: 10px 12px;
     font-size: 16px;
     color: #000000;
@@ -61,7 +63,7 @@ const Option = styled.div`
     }
 `;
 
-const DeleteButton = styled.button`
+export const DeleteButton = styled.button`
     margin-left: 10px;
     background: none;
     border: none;
@@ -70,21 +72,21 @@ const DeleteButton = styled.button`
     cursor: pointer;
 `;
 
-const PlusIcon = styled.img`
+export const PlusIcon = styled.img`
     width: 20px;
     height: 20px;
     margin-left: 15px;
     cursor: pointer;
 `;
 
-const InputContainer = styled.div`
+export const InputContainer = styled.div`
     display: flex;
     padding: 10px 12px;
     border-top: 1px solid #959595;
     background-color: #f9f9f9;
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
     height:25px;
     flex: 1;
     padding: 5px;
@@ -94,7 +96,7 @@ const Input = styled.input`
     margin-right: 10px;
 `;
 
-const ConfirmButton = styled.button`
+export const ConfirmButton = styled.button`
     font-family: 'Nanum Square Neo', sans-serif;
     padding: 5px 10px;
     font-size: 13px;
@@ -105,7 +107,7 @@ const ConfirmButton = styled.button`
     margin-right: 8px;
 `;
 
-const CancelButton = styled.button`
+export const CancelButton = styled.button`
     font-family: 'Nanum Square Neo', sans-serif;
     padding: 5px 10px;
     font-size: 13px;
@@ -115,7 +117,16 @@ const CancelButton = styled.button`
     border-radius: 4px;
 `;
 
-const DropdownSelect = ({ initialOptions = ["개인회원", "기업회원"], defaultOption, onChange, showPlusButton, showDeleteButton = false, width, margin }) => {
+const DropdownSelect = ({
+    className, // className prop 추가
+    initialOptions = ["개인회원", "기업회원"],
+    defaultOption,
+    onChange,
+    showPlusButton,
+    showDeleteButton = false,
+    width,
+    margin
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [newOptionName, setNewOptionName] = useState('');
@@ -125,6 +136,10 @@ const DropdownSelect = ({ initialOptions = ["개인회원", "기업회원"], def
     useEffect(() => {
         setOptions(initialOptions); // initialOptions가 변경될 때 options 상태를 업데이트
     }, [initialOptions]);
+
+    useEffect(() => {
+        setSelectedOption(defaultOption); // defaultOption이 변경될 때 selectedOption 업데이트
+    }, [defaultOption]);
 
     const toggleOpen = () => setIsOpen((prev) => !prev);
 
@@ -153,20 +168,29 @@ const DropdownSelect = ({ initialOptions = ["개인회원", "기업회원"], def
     };
 
     return (
-        <DropdownContainer width={width} margin={margin}>
-            <SelectBox>
+        <DropdownContainer
+            className={className} // className 전달
+            width={width}
+            margin={margin}
+        >
+            <SelectBox onClick={toggleOpen}>
                 <span>{selectedOption}</span>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ArrowIcon src="/icons/sbtn.png" alt="Arrow Icon" onClick={(e) => {
-                        e.stopPropagation(); // 부모의 클릭 이벤트 방지
-                        toggleOpen(); // ArrowIcon 클릭 시 드롭다운 창 열림
-                    }} />
+                    <ArrowIcon
+                        src="/icons/sbtn.png"
+                        alt="Arrow Icon"
+                        style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
                     {showPlusButton && (
-                        <PlusIcon src="/icons/plusbtn.png" alt="Plus Icon" onClick={(e) => {
-                            e.stopPropagation();
-                            setIsAdding(true); // PlusIcon 클릭 시 추가 모드 활성화
-                            setIsOpen(true); // 드롭다운 열림
-                        }} />
+                        <PlusIcon
+                            src="/icons/plusbtn.png"
+                            alt="Plus Icon"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsAdding(true); // PlusIcon 클릭 시 추가 모드 활성화
+                                setIsOpen(true); // 드롭다운 열림
+                            }}
+                        />
                     )}
                 </div>
             </SelectBox>

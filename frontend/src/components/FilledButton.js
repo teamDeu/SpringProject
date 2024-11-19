@@ -7,10 +7,11 @@ const FilledButton = ({
   children,
   color = "#00257A",
   size = "180px",
+  height,
   onClick = ()=>{}
 }) => {
   return (
-    <ButtonContainer color={color} onClick={onClick} size={size}>
+    <ButtonContainer height = {height} color={color} onClick={onClick} size={size}>
       {children}  
     </ButtonContainer>
   );
@@ -26,6 +27,7 @@ const ButtonContainer = styled.button`
   border:none;
   padding : 5px;
   width : ${props => props.size};
+  height : ${props => props.height ? props.height : ""};
   &:hover {
     opacity: 0.8;
   };
