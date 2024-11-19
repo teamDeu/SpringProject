@@ -26,6 +26,7 @@ function Index() {
                 setData(prevData => [...prevData, response.data]);
             })
             .catch(error => console.error('Error posting data:', error));
+            
     };
 
     return (
