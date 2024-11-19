@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Selectbox from '../../components/yangji/selectbox';
 import Input from '../../components/yangji/input';
-import ReviewButton from '../../components/yangji/review_button';
 import HorizontalLine from '../../components/yangji/Line';
-import TestBox from '../../components/yangji/test_box';
-import JobTopBar from '../../components/JobTopBar';
+import TestBox from '../../components/yangji/myreview/test_box';
 import styled from 'styled-components';
 
 
