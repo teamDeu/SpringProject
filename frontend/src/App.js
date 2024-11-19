@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import JobPosting from './container/jobPosting';
 import JobSearch from './container/jobPosting/JobSearch';
+import JobDetail from './container/jobPosting/JobDetail';
 import Resume from './container/Resume';
 import MyResume from './container/Resume/MyResume';
 import ResumeForm from './container/Resume/ResumeForm';
@@ -68,6 +69,7 @@ function App() {
             <Route path="Awrite" element={<Awrite/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
             <Route path="jobSearch" element={<JobSearch />} />
+            <Route path="/job-detail/:id" element={<JobDetail />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
