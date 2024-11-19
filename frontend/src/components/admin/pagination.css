@@ -1,0 +1,56 @@
+@font-face {
+    font-family: 'Nanum Square Neo';
+    src: url('../../fonts/NanumSquareNeo-aLt.ttf') format('truetype');
+    font-style: normal;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .page-button {
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-size: 13px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bolder;
+    color: #959595;
+  }
+  
+  .page-button.active {
+    color: #000000;
+  }
+  
+  .page-button:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  
+  .prev-button,
+  .next-button {
+    width: auto;
+    height: 30px;
+    padding: 0 10px;
+    font-weight: bolder;
+    border: none;
+    background-color: #ffffff;
+    color: #000000;
+  }
+  
+  .page-placeholder {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: none;
+  }
+  
