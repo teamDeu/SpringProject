@@ -26,6 +26,7 @@ import Areview from './container/admin/areview';
 import Faqwrite from './container/admin/faqwrite';
 import Awrite from './container/admin/awrite';
 
+
 import Mp1 from './container/mypage/mp1';
 import Mp2 from "./container/mypage/mp2";
 import Mp3 from "./container/mypage/mp3";
