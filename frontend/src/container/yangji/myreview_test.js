@@ -1,71 +1,55 @@
 import React, { useState } from 'react';
+import Selectbox from '../../components/yangji/selectbox';
+import Input from '../../components/yangji/input';
+import HorizontalLine from '../../components/yangji/Line';
+import TestBox from '../../components/yangji/myreview/test_box';
 import styled from 'styled-components';
 
 const Container = styled.div`
     position: relative;
-    width: 69%;
+    width: 100%;
     height: 100vh;
     background: #ffffff;
     margin: 0 auto; /* 가로 중앙 정렬 */
     font-family: 'Nanum Square Neo', sans-serif;
 `;
 
-const Title = styled.h2`
-    position: absolute;
-    top: 20px;
-    color: #000000;
-  text-align: left;
-  font-size: 30px;
-  font-weight: 400;
-  position: relative;
-  height: 126px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  -webkit-text-stroke: 0.699999988079071px #000000;
-`;
-
 const InputContainer = styled.div`
     position: absolute;
-    top: 150px;
-    left: 390px;
+    top: 30px;
+    left: 1042px;
 `;
 
 const SelectboxContainer = styled.div`
     position: absolute;
-    top: 150px;
+    top: 30px;
+    left: 652px;
     width: 190px;
 `;
 
 const SecondSelectboxContainer = styled.div`
     position: absolute;
-    top: 150px; /* 첫 번째 Selectbox 아래로 배치 */
-    left: 150px;
+    top: 30px; /* 첫 번째 Selectbox 아래로 배치 */
+    left: 802px;
     width: 320px;
-`;
-
-const ButtonContainer = styled.div`
-    position: absolute;
-    top: 132px;
-    right: 19%;
 `;
 
 const LineContainer = styled.div`
     position: absolute;
-    top: 200px;
+    top: 80px;
     width: 100%; /* 선의 너비 조정 */
 `;
 
 const TestBoxContainer = styled.div`
     position: absolute;
-    top: 220px;
+    top: 100px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 100%; /* 부모 컨테이너에 맞게 늘림 */
 `;
 
-const Write1 = () => {
+const Review2 = () => {
     const dropdownOptions1 = ["전체", "합격", "대기중", "불합격"];
     const dropdownOptions2 = [
         "서버/백엔드 개발자",
@@ -82,17 +66,26 @@ const Write1 = () => {
     ];
 
     const [selectedStatus, setSelectedStatus] = useState("전체");
+    const statusOptions = ['등록대기중', '등록완료', '등록취소'];
+    const [dummyData, setDummyData] = useState(
+        Array.from({ length: 8 }, (_, index) => ({
+            id: index + 1, // 고유 ID 추가
+            companyName: `회사 이름 ${index + 1}`,
+            manufacturing: `제조 ${index + 1}`,
+            period: "2024년 하반기",
+            type: "신입",
+            status: index % 3 === 0 ? "합격" : index % 3 === 1 ? "대기중" : "불합격",
+            date: `2024.10.${27 - index}`,
+            hiddenContent: `숨겨진 내용 ${index + 1}`,
+            registrationStatus:statusOptions[Math.floor(Math.random() * statusOptions.length)]
+        }))
+    );
 
-    const numberOfBoxes = 8; // 데이터베이스에서 가져온 값
-    const dummyData = Array.from({ length: numberOfBoxes }, (_, index) => ({
-        companyName: `회사 이름 ${index + 1}`,
-        manufacturing: `제조 ${index + 1}`,
-        period: "2024년 하반기",
-        type: "신입",
-        status: index % 3 === 0 ? "합격" : index % 3 === 1 ? "대기중" : "불합격",
-        date: `2024.10.${27 - index}`,
-        hiddenContent: `숨겨진 내용 ${index + 1}`,
-    }));
+    const handleDelete = (id) => {
+        if (window.confirm("정말 삭제하시겠습니까?")) {
+            setDummyData((prevData) => prevData.filter((item) => item.id !== id));
+        }
+    };
 
     const filteredData =
         selectedStatus === "전체"
@@ -100,10 +93,7 @@ const Write1 = () => {
             : dummyData.filter((data) => data.status === selectedStatus);
 
     return (
-        <>
-        <JobTopBar />
         <Container>
-            <Title>면접 후기 작성</Title>
             <SelectboxContainer>
                 <Selectbox
                     options={dropdownOptions1}
@@ -117,16 +107,13 @@ const Write1 = () => {
             <InputContainer>
                 <Input />
             </InputContainer>
-            <ButtonContainer>
-                <ReviewButton text="면접 후기 등록하기" />
-            </ButtonContainer>
             <LineContainer>
                 <HorizontalLine />
             </LineContainer>
             <TestBoxContainer>
-                {filteredData.map((data, index) => (
+                {filteredData.map((data) => (
                     <TestBox
-                        key={index}
+                        key={data.id}
                         companyName={data.companyName}
                         manufacturing={data.manufacturing}
                         period={data.period}
@@ -134,12 +121,13 @@ const Write1 = () => {
                         status={data.status}
                         date={data.date}
                         hiddenContent={data.hiddenContent}
+                        onDelete={() => handleDelete(data.id)} // 삭제 기능 연결
+                        registrationStatus={data.registrationStatus}
                     />
                 ))}
             </TestBoxContainer>
         </Container>
-        </>
     );
 };
 
-export default Write1;
+export default Review2;
