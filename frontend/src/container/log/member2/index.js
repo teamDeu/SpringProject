@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // useNavigate import
 import LoginButton from '../../../components/log/LoginButton';
 import InputField from '../../../components/log/InputField2';
 import SmallButton from '../../../components/log/SmallButton';
 import styled from 'styled-components';
-import qs from 'qs';
 
 const Container = styled.div`
     display: flex;
@@ -34,7 +34,7 @@ const Title = styled.h1`
     margin: 0;
 `;
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: 68%;
     display: flex;
     flex-direction: column;
@@ -67,7 +67,9 @@ const Index = () => {
         birthDate: '',
         verificationCode: ''
     });
-    const [isVerified, setIsVerified] = useState(false); // 인증 여부 상태
+    const [isVerified, setIsVerified] = useState(false);
+    const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
+    const navigate = useNavigate(); // useNavigate 인스턴스 생성
 
     const handleInputChange = (e) => {
         setFormData({
@@ -76,22 +78,40 @@ const Index = () => {
         });
     };
 
+    const checkDuplicate = () => {
+        if (!formData.id) {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+
+        axios.get(`http://localhost:8080/check-duplicate?id=${formData.id}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    alert('아이디 사용 가능');
+                    setIsDuplicateChecked(true);
+                }
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 400) {
+                    alert('아이디가 이미 존재합니다.');
+                } else {
+                    alert('서버와 통신 중 오류가 발생했습니다.');
+                }
+                setIsDuplicateChecked(false);
+            });
+    };
+
     const sendVerificationCode = () => {
         if (!formData.phone) {
             alert('전화번호를 입력해주세요.');
             return;
         }
-        axios
-            .post('/api/request-verification', qs.stringify({ phone: formData.phone }), {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-            .then((response) => {
+
+        axios.post('http://localhost:8080/api/request', { phone: formData.phone })
+            .then(() => {
                 alert('인증번호가 발송되었습니다.');
             })
-            .catch((error) => {
-                console.error('인증번호 발송 오류:', error.response || error.message);
+            .catch(() => {
                 alert('인증번호 발송 실패. 다시 시도해주세요.');
             });
     };
@@ -101,41 +121,54 @@ const Index = () => {
             alert('전화번호와 인증번호를 입력해주세요.');
             return;
         }
-        axios
-            .post('/api/verify-code', {
-                phone: formData.phone,
-                code: formData.verificationCode
-            })
-            .then(() => {
-                alert('인증 성공');
-                setIsVerified(true);
-            })
-            .catch(() => alert('인증 실패'));
+
+        axios.post('http://localhost:8080/api/verify-code', {
+            phone: formData.phone,
+            code: formData.verificationCode
+        })
+        .then(() => {
+            alert('인증 성공');
+            setIsVerified(true);
+        })
+        .catch(() => {
+            alert('인증 실패');
+            setIsVerified(false);
+        });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!isDuplicateChecked) {
+            alert('아이디 중복확인을 해주세요.');
+            return;
+        }
+
         if (!isVerified) {
             alert('전화번호 인증을 완료해주세요.');
             return;
         }
+
         if (formData.password !== formData.confirmPassword) {
             alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
             return;
         }
 
-        const payload = {
+        axios.post('http://localhost:8080/api/register', {
             id: formData.id,
             password: formData.password,
             name: formData.name,
             phone: formData.phone,
-            birthDate: formData.birthDate
-        };
-
-        axios
-            .post('/api/register', payload)
-            .then(() => alert('회원가입 성공'))
-            .catch(() => alert('회원가입 실패'));
+            birthDate: new Date(formData.birthDate).toISOString().split('T')[0]
+        })
+        .then(() => {
+            alert('회원가입 성공');
+            navigate('/login'); // 로그인 페이지로 이동
+        })
+        .catch((error) => {
+            console.error("회원가입 오류: ", error);
+            alert('회원가입 실패');
+        });
     };
 
     return (
@@ -152,7 +185,7 @@ const Index = () => {
                                 onChange={handleInputChange}
                             />
                         </InputWrapper>
-                        <SmallButton>중복확인</SmallButton>
+                        <SmallButton type="button" onClick={checkDuplicate}>중복확인</SmallButton>
                     </InputWithButton>
                 </FormRow>
 
@@ -195,7 +228,7 @@ const Index = () => {
                                 onChange={handleInputChange}
                             />
                         </InputWrapper>
-                        <SmallButton onClick={sendVerificationCode}>인증번호</SmallButton>
+                        <SmallButton type="button" onClick={sendVerificationCode}>인증번호</SmallButton>
                     </InputWithButton>
                 </FormRow>
 
@@ -209,7 +242,7 @@ const Index = () => {
                                 onChange={handleInputChange}
                             />
                         </InputWrapper>
-                        <SmallButton onClick={verifyCode}>재전송</SmallButton>
+                        <SmallButton type="button" onClick={verifyCode}>확인</SmallButton>
                     </InputWithButton>
                 </FormRow>
 
@@ -224,7 +257,7 @@ const Index = () => {
                 </FormRow>
 
                 <FormRow>
-                    <LoginButton onClick={handleSubmit}>회원가입</LoginButton>
+                    <LoginButton type="submit">회원가입</LoginButton>
                 </FormRow>
             </FormContainer>
         </Container>

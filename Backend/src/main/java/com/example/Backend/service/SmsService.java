@@ -2,8 +2,6 @@ package com.example.Backend.service;
 
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,8 @@ public class SmsService {
 
     public String sendVerificationCode(String phone) {
         String code = generateVerificationCode();
+        System.out.println(senderPhone);
+        System.out.println(phone);
         System.out.println("Generated Code: " + code);
         // 메시지 객체 생성 및 설정
         Message message = new Message();
@@ -42,8 +42,8 @@ public class SmsService {
 
         try {
             // 메시지 전송
-            SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-            System.out.println("메시지 전송 성공: " + response);
+            messageService.send(message);
+            System.out.println("메시지 전송 성공");
             verificationStorage.put(phone, code); // 발송된 인증번호 저장
         }
          catch (Exception e) {
