@@ -42,7 +42,7 @@ const Label = styled.div`
     color: #000000;
     width: 150px;
     margin-left: 50px;
-    margin-top: 20px;
+    margin-top: 24px;
 `;
 
 const Value = styled.div`
@@ -85,6 +85,7 @@ const Paragraph = styled.div`
     display: flex;
     flex-direction: column;
     gap: 14px;
+    text-align: left;
 `;
 
 const HiddenBox = ({

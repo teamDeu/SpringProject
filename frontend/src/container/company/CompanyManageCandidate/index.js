@@ -34,7 +34,7 @@ const index = () => {
                 <Tab options={options}/>
             </TabSection>
             <ButtonSection>
-                <FilledButton>삭제</FilledButton>
+                <FilledButton height = "40px">삭제</FilledButton>
             </ButtonSection>
             <TableSection>
                 <DataTable/>

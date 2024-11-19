@@ -36,11 +36,15 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
                         <NavItem>
                             <NavButton>합격 후기</NavButton>
                             <DropdownContent>
-                                <DropdownButton>
-                                    면접 후기
-                                </DropdownButton>
+                                <Link to="/test_review_home1">
+                                <DropdownButton>면접 후기</DropdownButton>
+                                </Link>
+                                <Link to="/test_review_home2">
                                 <DropdownButton>기업 리뷰</DropdownButton>
-                                <DropdownButton>My 리뷰</DropdownButton>
+                                </Link>
+                                <Link to="/myreview">
+                                    <DropdownButton>My 리뷰</DropdownButton>
+                                </Link>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
@@ -69,6 +73,7 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
 };
 
 export default JobTopBar;
+
 
 const Container = styled.div`
     width: 100%;
