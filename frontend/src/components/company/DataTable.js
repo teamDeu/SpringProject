@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import TextButton from '../common/TextButton'
+import ChangeButton from './ChangeButton';
 
 const triangleRightIcon = process.env.PUBLIC_URL + '/icons/triangle-right.png';
 
@@ -22,6 +23,7 @@ const HeaderCell = styled.td`
     height : 5vh;
     background-color : #F9F9F9;
     color : #B5B5B5;
+    vertical-align : middle;
 `
 const ContentCell = styled.td`
     vertical-align : middle;
@@ -64,9 +66,9 @@ const CheckboxCell = styled.td`
 `
 
 const Button = styled.button`
-    width : 220px;
+    width : 180px;
     padding : 10px;
-    font-size : 20px;
+    font-size : 16px;
     position : relative;
     display:flex;
     background-color : #FFFEFE;
@@ -78,26 +80,69 @@ const Button = styled.button`
     & > img{
         position : absolute;
         right : 10px;
+        width : 16px;
     };
     &:hover{
         background-color : #B5B5B5;
     }
 `
-
-const Checkbox = styled.input`
-    padding : 10px;
+const Label = styled.label`
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border:1px solid #B7B7B7;
+        border-radius : 3px;
+        position: relative;
 `
-const tempData = Array(10).fill({
+const Checkbox = styled.input`
+    &:checked + label::after{
+        content:'✔';
+        color : #B7B7B7;
+        font-size: 18px;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        position: absolute;
+        left: 0;
+        top:0;
+    };
+    display:none;
+`
+
+const ValueBox = styled.div`
+    display:flex;
+    flex-direction : column;
+    aling-items:center;
+`
+
+
+const tempData = [{
     지원자명: '김세영',
     경력: '신입',
     최종학력: '대학교(4년제) 졸업',
     지원일: '2024-11-02',
     평가내용 : <ButtonArticle>
-        <TextButton>서류 합격</TextButton>
+        <ChangeButton title = "합격 여부" defaultValue = {{title : "서류 합격" , color : "blue"}} options ={[
+          {title : "서류 합격" , color : "blue"},{title : "최종 합격" , color : "red"}
+        ]}/>
         <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
         <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
     </ButtonArticle>
-  });
+  },
+  {
+    지원자명: '김세영',
+    경력: '경력 2년',
+    최종학력: '대학교(4년제) 졸업',
+    지원일: '2024-11-02',
+    평가내용 : <ButtonArticle>
+        <ChangeButton title = "합격 여부" defaultValue = {{title : "서류 합격" , color : "blue"}} options ={[
+          {title : "서류 합격" , color : "blue"},{title : "최종 합격" , color : "red"}
+        ]}/>
+        <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
+        <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
+    </ButtonArticle>
+  },
+];
 
   const DataTable = () => {
     // 체크 상태 관리
@@ -134,7 +179,9 @@ const tempData = Array(10).fill({
                 type="checkbox"
                 checked={isAllChecked}
                 onChange={handleAllCheck}
+                id = "header"
               />
+              <Label htmlFor='header'/>
             </CheckboxBox>
           </HeaderCell>
           {keyValues.map((title, index) => (
@@ -153,12 +200,14 @@ const tempData = Array(10).fill({
                   type="checkbox"
                   checked={checkedItems[rowIndex]}
                   onChange={() => handleRowCheck(rowIndex)}
+                  id = {`checkbox${rowIndex}`}
                 />
+                <Label htmlFor={`checkbox${rowIndex}`}/>
               </ContentBox>
             </CheckboxCell>
             {keyValues.map((key, cellIndex) => (
               <ContentCell key={`cell-${rowIndex}-${cellIndex}`}>
-                <ContentBox>{item[key]}</ContentBox>
+                <ContentBox>{typeof item[key] === "string" ? item[key].split(' ').map((item) => <ValueBox>{item}<br/></ValueBox>) : item[key]}</ContentBox>
               </ContentCell>
             ))}
           </ContentRow>
