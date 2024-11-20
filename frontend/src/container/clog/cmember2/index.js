@@ -156,8 +156,8 @@ const Cmember2 = () => {
         axios.post('http://localhost:8080/api/register_company', {
             id: formData.id,
             pwd: formData.pwd,
-            manager_name: formData.manager_name,
-            manager_phone: formData.manager_phone
+            managerName: formData.manager_name,
+            managerPhone: formData.manager_phone
         })
         .then(() => {
             alert('회원가입 성공');

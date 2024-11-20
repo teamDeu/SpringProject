@@ -41,11 +41,9 @@ public class Company {
     private Long employees;
 
     @Column(name = "manager_name")
-    @JsonProperty("manager_name")
     private String managerName;
 
     @Column(name = "manager_phone")
-    @JsonProperty("manager_phone")
     private String managerPhone;
 
 
