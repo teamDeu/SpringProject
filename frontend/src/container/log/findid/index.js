@@ -62,6 +62,23 @@ const InputWrapper = styled.div`
     margin-right: 2px;
 `;
 
+const LinkText = styled.div`
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-top: 20px;
+`;
+
+const Link = styled.span`
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 5px;
+    text-decoration: underline;
+    &:hover {
+        color: #003366;
+    }
+`;
+
 const Index = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
@@ -130,6 +147,21 @@ const Index = () => {
     const closeModal = () => {
         setIsModalOpen(false); // 모달 닫기
     };
+    const handleLinkClick = (type) => {
+        switch (type) {
+            case 'login':
+                navigate('/login'); // 기업 로그인 페이지로 이동
+                break;
+            case 'member':
+                navigate('/member'); // 기업 회원가입 페이지로 이동
+                break;
+            case 'findpwd':
+                navigate('/findpwd'); // 기업 아이디 찾기 페이지로 이동
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <Container>
@@ -174,6 +206,11 @@ const Index = () => {
                         <LoginButton onClick={findId}>아이디 찾기</LoginButton>
                     </FormRow>
                 </InnerForm>
+                <LinkText>
+                    <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
+                    <Link onClick={() => handleLinkClick('member')}>회원가입</Link> | 
+                    <Link onClick={() => handleLinkClick('findpwd')}>비밀번호찾기 찾기</Link>
+                </LinkText>
             </FormContainer>
             {isModalOpen && (
                 <Modal

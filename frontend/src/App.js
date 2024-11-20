@@ -12,12 +12,17 @@ import ResumeForm from './container/Resume/ResumeForm';
 import Home from './container';
 import Test from './container/test';
 import Login from './container/log/login';
+import Clogin from './container/clog/clogin'
 import Member from './container/log/member';
 import Member2 from './container/log/member2';
+import Cmember from './container/clog/cmember';
 import Cmember2 from './container/clog/cmember2';
 import Findid from './container/log/findid';
+import Cfindid from './container/clog/cfindid';
 import Findpwd from './container/log/findpwd';
+import Cfindpwd from './container/clog/cfindpwd';
 import Rpwd from './container/log/rpwd';
+import Crpwd from './container/clog/crpwd';
 import Basic from './container/log/basic';
 import Admin from './container/admin';
 import Amember from './container/admin/amember';
@@ -59,10 +64,15 @@ function App() {
             <Route index element={<Home />} />
             <Route path="test" element={<Test />} />
             <Route path="login" element={<Login />} />
+            <Route path="clogin" element={<Clogin/>}/>
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
+            <Route path="cmember" element={<Cmember/>}/>
             <Route path="cmember2" element={<Cmember2/>}/>
             <Route path="findid" element={<Findid/>}/>
+            <Route path="cfindid" element={<Cfindid/>}/>
+            <Route path="findpwd" element={<Findpwd/>}/>
+            <Route path="cfindpwd" element={<Cfindpwd/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
             <Route path="amember" element={<Amember />} />
@@ -76,8 +86,8 @@ function App() {
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
-            <Route path="findpwd" element={<Findpwd/>}/>
             <Route path="rpwd" element={<Rpwd/>}/>
+            <Route path="crpwd" element={<Crpwd/>}/>
             <Route path="basic" element={<Basic/>}/>
             <Route path="mp1" element={<Mp1/>}/>
             <Route path="mp2" element={<Mp2/>}/>

@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -39,11 +40,14 @@ public class Company {
     @Column(name ="employees")
     private Long employees;
 
-    @Column(name ="manager_name")
+    @Column(name = "manager_name")
+    @JsonProperty("manager_name")
     private String managerName;
 
-    @Column(name ="manager_phone")
+    @Column(name = "manager_phone")
+    @JsonProperty("manager_phone")
     private String managerPhone;
+
 
     @Column(name ="logo_url")
     private String logoUrl;
