@@ -22,6 +22,7 @@ import Admin from './container/admin';
 import Amember from './container/admin/amember';
 import Job from './container/admin/job';
 import Faq from './container/admin/faq';
+
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
 import Faqwrite from './container/admin/faqwrite';
@@ -46,6 +47,10 @@ import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
 import CompanyManageCandidate from './container/company/CompanyManageCandidate'
 import ManageCompanyInfo from './container/company/ManageCompanyInfo'
+
+import SFAQ from './container/service/sfaq';
+import SAnnouncements from './container/service/sannouncements';
+
 function App() {
 
   return (
@@ -91,6 +96,8 @@ function App() {
             <Route path="CompanyRegPost" element ={<CompanyRegPost/>}/>
             <Route path="CompanyManageCandidate" element ={<CompanyManageCandidate/>}/>
             <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
+            <Route path="sfaq" element ={<SFAQ/>}/>
+            <Route path="sannouncements" element ={<SAnnouncements/>}/>
           </Routes>
         </BrowserRouter>
         

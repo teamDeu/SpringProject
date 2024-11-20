@@ -50,8 +50,12 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
                         <NavItem>
                             <NavButton>고객센터</NavButton>
                             <DropdownContent>
-                                <DropdownButton>공지사항</DropdownButton>
-                                <DropdownButton>FAQ</DropdownButton>
+                                <Link to="/sannouncements">
+                                    <DropdownButton>공지사항</DropdownButton>
+                                </Link>
+                                <Link to="/sfaq">
+                                    <DropdownButton>FAQ</DropdownButton>
+                                </Link>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
