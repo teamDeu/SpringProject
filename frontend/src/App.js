@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 
 import JobPosting from './container/jobPosting';
 import JobSearch from './container/jobPosting/JobSearch';
@@ -50,6 +50,7 @@ import CompanyRegPost from './container/company/CompanyRegPost'
 import CompanyManageCandidate from './container/company/CompanyManageCandidate'
 import ManageCompanyInfo from './container/company/ManageCompanyInfo'
 function App() {
+  
 
   return (
     
@@ -74,7 +75,7 @@ function App() {
             <Route path="main" element={<Main/>}/>
             <Route path="personalmain" element={<PersonalMain/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
-            <Route path="jobSearch" element={<JobSearch />} />
+            <Route path="/jobsearch" element={<JobSearchWrapper />}/>
             <Route path="/jobdetail/:jobId" element={<JobDetail />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
@@ -105,4 +106,15 @@ function App() {
 }
 
 export default App;
+
+
+function JobSearchWrapper() {
+  const navigate = useNavigate();
+
+  const handleJobSelect = (jobId) => {
+    navigate(`/jobdetail/${jobId}`);
+  };
+
+  return <JobSearch onJobSelect={handleJobSelect} />;
+}
 
