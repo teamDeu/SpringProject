@@ -30,7 +30,7 @@ const Index = () => {
     requirements:[],
     additionalPreferences:[],
     employeeBenefits:[],
-    aboutCompany:[],
+    aboutCompany:{},
   });
   useEffect(() => {
     const fecthData = async() =>{
