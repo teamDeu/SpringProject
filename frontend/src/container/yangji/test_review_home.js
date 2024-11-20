@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Selectbox from '../../components/yangji/selectbox';
 import Input from '../../components/yangji/input';
 import ReviewButton from '../../components/yangji/review_button';
@@ -6,6 +6,8 @@ import HorizontalLine from '../../components/yangji/Line';
 import TestBox from '../../components/yangji/test_box';
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
     position: relative;
@@ -20,15 +22,15 @@ const Title = styled.h2`
     position: absolute;
     top: 20px;
     color: #000000;
-  text-align: left;
-  font-size: 30px;
-  font-weight: 400;
-  position: relative;
-  height: 126px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  -webkit-text-stroke: 0.699999988079071px #000000;
+    text-align: left;
+    font-size: 30px;
+    font-weight: 400;
+    position: relative;
+    height: 126px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    -webkit-text-stroke: 0.699999988079071px #000000;
 `;
 
 const InputContainer = styled.div`
@@ -88,62 +90,62 @@ const Review2 = () => {
     ];
 
     const [selectedStatus, setSelectedStatus] = useState("전체");
+    const [data, setData] = useState([]); // 서버에서 가져온 데이터
 
-    const numberOfBoxes = 8; // 데이터베이스에서 가져온 값
-    const dummyData = Array.from({ length: numberOfBoxes }, (_, index) => ({
-        companyName: `회사 이름 ${index + 1}`,
-        manufacturing: `제조 ${index + 1}`,
-        period: "2024년 하반기",
-        type: "신입",
-        status: index % 3 === 0 ? "합격" : index % 3 === 1 ? "대기중" : "불합격",
-        date: `2024.10.${27 - index}`,
-        hiddenContent: `숨겨진 내용 ${index + 1}`,
-    }));
+    // 데이터베이스에서 데이터를 가져옵니다.
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/interview-reviews')
+            .then((response) => setData(response.data))
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
 
+    // 선택된 상태에 따라 데이터를 필터링합니다.
     const filteredData =
         selectedStatus === "전체"
-            ? dummyData
-            : dummyData.filter((data) => data.status === selectedStatus);
+            ? data
+            : data.filter((item) => item.interviewPassFail === selectedStatus);
 
     return (
         <>
-        <JobTopBar />
-        <Container>
-            <Title>면접 후기</Title>
-            <SelectboxContainer>
-                <Selectbox
-                    options={dropdownOptions1}
-                    defaultOption="합격 유무"
-                    onChange={(value) => setSelectedStatus(value)}
-                />
-            </SelectboxContainer>
-            <SecondSelectboxContainer>
-                <Selectbox options={dropdownOptions2} defaultOption="직무 · 직업" />
-            </SecondSelectboxContainer>
-            <InputContainer>
-                <Input />
-            </InputContainer>
-            <ButtonContainer>
-                <ReviewButton text="면접 후기 등록하기" />
-            </ButtonContainer>
-            <LineContainer>
-                <HorizontalLine />
-            </LineContainer>
-            <TestBoxContainer>
-                {filteredData.map((data, index) => (
-                    <TestBox
-                        key={index}
-                        companyName={data.companyName}
-                        manufacturing={data.manufacturing}
-                        period={data.period}
-                        type={data.type}
-                        status={data.status}
-                        date={data.date}
-                        hiddenContent={data.hiddenContent}
+            <JobTopBar />
+            <Container>
+                <Title>면접 후기</Title>
+                <SelectboxContainer>
+                    <Selectbox
+                        options={dropdownOptions1}
+                        defaultOption="합격 유무"
+                        onChange={(value) => setSelectedStatus(value)}
                     />
-                ))}
-            </TestBoxContainer>
-        </Container>
+                </SelectboxContainer>
+                <SecondSelectboxContainer>
+                    <Selectbox options={dropdownOptions2} defaultOption="직무 · 직업" />
+                </SecondSelectboxContainer>
+                <InputContainer>
+                    <Input />
+                </InputContainer>
+                <ButtonContainer>
+
+                    <Link to="/test_review_home3">
+                        <ReviewButton text="면접 후기 등록하기" />
+                    </Link>
+                </ButtonContainer>
+                <LineContainer>
+                    <HorizontalLine />
+                </LineContainer>
+                <TestBoxContainer>
+                    {filteredData.map((item) => (
+                        <TestBox
+                            key={item.id} // 고유 ID
+                            companyName={item.companyId} // 회사 이름
+                            manufacturing={item.jobCategoryId} // 직무
+                            period={item.interviewDate} // 면접 날짜
+                            type={item.experience} // 신입/경력
+                            status={item.interviewPassFail} // 합격/대기중/불합격
+                            date={item.interviewRegisterDate} // 등록 날짜
+                        />
+                    ))}
+                </TestBoxContainer>
+            </Container>
         </>
     );
 };

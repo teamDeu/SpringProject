@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate import
-import Tabs from '../../../components/log/Tabs';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
 import SmallButton from '../../../components/log/SmallButton';
@@ -79,7 +79,60 @@ const Link = styled.span`
 `;
 
 const Index = () => {
-    const navigate = useNavigate(); // useNavigate 훅 사용
+    const navigate = useNavigate();
+    const [form, setForm] = useState({
+        id: '',
+        phone: '',
+        verificationCode: '',
+        verified: false,
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
+
+    const sendVerificationCode = async () => {
+        try {
+            await axios.post('http://localhost:8080/api/find-pwd/request-verification', {
+                phone: form.phone,
+            });
+            alert('인증번호가 발송되었습니다.');
+        } catch (error) {
+            console.error('인증번호 발송 실패:', error);
+            alert('인증번호 발송에 실패했습니다.');
+        }
+    };
+
+    const verifyCode = async () => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8080/api/find-pwd/verify-code?phone=${form.phone}&code=${form.verificationCode}`
+            );
+            if (response.data) {
+                alert('인증 성공');
+                setForm((prevForm) => ({ ...prevForm, verified: true }));
+            } else {
+                alert('인증 실패');
+            }
+        } catch (error) {
+            console.error('인증 실패:', error);
+            alert('인증에 실패했습니다.');
+        }
+    };
+
+    const navigateToRpwd = () => {
+        if (!form.verified) {
+            alert('먼저 전화번호 인증을 완료해주세요.');
+            return;
+        }
+
+        // rpwd 페이지로 이동
+        navigate('/rpwd', { state: { id: form.id, phone: form.phone } });
+    };
 
     const handleLinkClick = (type) => {
         switch (type) {
@@ -89,7 +142,7 @@ const Index = () => {
             case 'signup':
                 navigate('/member'); // 회원가입 페이지로 이동
                 break;
-            case 'findPassword':
+            case 'findId':
                 navigate('/findid'); // 아이디 찾기 페이지로 이동
                 break;
             default:
@@ -101,34 +154,48 @@ const Index = () => {
         <Container>
             <Title>구인구직</Title>
             <FormContainer>
-                <Tabs activeTab="individual" />
                 <InnerForm>
                     <FormRow>
-                        <InputField placeholder="아이디" />
+                        <InputField
+                            name="id"
+                            placeholder="아이디"
+                            value={form.id}
+                            onChange={handleInputChange}
+                        />
                     </FormRow>
                     <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="전화번호" />
+                                <InputField
+                                    name="phone"
+                                    placeholder="전화번호"
+                                    value={form.phone}
+                                    onChange={handleInputChange}
+                                />
                             </InputWrapper>
-                            <SmallButton>인증번호</SmallButton>
+                            <SmallButton onClick={sendVerificationCode}>인증번호</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="인증번호" />
+                                <InputField
+                                    name="verificationCode"
+                                    placeholder="인증번호"
+                                    value={form.verificationCode}
+                                    onChange={handleInputChange}
+                                />
                             </InputWrapper>
-                            <SmallButton>재전송</SmallButton>
+                            <SmallButton onClick={verifyCode}>확인</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
-                        <LoginButton>비밀번호 찾기</LoginButton>
+                        <LoginButton onClick={navigateToRpwd}>비밀번호 찾기</LoginButton>
                     </FormRow>
                     <LinkText>
                         <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
                         <Link onClick={() => handleLinkClick('signup')}>회원가입</Link> | 
-                        <Link onClick={() => handleLinkClick('findPassword')}>아이디 찾기</Link>
+                        <Link onClick={() => handleLinkClick('findId')}>아이디 찾기</Link>
                     </LinkText>
                 </InnerForm>
             </FormContainer>

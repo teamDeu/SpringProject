@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Tabs from '../../../components/log/Tabs';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
 import styled from 'styled-components';
@@ -35,11 +36,11 @@ const FormContainer = styled.div`
 `;
 
 const InnerForm = styled.div`
-    width: 100%; /* 전체 너비로 설정 */
-    max-width: 535px; /* 최대 너비를 설정하여 중앙 정렬 효과 */
+    width: 100%;
+    max-width: 535px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 중앙 정렬 */
+    align-items: center;
     gap: 10px;
     margin-top: 20px;
 `;
@@ -48,18 +49,7 @@ const FormRow = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
-    justify-content: center; /* 중앙 정렬 */
-`;
-
-const InputWithButton = styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-`;
-
-const InputWrapper = styled.div`
-    flex: 1;
-    margin-right: 2px;
+    justify-content: center;
 `;
 
 const LinkText = styled.div`
@@ -80,21 +70,43 @@ const Link = styled.span`
 `;
 
 const Index = () => {
-    const [activeTab, setActiveTab] = useState('individual');
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { id, phone } = location.state || {}; // 전달받은 ID와 전화번호
+    const [form, setForm] = useState({
+        newPassword: '',
+        confirmPassword: '',
+    });
 
-    const handleLinkClick = (type) => {
-        switch(type) {
-            case 'login':
-                alert('로그인 클릭됨');
-                break;
-            case 'signup':
-                alert('회원가입 클릭됨');
-                break;
-            case 'findPassword':
-                alert('아이디 찾기 클릭됨');
-                break;
-            default:
-                break;
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
+
+    const handlePasswordReset = async () => {
+        if (!form.newPassword || !form.confirmPassword) {
+            alert('모든 필드를 입력해주세요.');
+            return;
+        }
+        if (form.newPassword !== form.confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        try {
+            await axios.post('http://localhost:8080/api/reset-password', {
+                id,
+                phone,
+                newPassword: form.newPassword,
+            });
+            alert('비밀번호가 성공적으로 변경되었습니다.');
+            navigate('/login'); // 비밀번호 변경 후 로그인 페이지로 이동
+        } catch (error) {
+            console.error('비밀번호 변경 실패:', error);
+            alert('비밀번호 변경에 실패했습니다.');
         }
     };
 
@@ -102,29 +114,32 @@ const Index = () => {
         <Container>
             <Title>구인구직</Title>
             <FormContainer>
-                <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
                 <InnerForm>
                     <FormRow>
-                        <InputWithButton>
-                            <InputWrapper>
-                                <InputField placeholder="새 비밀번호" />
-                            </InputWrapper>
-                        </InputWithButton>
+                        <InputField
+                            name="newPassword"
+                            placeholder="새 비밀번호"
+                            type="password"
+                            value={form.newPassword}
+                            onChange={handleInputChange}
+                        />
                     </FormRow>
                     <FormRow>
-                        <InputWithButton>
-                            <InputWrapper>
-                                <InputField placeholder="비밀번호 확인" />
-                            </InputWrapper>
-                        </InputWithButton>
+                        <InputField
+                            name="confirmPassword"
+                            placeholder="비밀번호 확인"
+                            type="password"
+                            value={form.confirmPassword}
+                            onChange={handleInputChange}
+                        />
                     </FormRow>
                     <FormRow>
-                        <LoginButton>비밀번호 재설정</LoginButton>
+                        <LoginButton onClick={handlePasswordReset}>비밀번호 재설정</LoginButton>
                     </FormRow>
                     <LinkText>
-                        <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
-                        <Link onClick={() => handleLinkClick('signup')}>회원가입</Link> | 
-                        <Link onClick={() => handleLinkClick('findPassword')}>아이디 찾기</Link>
+                        <Link onClick={() => navigate('/login')}>로그인</Link> | 
+                        <Link onClick={() => navigate('/member')}>회원가입</Link> | 
+                        <Link onClick={() => navigate('/findid')}>아이디 찾기</Link>
                     </LinkText>
                 </InnerForm>
             </FormContainer>

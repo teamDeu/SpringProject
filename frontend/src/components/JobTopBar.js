@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 
-const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
+const JobTopBar = () => {
     const location = useLocation();
 
     return (
@@ -12,7 +12,9 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
             <Navbar>
                 <NavbarLeft>
                     <LogoSearch>
-                        <Logo>구인구직</Logo>
+                        <StyledLink to="/main">
+                            <Logo>구인구직</Logo>
+                        </StyledLink>
                         <SearchContainer>
                             <SearchInput type="text" placeholder="검색어를 입력하세요." />
                             <SearchIcon src={searchIcon} alt="검색 아이콘" />
@@ -22,15 +24,20 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
                         <NavItem>
                             <NavButton>채용 정보</NavButton>
                             <DropdownContent>
-                                <DropdownButton onClick={onJobSearchClick}>지역/산업별 채용 정보</DropdownButton>
-                                <DropdownButton>관심 채용 정보 보기</DropdownButton>
+                                <Link to="/jobsearch">
+                                    <DropdownButton>지역/산업별 채용 정보</DropdownButton>
+                                </Link>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
-                            <NavButton isActive={location.pathname === '/resume'}>이력서</NavButton>
+                            <NavButton $isActive={location.pathname === '/resume'}>이력서</NavButton>
                             <DropdownContent>
-                                <DropdownButton onClick={onResumeClick}>이력서 작성</DropdownButton>
-                                <DropdownButton onClick={onMyResumeClick}>My 이력서</DropdownButton>
+                                <Link to="/resumeform">
+                                    <DropdownButton>이력서 작성</DropdownButton>
+                                </Link>
+                                <Link to="/myresume">
+                                    <DropdownButton>My 이력서</DropdownButton>
+                                </Link>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
@@ -104,6 +111,7 @@ const LogoSearch = styled.div`
     display: flex;
     align-items: center;
     gap: 40px;
+
 `;
 
 const Logo = styled.span`
@@ -112,6 +120,14 @@ const Logo = styled.span`
     color: #000000;
     display: flex;
     align-items: center;
+    text-decoration: none;
+`;
+
+const StyledLink = styled(Link)`
+    text-decoration: none; 
+    &:hover {
+        text-decoration: none; 
+    }
 `;
 
 const SearchContainer = styled.div`
@@ -157,8 +173,8 @@ const NavButton = styled.button`
     background: none;
     border: none;
     font-size: 17px;
-    color: ${(props) => (props.isActive ? '#00257A' : '#000000')};
-    font-weight: ${(props) => (props.isActive ? '700' : '400')};
+    color: ${(props) => (props.$isActive ? '#00257A' : '#000000')};
+    font-weight: ${(props) => (props.$isActive ? '700' : '400')};
     cursor: pointer;
     padding: 0;
     font-family: 'Nanum Square Neo', sans-serif;

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import InputArrayTitle from './InputArrayTitle';
 
-const InputArray = ({ title, placeholder, mainInput }) => {
+const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) => {
     const [inputs, setInputs] = useState([{ id: Date.now(), value: '' }]);
     const inputRefs = useRef([]); // 각 input 요소의 참조를 저장
     const [isComposing, setIsComposing] = useState(false); // 한글 입력 조합 상태
@@ -34,10 +34,12 @@ const InputArray = ({ title, placeholder, mainInput }) => {
     const handleCompositionEnd = () => setIsComposing(false);
 
     useEffect(() => {
+        updateValue(inputs);
         if (inputRefs.current.length > 0) {
             const lastInput = inputRefs.current[inputRefs.current.length - 1].element;
             lastInput?.focus();
         }
+        
     }, [inputs]);
 
     const setInputRef = (element, id) => {
