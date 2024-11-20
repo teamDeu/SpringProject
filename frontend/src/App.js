@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import JobPosting from './container/jobPosting';
 import JobSearch from './container/jobPosting/JobSearch';
+import JobDetail from './container/jobPosting/JobDetail';
 import Resume from './container/Resume';
 import MyResume from './container/Resume/MyResume';
 import ResumeForm from './container/Resume/ResumeForm';
@@ -26,6 +27,7 @@ import Areview from './container/admin/areview';
 import Faqwrite from './container/admin/faqwrite';
 import Awrite from './container/admin/awrite';
 
+
 import Mp1 from './container/mypage/mp1';
 import Mp2 from "./container/mypage/mp2";
 import Mp3 from "./container/mypage/mp3";
@@ -39,11 +41,12 @@ import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 
-import InputCompanyInfo from './container/company/inputCompanyInfo'
+import InputCompanyInfo from './container/company/InputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
 import CompanyManageCandidate from './container/company/CompanyManageCandidate'
+import ManageCompanyInfo from './container/company/ManageCompanyInfo'
 function App() {
 
   return (
@@ -58,7 +61,6 @@ function App() {
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
             <Route path="findid" element={<Findid/>}/>
-            <Route path="admin" element={<Admin/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
             <Route path="amember" element={<Amember />} />
@@ -67,7 +69,8 @@ function App() {
             <Route path="faqwrite" element={<Faqwrite/>}/>
             <Route path="Awrite" element={<Awrite/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
-            <Route path="/jobPosting/jobSearch" element={<JobSearch />} />
+            <Route path="jobSearch" element={<JobSearch />} />
+            <Route path="/job-detail/:id" element={<JobDetail />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
@@ -89,6 +92,7 @@ function App() {
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>
             <Route path="CompanyRegPost" element ={<CompanyRegPost/>}/>
             <Route path="CompanyManageCandidate" element ={<CompanyManageCandidate/>}/>
+            <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
           </Routes>
         </BrowserRouter>
         
