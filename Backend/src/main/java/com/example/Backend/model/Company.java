@@ -40,6 +40,7 @@ public class Company {
     @Column(name ="employees")
     private Long employees;
 
+
     @Column(name = "manager_name")
     private String managerName;
 
