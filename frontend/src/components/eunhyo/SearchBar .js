@@ -17,10 +17,12 @@ const SearchInput = styled.input`
   border: none;
   outline: none;
   color: #000000;
+  font-weight: bold;
   font-family: 'Nanum Square Neo', sans-serif; 
 
   &::placeholder {
     color: #888;
+    font-weight:100;
   }
 `;
 

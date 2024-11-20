@@ -5,6 +5,7 @@ import ChangeButton2 from "../../components/admin/ChangeButton2";
 import SearchBar from '../../components/eunhyo/SearchBar ';
 import AForm from "../../components/admin/AForm";
 import Pagination from "../../components/admin/Pagination";
+import SelectBox from '../../components/eunhyo/SelectBox';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -65,11 +66,11 @@ const SearchBarWrapper = styled.div`
 `;
 
 const FormBox = styled.div`
-  width: 1305;
+  width: 1340px;
   height: 640px;
   border: none;
-  margin-top: -20px;
-  margin-left: 0px;
+  margin-top: 0px;
+  margin-left: -20px;
   padding: 20px;
   box-sizing: border-box;
 `;
@@ -82,17 +83,23 @@ const PaginationBox = styled.div`
   border: none;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 0px;
   position: absolute; /* FormBox 하단에 고정 */
   bottom: 0; /* 하단 고정 */
 `;
 
+const SelectBoxWrapper = styled.div`
+  margin-right: 10px; /* SearchBar와의 간격 */
+`;
+
 const SAnnouncements = () => {
-    const [selectedType, setSelectedType] = useState("all"); // 기본값: 전체
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-    const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
-    const itemsPerPage = 8; // 페이지당 항목 수
-    const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태 추가
+  const [selectedType, setSelectedType] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [resetSelections, setResetSelections] = useState(false); // resetSelections 상태 추가
+  const itemsPerPage = 8;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
 
     const handleButtonClick = (type) => {
         if (type === "전체") setSelectedType("all");
@@ -103,15 +110,21 @@ const SAnnouncements = () => {
     
       const handlePageChange = (page) => {
         setCurrentPage(page);
-      };
-    // `AForm`에서 totalPages 값을 계산 후 전달
-   const updateTotalPages = (totalItems) => {
+    };
+
+    const updateTotalPages = (totalItems) => {
         const calculatedPages = Math.ceil(totalItems / itemsPerPage);
         setTotalPages(calculatedPages);
     };
+
     const handleSearch = (term) => {
-        setSearchTerm(term); // 검색어 업데이트
-      };
+        setSearchTerm(term);
+    };
+
+    const handleSelectCategory = (category) => {
+        setSelectedCategory(category);
+        setCurrentPage(1);
+    };
 
   return (
     <>
@@ -126,24 +139,36 @@ const SAnnouncements = () => {
             />
           </ButtonCh>
           <SearchBarWrapper>
+          <SelectBoxWrapper>
+              <SelectBox
+                options={["전체", "이벤트", "안내", "공지"]}
+                onChange={handleSelectCategory}
+                defaultValue="전체"
+              />
+            </SelectBoxWrapper>
             <SearchBar onSearch={handleSearch} />
           </SearchBarWrapper>
           <FormBox>
-            <AForm
-                selectedType={selectedType}
+          <AForm
+              selectedType={selectedType}
+              selectedCategory={selectedCategory}
+              searchTerm={searchTerm}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              onTotalItemsChange={updateTotalPages}
+              resetSelections={resetSelections} // 전달
+              setResetSelections={setResetSelections} // 전달
+              hideActions={true}
+          />
+            <PaginationBox>
+              <Pagination
                 currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                onTotalItemsChange={updateTotalPages} // totalPages 업데이트 콜백
-                />
-                            <PaginationBox>
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages} // AForm 내부 데이터를 기반으로 계산할 수 있음
-                    onPageChange={handlePageChange}
-    
-                />
-                </PaginationBox>
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </PaginationBox>
           </FormBox>
+
         </Content>
       </MainContent>
     </>
