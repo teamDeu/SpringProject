@@ -37,6 +37,7 @@ import Mp5 from "./container/mypage/mp5";
 import Mp6 from "./container/mypage/mp6";
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
+import Test_Review_Write from './container/yangji/test_review_write'
 import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
@@ -87,6 +88,7 @@ function App() {
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
             <Route path="test_review_home1" element={<Test_Review_Home />} />
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
+            <Route path="test_review_home3" element={<Test_Review_Write />} />
             <Route path="myreview" element={<Myreview />} />
             <Route path="usersearch" element ={<UserSearch/>}/>
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>

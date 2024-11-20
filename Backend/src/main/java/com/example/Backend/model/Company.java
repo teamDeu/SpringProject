@@ -1,8 +1,16 @@
 package com.example.Backend.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@Data
 @Table(name ="c_companies")
 public class Company {
 
@@ -10,11 +18,11 @@ public class Company {
     @Column(name ="id")
     private String id;
 
-    @Column(name ="name")
-    private String name;
+    @Column(name="pwd")
+    private String pwd;
 
-    @Column(name ="logo_url")
-    private String logoUrl;
+    @Column(name ="company_name")
+    private String companyName;
 
     @Column(name ="industry")
     private String industry;
@@ -22,56 +30,21 @@ public class Company {
     @Column(name = "location")
     private String location;
 
-    @Column(name ="website_url")
-    private String websiteUrl;
+    @Column(name = "business_number")
+    private String businessNumber;
 
-    // getters and setters
+    @Column(name = "since")
+    private Long since;
 
-    public String getId() {
-        return id;
-    }
+    @Column(name ="employees")
+    private Long employees;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    @Column(name ="manager_name")
+    private String managerName;
 
-    public String getName() {
-        return name;
-    }
+    @Column(name ="manager_phone")
+    private String managerPhone;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
-    public String getIndustry() {
-        return industry;
-    }
-
-    public void setIndustry(String industry) {
-        this.industry = industry;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getWebsiteUrl() {
-        return websiteUrl;
-    }
-
-    public void setWebsiteUrl(String websiteUrl) {
-        this.websiteUrl = websiteUrl;
-    }
+    @Column(name ="logo_url")
+    private String logoUrl;
 }
