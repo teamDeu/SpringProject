@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GetAllCompanies, PostComapany } from '../../api/api';
+import { GetAllCompanies, PostCompany } from '../../api/api';
 
 const Index = () => {
     const [data, setData] = useState([]); // 초기값을 빈 배열로 설정
@@ -10,7 +10,7 @@ const Index = () => {
     };
 
     const handleOnClick = () => {
-        PostComapany(company).then(() => {
+        PostCompany(company).then(() => {
             console.log("Post 완료");
         });
     };

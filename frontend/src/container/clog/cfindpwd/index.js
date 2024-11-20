@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
 import SmallButton from '../../../components/log/SmallButton';
-import Modal from '../../../components/log/Modal'; // Modal 컴포넌트 import
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -79,16 +78,14 @@ const Link = styled.span`
     }
 `;
 
-const Index = () => {
+const CFindPwd = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
-        name: '',
+        id: '',
         phone: '',
         verificationCode: '',
         verified: false,
     });
-    const [foundId, setFoundId] = useState(null); // 찾은 아이디 저장
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -100,7 +97,7 @@ const Index = () => {
 
     const sendVerificationCode = async () => {
         try {
-            await axios.post('http://localhost:8080/api/find-id/request-verification', {
+            await axios.post('http://localhost:8080/api/find-pwd-company/request-verification', {
                 phone: form.phone,
             });
             alert('인증번호가 발송되었습니다.');
@@ -113,7 +110,7 @@ const Index = () => {
     const verifyCode = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:8080/api/find-id/verify-code?phone=${form.phone}&code=${form.verificationCode}`
+                `http://localhost:8080/api/find-pwd-company/verify-code?phone=${form.phone}&code=${form.verificationCode}`
             );
             if (response.data) {
                 alert('인증 성공');
@@ -127,36 +124,26 @@ const Index = () => {
         }
     };
 
-    const findId = async () => {
+    const navigateToRpwd = () => {
         if (!form.verified) {
             alert('먼저 전화번호 인증을 완료해주세요.');
             return;
         }
-        try {
-            const response = await axios.get(
-                `http://localhost:8080/api/find-id/search?name=${form.name}&phone=${form.phone}`
-            );
-            setFoundId(response.data); // 아이디 저장
-            setIsModalOpen(true); // 모달 열기
-        } catch (error) {
-            console.error('아이디 찾기 실패:', error);
-            alert('일치하는 사용자 정보를 찾을 수 없습니다.');
-        }
+
+        // crpwd 페이지로 이동
+        navigate('/crpwd', { state: { id: form.id, phone: form.phone } });
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false); // 모달 닫기
-    };
     const handleLinkClick = (type) => {
         switch (type) {
-            case 'login':
-                navigate('/login'); // 기업 로그인 페이지로 이동
+            case 'clogin':
+                navigate('/clogin'); // 기업 로그인 페이지로 이동
                 break;
-            case 'member':
-                navigate('/member'); // 기업 회원가입 페이지로 이동
+            case 'cmember':
+                navigate('/cmember'); // 기업 회원가입 페이지로 이동
                 break;
-            case 'findpwd':
-                navigate('/findpwd'); // 기업 아이디 찾기 페이지로 이동
+            case 'cfindid':
+                navigate('/cfindid'); // 기업 아이디 찾기 페이지로 이동
                 break;
             default:
                 break;
@@ -165,14 +152,14 @@ const Index = () => {
 
     return (
         <Container>
-            <Title>구인구직</Title>
+            <Title>기업 비밀번호 찾기</Title>
             <FormContainer>
                 <InnerForm>
                     <FormRow>
                         <InputField
-                            name="name"
-                            placeholder="이름"
-                            value={form.name}
+                            name="id"
+                            placeholder="아이디"
+                            value={form.id}
                             onChange={handleInputChange}
                         />
                     </FormRow>
@@ -203,24 +190,17 @@ const Index = () => {
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
-                        <LoginButton onClick={findId}>아이디 찾기</LoginButton>
+                        <LoginButton onClick={navigateToRpwd}>비밀번호 찾기</LoginButton>
                     </FormRow>
+                    <LinkText>
+                        <Link onClick={() => handleLinkClick('clogin')}>로그인</Link> | 
+                        <Link onClick={() => handleLinkClick('cmember')}>회원가입</Link> | 
+                        <Link onClick={() => handleLinkClick('cfindid')}>아이디 찾기</Link>
+                    </LinkText>
                 </InnerForm>
-                <LinkText>
-                    <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
-                    <Link onClick={() => handleLinkClick('member')}>회원가입</Link> | 
-                    <Link onClick={() => handleLinkClick('findpwd')}>비밀번호찾기 찾기</Link>
-                </LinkText>
             </FormContainer>
-            {isModalOpen && (
-                <Modal
-                    title="아이디 찾기 결과"
-                    content={`회원님의 아이디는 "${foundId}" 입니다.`}
-                    onClose={closeModal}
-                />
-            )}
         </Container>
     );
 };
 
-export default Index;
+export default CFindPwd;

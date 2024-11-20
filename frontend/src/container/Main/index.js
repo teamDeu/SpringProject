@@ -9,7 +9,6 @@ function Main() {
 
     return (
         <div>
-            <JobTopBar />  
             <PersonalMain />       
         </div>
     );

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
 import SmallButton from '../../../components/log/SmallButton';
-import Modal from '../../../components/log/Modal'; // Modal 컴포넌트 import
+import Modal from '../../../components/log/Modal';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -82,13 +82,13 @@ const Link = styled.span`
 const Index = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
-        name: '',
+        manager_name: '',
         phone: '',
         verificationCode: '',
         verified: false,
     });
-    const [foundId, setFoundId] = useState(null); // 찾은 아이디 저장
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+    const [foundId, setFoundId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -100,7 +100,7 @@ const Index = () => {
 
     const sendVerificationCode = async () => {
         try {
-            await axios.post('http://localhost:8080/api/find-id/request-verification', {
+            await axios.post('http://localhost:8080/api/find-id-company/request-verification', {
                 phone: form.phone,
             });
             alert('인증번호가 발송되었습니다.');
@@ -113,7 +113,7 @@ const Index = () => {
     const verifyCode = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:8080/api/find-id/verify-code?phone=${form.phone}&code=${form.verificationCode}`
+                `http://localhost:8080/api/find-id-company/verify-code?phone=${form.phone}&code=${form.verificationCode}`
             );
             if (response.data) {
                 alert('인증 성공');
@@ -134,29 +134,30 @@ const Index = () => {
         }
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/find-id/search?name=${form.name}&phone=${form.phone}`
+                `http://localhost:8080/api/find-id-company/search?name=${form.manager_name}&phone=${form.phone}`
             );
-            setFoundId(response.data); // 아이디 저장
-            setIsModalOpen(true); // 모달 열기
+            setFoundId(response.data);
+            setIsModalOpen(true);
         } catch (error) {
             console.error('아이디 찾기 실패:', error);
-            alert('일치하는 사용자 정보를 찾을 수 없습니다.');
+            alert('일치하는 회사 정보를 찾을 수 없습니다.');
         }
     };
 
     const closeModal = () => {
-        setIsModalOpen(false); // 모달 닫기
+        setIsModalOpen(false);
     };
+
     const handleLinkClick = (type) => {
         switch (type) {
-            case 'login':
-                navigate('/login'); // 기업 로그인 페이지로 이동
+            case 'clogin':
+                navigate('/clogin'); // 기업 로그인 페이지로 이동
                 break;
-            case 'member':
-                navigate('/member'); // 기업 회원가입 페이지로 이동
+            case 'cmember':
+                navigate('/cmember'); // 기업 회원가입 페이지로 이동
                 break;
-            case 'findpwd':
-                navigate('/findpwd'); // 기업 아이디 찾기 페이지로 이동
+            case 'cfindpwd':
+                navigate('/cfindpwd'); // 기업 아이디 찾기 페이지로 이동
                 break;
             default:
                 break;
@@ -165,14 +166,14 @@ const Index = () => {
 
     return (
         <Container>
-            <Title>구인구직</Title>
+            <Title>기업 아이디 찾기</Title>
             <FormContainer>
                 <InnerForm>
                     <FormRow>
                         <InputField
-                            name="name"
-                            placeholder="이름"
-                            value={form.name}
+                            name="manager_name"
+                            placeholder="담당자 이름"
+                            value={form.manager_name}
                             onChange={handleInputChange}
                         />
                     </FormRow>
@@ -207,9 +208,9 @@ const Index = () => {
                     </FormRow>
                 </InnerForm>
                 <LinkText>
-                    <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
-                    <Link onClick={() => handleLinkClick('member')}>회원가입</Link> | 
-                    <Link onClick={() => handleLinkClick('findpwd')}>비밀번호찾기 찾기</Link>
+                    <Link onClick={() => handleLinkClick('clogin')}>로그인</Link> | 
+                    <Link onClick={() => handleLinkClick('cmember')}>회원가입</Link> | 
+                    <Link onClick={() => handleLinkClick('cfindpwd')}>비밀번호 찾기</Link>
                 </LinkText>
             </FormContainer>
             {isModalOpen && (
