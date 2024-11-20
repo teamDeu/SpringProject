@@ -101,8 +101,8 @@ const Date = styled.div`
 
 const AForm = ({ 
   selectedType,
-  selectedCategory,
-  searchTerm,
+  selectedCategory = "전체",
+  searchTerm = "",
   currentPage,
   itemsPerPage,
   onTotalItemsChange,
@@ -188,12 +188,13 @@ const AForm = ({
   };
 
  // 필터링 로직: 선택된 타입, 카테고리, 검색어를 기반으로 필터링
-    const filteredAnnouncements = announcements.filter((item) => {
-        const matchesType = selectedType === "all" || item.type === selectedType;
-        const matchesCategory = selectedCategory === "전체" || item.category === selectedCategory;
-        const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesType && matchesCategory && matchesSearch;
-    });
+ const filteredAnnouncements = announcements.filter((item) => {
+  const matchesType = selectedType === "all" || item.type === selectedType;
+  const matchesCategory = selectedCategory === "전체" || item.category === selectedCategory;
+  const matchesSearch = item.title.toLowerCase().includes((searchTerm || "").toLowerCase()); // searchTerm 기본값 설정
+  return matchesType && matchesCategory && matchesSearch;
+});
+
   useEffect(() => {
     onTotalItemsChange(filteredAnnouncements.length);
   }, [filteredAnnouncements.length, onTotalItemsChange]);
