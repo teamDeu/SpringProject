@@ -75,7 +75,7 @@ function App() {
             <Route path="personalmain" element={<PersonalMain/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
             <Route path="jobSearch" element={<JobSearch />} />
-            <Route path="/job-detail/:id" element={<JobDetail />} />
+            <Route path="/jobdetail/:jobId" element={<JobDetail />} />
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />

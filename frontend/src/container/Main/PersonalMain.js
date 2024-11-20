@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import JobTopBar from '../../components/JobTopBar';
 import Eye from './img/eye.png';
 import Hlogo from './img/Hlogo.png';
 import Aa from './img/aa.png';
@@ -107,64 +108,69 @@ function PersonalMain() {
 
 
     return (
-        <Container>
-            <Section>
-                <SectionTitle><img src={Eye}/>  많은 회원들이 눈여겨보는 기업</SectionTitle>
-                <CarouselWrapper>
-                    <Arrow onClick={handlePrevImage} disabled={currentIndex === 0}>
-                        &lt;
-                    </Arrow>
-                    <CompanyCarousel>
-                        {companies.slice(currentIndex, currentIndex + 5).map((company, index) => (
-                            <CompanyCard key={index}>
-                                <Logo src={company.logo} alt={`${company.name} 로고`} />
-                                <CompanyName>{company.name}</CompanyName>
-                                <Description>{company.description}</Description>
-                                <Views>{company.views}</Views>
-                            </CompanyCard>
-                        ))}
-                    </CompanyCarousel>
-                    <Arrow onClick={handleNextImage} disabled={currentIndex >= companies.length - 5}>
-                        &gt;
-                    </Arrow>
-                </CarouselWrapper>
-            </Section>
+        <>
+            <JobTopBar />    
+            <Container>
 
-            <ViewContainer>
-                조회수 높은 기업의 채용 공고
-            </ViewContainer>
-            <JobPostingsContainer>
-                {jobPostings.map((posting, index) => (
-                    <JobPostingCard key={index}>                        
-                        <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
-                        <JobTitle>{posting.jobTitle}</JobTitle>
-                        <JobDeadline>{posting.deadline}</JobDeadline>
-                        <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
-                    </JobPostingCard>
-                ))}
-            </JobPostingsContainer>
+                <Section>
+                    <SectionTitle><img src={Eye}/>  많은 회원들이 눈여겨보는 기업</SectionTitle>
+                    <CarouselWrapper>
+                        <Arrow onClick={handlePrevImage} disabled={currentIndex === 0}>
+                            &lt;
+                        </Arrow>
+                        <CompanyCarousel>
+                            {companies.slice(currentIndex, currentIndex + 5).map((company, index) => (
+                                <CompanyCard key={index}>
+                                    <Logo src={company.logo} alt={`${company.name} 로고`} />
+                                    <CompanyName>{company.name}</CompanyName>
+                                    <Description>{company.description}</Description>
+                                    <Views>{company.views}</Views>
+                                </CompanyCard>
+                            ))}
+                        </CompanyCarousel>
+                        <Arrow onClick={handleNextImage} disabled={currentIndex >= companies.length - 5}>
+                            &gt;
+                        </Arrow>
+                    </CarouselWrapper>
+                </Section>
 
-            <DeadlineContainer>
-                마감 임박한 채용 공고          
-            </DeadlineContainer>
-            <JobPostingsContainer>
-                {jobPostings.map((posting, index) => (
-                    <JobPostingCard key={index}>
-                        
-                        <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
-                        <JobTitle>{posting.jobTitle}</JobTitle>
-                        <JobDeadline>{posting.deadline}</JobDeadline>
-                        <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
-                    </JobPostingCard>
-                ))}
-            </JobPostingsContainer>
+                <ViewContainer>
+                    조회수 높은 기업의 채용 공고
+                </ViewContainer>
+                <JobPostingsContainer>
+                    {jobPostings.map((posting, index) => (
+                        <JobPostingCard key={index}>                        
+                            <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
+                            <JobTitle>{posting.jobTitle}</JobTitle>
+                            <JobDeadline>{posting.deadline}</JobDeadline>
+                            <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
+                        </JobPostingCard>
+                    ))}
+                </JobPostingsContainer>
+
+                <DeadlineContainer>
+                    마감 임박한 채용 공고          
+                </DeadlineContainer>
+                <JobPostingsContainer>
+                    {jobPostings.map((posting, index) => (
+                        <JobPostingCard key={index}>
+                            
+                            <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
+                            <JobTitle>{posting.jobTitle}</JobTitle>
+                            <JobDeadline>{posting.deadline}</JobDeadline>
+                            <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
+                        </JobPostingCard>
+                    ))}
+                </JobPostingsContainer>
 
 
-        </Container>
+            </Container>
+        </>
     );
 };
 
 export default PersonalMain;
+
 
 const Container = styled.div`
     padding: 20px;

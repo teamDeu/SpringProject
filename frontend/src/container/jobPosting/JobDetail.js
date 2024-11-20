@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Blocation from './img/blocation.png';
 import Aress from './img/aress.png';
@@ -9,8 +10,9 @@ import Acompany2 from './img/acompany2.png';
 import Edit from './img/edit.png';
 import Plus from './img/plus.png';
 import Trash from './img/trash.png';
+import JobTopBar from '../../components/JobTopBar';
 
-const JobDetail = ({ jobId }) => {
+const JobDetail = () => {
 
     const jobData = {
         1: {
@@ -68,7 +70,9 @@ const JobDetail = ({ jobId }) => {
         },
     };
 
+    const { jobId } = useParams();
     const job = jobData[jobId];
+    
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFavorited, setIsFavorited] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -116,211 +120,214 @@ const JobDetail = ({ jobId }) => {
     };
 
     return (
-        <Container>
-            <Header>              
-                <HeaderLeft>
-                    <Title>{job.title}</Title>                   
-                    <CompanyWrapper>
-                        <Icon src={isFavorited ? Heart : Nonheart} alt="관심기업" onClick={toggleFavorite}  />
-                        <span>관심기업</span>
-                    </CompanyWrapper>
-                </HeaderLeft>
-                <HeaderRight>
-                    <ApplyButton onClick={toggleModal}>지원하기</ApplyButton>
-                </HeaderRight>
+        <>
+            <JobTopBar />
+            <Container>
+                <Header>              
+                    <HeaderLeft>
+                        <Title>{job.title}</Title>                   
+                        <CompanyWrapper>
+                            <Icon src={isFavorited ? Heart : Nonheart} alt="관심기업" onClick={toggleFavorite}  />
+                            <span>관심기업</span>
+                        </CompanyWrapper>
+                    </HeaderLeft>
+                    <HeaderRight>
+                        <ApplyButton onClick={toggleModal}>지원하기</ApplyButton>
+                    </HeaderRight>
 
-            </Header>
-            <Company>{job.company}</Company>
-            <Divider />
-            {showModal && (
-                <ModalOverlay onClick={toggleModal}>
-                    <ModalContainer onClick={(e) => e.stopPropagation()}>
-                        <ModalHeader>
-                            <ModalTitle>입사 지원</ModalTitle>
-                            <CloseButton onClick={toggleModal}>X</CloseButton>
-                        </ModalHeader>
-                        <ModalContent>
-                            <JobSummaryHeader>
-                                <h3>{job.title}</h3>
-                                <JobApplyButton>지원하기</JobApplyButton>
-                            </JobSummaryHeader>
-                            <h4>{job.company}</h4>
-                            <AccountInfo>
-                                <AccountHeader>
-                                    <h4>계정 정보</h4>
-                                    <EditIcon src={Edit} alt="Edit" />
-                                </AccountHeader>
-                                <BorderedBox>
-                                    <AccountDetails>
-                                    <p>이름</p>
-                                    <p>김지원</p>
-                                    <p>이메일</p>
-                                    <p>tpdud66770@naver.com</p>
-                                    <p>연락처</p>
-                                    <p>010-1234-1234</p>
-                                    <p>출생년도</p>
-                                    <p>2001</p>
-                                    </AccountDetails>
-                                </BorderedBox>
-                            </AccountInfo>
+                </Header>
+                <Company>{job.company}</Company>
+                <Divider />
+                {showModal && (
+                    <ModalOverlay onClick={toggleModal}>
+                        <ModalContainer onClick={(e) => e.stopPropagation()}>
+                            <ModalHeader>
+                                <ModalTitle>입사 지원</ModalTitle>
+                                <CloseButton onClick={toggleModal}>X</CloseButton>
+                            </ModalHeader>
+                            <ModalContent>
+                                <JobSummaryHeader>
+                                    <h3>{job.title}</h3>
+                                    <JobApplyButton>지원하기</JobApplyButton>
+                                </JobSummaryHeader>
+                                <h4>{job.company}</h4>
+                                <AccountInfo>
+                                    <AccountHeader>
+                                        <h4>계정 정보</h4>
+                                        <EditIcon src={Edit} alt="Edit" />
+                                    </AccountHeader>
+                                    <BorderedBox>
+                                        <AccountDetails>
+                                        <p>이름</p>
+                                        <p>김지원</p>
+                                        <p>이메일</p>
+                                        <p>tpdud66770@naver.com</p>
+                                        <p>연락처</p>
+                                        <p>010-1234-1234</p>
+                                        <p>출생년도</p>
+                                        <p>2001</p>
+                                        </AccountDetails>
+                                    </BorderedBox>
+                                </AccountInfo>
 
-                            <ResumeSection>
-                                <h4>지원 이력서</h4>
-                                <ResumeBox >
-                                    <input type="radio" id="resume" name="resume" />
-                                    <label htmlFor="resume">김지원_이력서_제목</label>
-                                    <ResumeRow>
-                                        <p>2024.11.03 등록</p>
-                                        <ResumeEditIcon src={Edit} alt="Edit" />
-                                    </ResumeRow>
-                                </ResumeBox >
-                            </ResumeSection>
+                                <ResumeSection>
+                                    <h4>지원 이력서</h4>
+                                    <ResumeBox >
+                                        <input type="radio" id="resume" name="resume" />
+                                        <label htmlFor="resume">김지원_이력서_제목</label>
+                                        <ResumeRow>
+                                            <p>2024.11.03 등록</p>
+                                            <ResumeEditIcon src={Edit} alt="Edit" />
+                                        </ResumeRow>
+                                    </ResumeBox >
+                                </ResumeSection>
 
-                            <AttachmentSection>
-                                <h4>첨부파일</h4>
-                                <AttachmentHeader>
-                                    <h2>같이 제출하실 첨부파일을 선택해주세요!</h2>
-                                    <AddFileButton onClick={() => document.getElementById("fileUploadInput").click()}>
-                                        <img src={Plus} alt="첨부파일 추가" />
-                                        첨부파일 추가
-                                    </AddFileButton>
-                                </AttachmentHeader>
-                                <input
-                                    id="fileUploadInput"
-                                    type="file"
-                                    multiple
-                                    style={{ display: "none" }}
-                                    onChange={handleFileUpload}
-                                />
-                                <Dropzone>
-                                    {uploadedFiles.length > 0 ? (
-                                    <FileList>
-                                        {uploadedFiles.map((file, index) => (
-                                        <FileItem key={index}>
-                                            {file.name}
-                                            <RemoveFileButton onClick={() => handleRemoveFile(index)}><img src={Trash} /></RemoveFileButton>
-                                        </FileItem>
-                                        ))}
-                                    </FileList>
-                                    ) : (
-                                    <>
-                                        <h2>첨부파일이 비어있습니다.</h2>
-                                        <p>PDF 형식을 추천드립니다!</p>
-                                    </>
-                                    )}
-                                </Dropzone>
-                            </AttachmentSection>
-                        </ModalContent>
-                    </ModalContainer>
-                </ModalOverlay>
-            )}
+                                <AttachmentSection>
+                                    <h4>첨부파일</h4>
+                                    <AttachmentHeader>
+                                        <h2>같이 제출하실 첨부파일을 선택해주세요!</h2>
+                                        <AddFileButton onClick={() => document.getElementById("fileUploadInput").click()}>
+                                            <img src={Plus} alt="첨부파일 추가" />
+                                            첨부파일 추가
+                                        </AddFileButton>
+                                    </AttachmentHeader>
+                                    <input
+                                        id="fileUploadInput"
+                                        type="file"
+                                        multiple
+                                        style={{ display: "none" }}
+                                        onChange={handleFileUpload}
+                                    />
+                                    <Dropzone>
+                                        {uploadedFiles.length > 0 ? (
+                                        <FileList>
+                                            {uploadedFiles.map((file, index) => (
+                                            <FileItem key={index}>
+                                                {file.name}
+                                                <RemoveFileButton onClick={() => handleRemoveFile(index)}><img src={Trash} /></RemoveFileButton>
+                                            </FileItem>
+                                            ))}
+                                        </FileList>
+                                        ) : (
+                                        <>
+                                            <h2>첨부파일이 비어있습니다.</h2>
+                                            <p>PDF 형식을 추천드립니다!</p>
+                                        </>
+                                        )}
+                                    </Dropzone>
+                                </AttachmentSection>
+                            </ModalContent>
+                        </ModalContainer>
+                    </ModalOverlay>
+                )}
 
-            <JobInfo>
-                <InfoContainer>
-                    <InfoBlock>
-                        <InfoItem>
-                            <strong>경력</strong> {job.experience}
-                        </InfoItem>
-                        <InfoItem>
-                            <strong>학력</strong> {job.education}
-                        </InfoItem>
-                        <InfoItem>
-                            <strong>마감일</strong> {job.deadline}
-                        </InfoItem>
-                        <InfoItem>
-                            <strong>근무지역</strong>
-                            <AddressContainer>
-                                {job.location}
-                                <IconWrapper>
-                                    <Icon src={Blocation} onClick={handleOpenMap} /> 지도보기
-                                    <Icon src={Aress} onClick={handleCopyAddress} />
-                                    <AddressCopyText onClick={handleCopyAddress}>주소복사</AddressCopyText>
-                                </IconWrapper>
-                            </AddressContainer>
-                        </InfoItem>
-                    </InfoBlock>
-                </InfoContainer>
+                <JobInfo>
+                    <InfoContainer>
+                        <InfoBlock>
+                            <InfoItem>
+                                <strong>경력</strong> {job.experience}
+                            </InfoItem>
+                            <InfoItem>
+                                <strong>학력</strong> {job.education}
+                            </InfoItem>
+                            <InfoItem>
+                                <strong>마감일</strong> {job.deadline}
+                            </InfoItem>
+                            <InfoItem>
+                                <strong>근무지역</strong>
+                                <AddressContainer>
+                                    {job.location}
+                                    <IconWrapper>
+                                        <Icon src={Blocation} onClick={handleOpenMap} /> 지도보기
+                                        <Icon src={Aress} onClick={handleCopyAddress} />
+                                        <AddressCopyText onClick={handleCopyAddress}>주소복사</AddressCopyText>
+                                    </IconWrapper>
+                                </AddressContainer>
+                            </InfoItem>
+                        </InfoBlock>
+                    </InfoContainer>
 
-                
-                <InfoContainer>
-                    <InfoBlock>
-                        <InfoItem>
-                            <strong>근무형태</strong> 정규직 수습기간 3개월
-                        </InfoItem>
-                        <InfoItem>
-                            <strong>급여</strong> 면접 후 결정
-                        </InfoItem>
-                        <InfoItem>
-                            <strong>출퇴근 시간</strong> 08:00 ~ 17:00
-                        </InfoItem>
-                    </InfoBlock>
-                </InfoContainer>
-            </JobInfo>
-            <Divider />
-            <Skills>
-                <h3>기술 스택</h3>
-                <SkillList>
-                    {job.skills.map((skill, index) => (
-                        <SkillItem key={index}>{skill}</SkillItem>
-                    ))}
-                </SkillList>
-            </Skills>
-            <Section>
-                <SectionTitle>주요 업무</SectionTitle>
-                <ul>
-                    {job.tasks.map((task, index) => (
-                        <li key={index}>{task}</li>
-                    ))}
-                </ul>
-            </Section>
-            <Section>
-                <SectionTitle>자격 요건</SectionTitle>
-                <ul>
-                    {job.requirements.map((req, index) => (
-                        <li key={index}>{req}</li>
-                    ))}
-                </ul>
-            </Section>
-            <Section>
-                <SectionTitle>우대 사항</SectionTitle>
-                <ul>
-                    {job.preferences.map((pref, index) => (
-                        <li key={index}>{pref}</li>
-                    ))}
-                </ul>
-            </Section>
-            <Section>
-                <SectionTitle>복지 및 혜택</SectionTitle>
-                <HighlightText>
-                    개인의 성장이 팀의 성장이라고 믿습니다. 개인의 성장을 위해 다양한 지원을 아끼지 않습니다.
-                </HighlightText>
-                <ul>
-                    {job.benefits.map((benefit, index) => (
-                        <li key={index}>{benefit}</li>
-                    ))}
-                </ul>
-            </Section>
-            <Divider />
-            <CompanySection>
-                <SectionTitle>기업/서비스 소개</SectionTitle>
-                <ImageCarousel>
-                    <Arrow onClick={handlePrevImage}>&lt;</Arrow>
-                    <ImageWrapper>
-                        <img
-                            src={job.companyDescription.images[currentImageIndex]}
-                            alt={`기업 소개 이미지 ${currentImageIndex + 1}`}
-                        />
-                    </ImageWrapper>
-                    <Arrow onClick={handleNextImage}>&gt;</Arrow>
-                </ImageCarousel>
-                <CompanyDescriptions>
-                    {job.companyDescription.description.map((desc, index) => (
-                        <DescriptionText key={index}>{desc}</DescriptionText>
-                    ))}
-                </CompanyDescriptions>
-            </CompanySection>        
+                    
+                    <InfoContainer>
+                        <InfoBlock>
+                            <InfoItem>
+                                <strong>근무형태</strong> 정규직 수습기간 3개월
+                            </InfoItem>
+                            <InfoItem>
+                                <strong>급여</strong> 면접 후 결정
+                            </InfoItem>
+                            <InfoItem>
+                                <strong>출퇴근 시간</strong> 08:00 ~ 17:00
+                            </InfoItem>
+                        </InfoBlock>
+                    </InfoContainer>
+                </JobInfo>
+                <Divider />
+                <Skills>
+                    <h3>기술 스택</h3>
+                    <SkillList>
+                        {job.skills.map((skill, index) => (
+                            <SkillItem key={index}>{skill}</SkillItem>
+                        ))}
+                    </SkillList>
+                </Skills>
+                <Section>
+                    <SectionTitle>주요 업무</SectionTitle>
+                    <ul>
+                        {job.tasks.map((task, index) => (
+                            <li key={index}>{task}</li>
+                        ))}
+                    </ul>
+                </Section>
+                <Section>
+                    <SectionTitle>자격 요건</SectionTitle>
+                    <ul>
+                        {job.requirements.map((req, index) => (
+                            <li key={index}>{req}</li>
+                        ))}
+                    </ul>
+                </Section>
+                <Section>
+                    <SectionTitle>우대 사항</SectionTitle>
+                    <ul>
+                        {job.preferences.map((pref, index) => (
+                            <li key={index}>{pref}</li>
+                        ))}
+                    </ul>
+                </Section>
+                <Section>
+                    <SectionTitle>복지 및 혜택</SectionTitle>
+                    <HighlightText>
+                        개인의 성장이 팀의 성장이라고 믿습니다. 개인의 성장을 위해 다양한 지원을 아끼지 않습니다.
+                    </HighlightText>
+                    <ul>
+                        {job.benefits.map((benefit, index) => (
+                            <li key={index}>{benefit}</li>
+                        ))}
+                    </ul>
+                </Section>
+                <Divider />
+                <CompanySection>
+                    <SectionTitle>기업/서비스 소개</SectionTitle>
+                    <ImageCarousel>
+                        <Arrow onClick={handlePrevImage}>&lt;</Arrow>
+                        <ImageWrapper>
+                            <img
+                                src={job.companyDescription.images[currentImageIndex]}
+                                alt={`기업 소개 이미지 ${currentImageIndex + 1}`}
+                            />
+                        </ImageWrapper>
+                        <Arrow onClick={handleNextImage}>&gt;</Arrow>
+                    </ImageCarousel>
+                    <CompanyDescriptions>
+                        {job.companyDescription.description.map((desc, index) => (
+                            <DescriptionText key={index}>{desc}</DescriptionText>
+                        ))}
+                    </CompanyDescriptions>
+                </CompanySection>        
 
-        </Container>
+            </Container>
+        </>
     );
 };
 
