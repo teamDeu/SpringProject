@@ -27,12 +27,12 @@ const OptionList = styled.div`
     position: absolute;
     top: 40px;
     left: 0;
-    height : 300px;
-    overflow-y : scroll;
+    max-height: 300px; /* 최대 높이를 설정 */
+    overflow-y: auto; /* 스크롤 추가 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     z-index: 1;
-    display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+    display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
 `;
 
 const ArrowIcon = styled.img`
@@ -75,7 +75,7 @@ const DropdownSelect = ({ options, defaultOption, onChange }) => {
                     alt="Arrow Icon"
                 />
             </SelectBox>
-            <OptionList isOpen={isOpen}>
+            <OptionList $isOpen={isOpen}>
                 {options.map((option) => (
                     <Option
                         key={option}

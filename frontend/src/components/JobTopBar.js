@@ -27,7 +27,7 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
                             </DropdownContent>
                         </NavItem>
                         <NavItem>
-                            <NavButton isActive={location.pathname === '/resume'}>이력서</NavButton>
+                            <NavButton $isActive={location.pathname === '/resume'}>이력서</NavButton>
                             <DropdownContent>
                                 <DropdownButton onClick={onResumeClick}>이력서 작성</DropdownButton>
                                 <DropdownButton onClick={onMyResumeClick}>My 이력서</DropdownButton>
@@ -153,8 +153,8 @@ const NavButton = styled.button`
     background: none;
     border: none;
     font-size: 17px;
-    color: ${(props) => (props.isActive ? '#00257A' : '#000000')};
-    font-weight: ${(props) => (props.isActive ? '700' : '400')};
+    color: ${(props) => (props.$isActive ? '#00257A' : '#000000')};
+    font-weight: ${(props) => (props.$isActive ? '700' : '400')};
     cursor: pointer;
     padding: 0;
     font-family: 'Nanum Square Neo', sans-serif;
