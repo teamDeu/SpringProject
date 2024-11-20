@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Barrow2 from './img/barrow2.png';
 import Garrow from './img/garrow.png';
@@ -19,6 +19,8 @@ import Heart from './img/heart.png';
 import Lo from './img/lo.png';
 import Eye from './img/eye.png';
 import Gstar from './img/gstar.png';
+import Skill from './img/skill.png';
+import JobTopBar from '../../components/JobTopBar';
 import { jobRoles, skillStacks } from './job';
 
 const regions = [
@@ -149,11 +151,9 @@ const regions = [
     }
 ];
 
-const JobSearch = () => {
-    const navigate = useNavigate();
-
+const JobSearch = ({ onJobSelect }) => {
     const handleCardClick = (id) => {
-        navigate(`/job-detail/${id}`);
+        onJobSelect(id); 
     };
 
     const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
@@ -363,331 +363,343 @@ const JobSearch = () => {
 
 
     return (
-        <Container>
-            <Title>지역 & 직무 선택</Title>
-            <Options>
-            <Dropdown onClick={toggleExperienceDropdown}>
-                    경력 선택
-                    <ArrowIcon src={Barrow2} alt="아래 화살표 아이콘" isOpen={isExperienceDropdownOpen}  />
-                </Dropdown>
-                {isExperienceDropdownOpen  && (
-                    <DropdownContent>
-                        <CheckboxGroup>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    value="신입"
-                                    onChange={handleExperienceCheckboxChange}
-                                />
-                                신입
-                            </label>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    value="경력"
-                                    onChange={handleExperienceCheckboxChange}
-                                />
-                                경력
-                            </label>
-                        </CheckboxGroup>
-                        <Grid>
-                            {['~ 1년', '1년', '2년', '3년', '4년', '5년', '6년', '7년', '8년', '9년', '10년', '10년 ~'].map((year, index) => (
-                                <GridItem
-                                key={index}
-                                isSelected={selectedExperienceItem  === index} 
-                                onClick={() => handleExperienceItemClick(index)} 
+        <>
+            <JobTopBar />
+            <Container>
+                
+                <Title>지역 & 직무 선택</Title>
+                <Options>
+                <Dropdown onClick={toggleExperienceDropdown}>
+                        경력 선택
+                        <ArrowIcon src={Barrow2} alt="아래 화살표 아이콘" isOpen={isExperienceDropdownOpen}  />
+                    </Dropdown>
+                    {isExperienceDropdownOpen  && (
+                        <DropdownContent>
+                            <CheckboxGroup>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        value="신입"
+                                        onChange={handleExperienceCheckboxChange}
+                                    />
+                                    신입
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        value="경력"
+                                        onChange={handleExperienceCheckboxChange}
+                                    />
+                                    경력
+                                </label>
+                            </CheckboxGroup>
+                            <Grid>
+                                {['~ 1년', '1년', '2년', '3년', '4년', '5년', '6년', '7년', '8년', '9년', '10년', '10년 ~'].map((year, index) => (
+                                    <GridItem
+                                    key={index}
+                                    isSelected={selectedExperienceItem  === index} 
+                                    onClick={() => handleExperienceItemClick(index)} 
+                                    >
+                                    {year}
+                                    </GridItem>
+                                ))}
+                            </Grid>
+                        </DropdownContent>
+                    )}
+                    <Dropdown onClick={toggleEducationDropdown}>
+                        학력 선택
+                        <ArrowIcon src={Barrow2} alt="아래 화살표 아이콘" isOpen={isEducationDropdownOpen} />
+                    </Dropdown>
+                    {isEducationDropdownOpen && (
+                        <EducationDropdownContent>
+                            <CheckboxGroup>
+                                <label>
+                                    <input 
+                                        type="checkbox"
+                                        value="학력무관"
+                                        onChange={handleEducationCheckboxChange}
+                                    />
+                                    학력무관
+                                </label>
+                            </CheckboxGroup>
+                            <Grid>
+                                {['고교 졸업 이하', '고등학교 졸업', '대학 졸업 (2,3년제)', '대학교 졸업 (4년제)', '대학원 석사 졸업', '대학원 박사 졸업', '박사 졸업 이상'].map((level, index) => (
+                                    <EducationGridItem 
+                                    key={index}
+                                    isSelected={selectedEducationItem  === index} 
+                                    onClick={() => handleEducationItemClick(index)} 
+                                    >
+                                    {level}
+                                    </EducationGridItem>
+                                ))}
+                            </Grid>
+                        </EducationDropdownContent>
+                    )}
+                </Options>
+                <SearchContent>
+                    <SelectBox isOpen={isLocationDropdownOpen} onClick={toggleLocationDropdown}>
+                        <img src={isLocationDropdownOpen ? Blocation : Location} alt="지역 검색 아이콘" />
+                        <span>지역 선택</span>
+                        <LocationArrowIcon src={isLocationDropdownOpen ? Barrow : Garrow} alt="화살표 아이콘" />
+                    </SelectBox>
+                    {isLocationDropdownOpen && (
+                        <LocationDropdownContent>
+                            {regions.map((region, index) => (
+                                <RegionButton
+                                    key={index}
+                                    isSelected={selectedRegion?.name === region.name}
+                                    onClick={() => handleRegionClick(region)}
                                 >
-                                {year}
-                                </GridItem>
+                                    {region.name}
+                                </RegionButton>
                             ))}
-                        </Grid>
-                    </DropdownContent>
-                )}
-                <Dropdown onClick={toggleEducationDropdown}>
-                    학력 선택
-                    <ArrowIcon src={Barrow2} alt="아래 화살표 아이콘" isOpen={isEducationDropdownOpen} />
-                </Dropdown>
-                {isEducationDropdownOpen && (
-                    <EducationDropdownContent>
-                        <CheckboxGroup>
-                            <label>
-                                <input 
-                                    type="checkbox"
-                                    value="학력무관"
-                                    onChange={handleEducationCheckboxChange}
-                                />
-                                학력무관
-                            </label>
-                        </CheckboxGroup>
-                        <Grid>
-                            {['고교 졸업 이하', '고등학교 졸업', '대학 졸업 (2,3년제)', '대학교 졸업 (4년제)', '대학원 석사 졸업', '대학원 박사 졸업', '박사 졸업 이상'].map((level, index) => (
-                                <EducationGridItem 
-                                key={index}
-                                isSelected={selectedEducationItem  === index} 
-                                onClick={() => handleEducationItemClick(index)} 
-                                >
-                                {level}
-                                </EducationGridItem>
-                            ))}
-                        </Grid>
-                    </EducationDropdownContent>
-                )}
-            </Options>
-            <SearchContent>
-                <SelectBox isOpen={isLocationDropdownOpen} onClick={toggleLocationDropdown}>
-                    <img src={isLocationDropdownOpen ? Blocation : Location} alt="지역 검색 아이콘" />
-                    <span>지역 선택</span>
-                    <LocationArrowIcon src={isLocationDropdownOpen ? Barrow : Garrow} alt="화살표 아이콘" />
-                </SelectBox>
-                {isLocationDropdownOpen && (
-                    <LocationDropdownContent>
-                        {regions.map((region, index) => (
-                            <RegionButton
-                                key={index}
-                                isSelected={selectedRegion?.name === region.name}
-                                onClick={() => handleRegionClick(region)}
-                            >
-                                {region.name}
-                            </RegionButton>
-                        ))}
-                        {selectedRegion && (
-                            <CityCheckboxWrapper>
-                                <CityCheckboxContainer>
-                                    {selectedRegion.cities.map((city, index) => (
-                                        <label key={index}>
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedLocations[selectedRegion.name]?.includes(city)}
-                                                onChange={() => handleCityCheckboxChange(selectedRegion.name, city)}
-                                            />
-                                            {city}
-                                        </label>
+                            {selectedRegion && (
+                                <CityCheckboxWrapper>
+                                    <CityCheckboxContainer>
+                                        {selectedRegion.cities.map((city, index) => (
+                                            <label key={index}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedLocations[selectedRegion.name]?.includes(city)}
+                                                    onChange={() => handleCityCheckboxChange(selectedRegion.name, city)}
+                                                />
+                                                {city}
+                                            </label>
+                                        ))}
+                                    </CityCheckboxContainer>
+                                </CityCheckboxWrapper>
+                            )}
+
+                        </LocationDropdownContent>
+                    )}   
+                            
+
+                    <SelectBox isOpen={isJobDropdownOpen} onClick={toggleJobDropdown}>
+                        <img src={isJobDropdownOpen ? Bpjob : Pjob} alt="직업 검색 아이콘" />
+                        <span style={{ fontWeight: isJobDropdownOpen ? '700' : '550', color: isJobDropdownOpen ? '#00257A' : '#cdd1dd' }}>
+                            직무 & 기술 스택 선택
+                        </span>
+                        <LocationArrowIcon src={isJobDropdownOpen ? Barrow : Garrow} alt="화살표 아이콘" />
+                    </SelectBox>
+                    {isJobDropdownOpen && (
+                        <JobDropdownContent>
+                            <SmallBox>
+                                <SectionTitle>직무 & 직업 선택</SectionTitle>
+                                <JobGrid>
+                                    {jobRoles.map((job, index) => (
+                                        <JobGridItem
+                                            key={index}
+                                            isSelected={selectedJobs.includes(job)}
+                                            onClick={() => handleJobClick(job)}
+                                        >
+                                            {job}
+                                        </JobGridItem>
                                     ))}
-                                </CityCheckboxContainer>
-                            </CityCheckboxWrapper>
-                        )}
-
-                    </LocationDropdownContent>
-                )}   
-                         
-
-                <SelectBox isOpen={isJobDropdownOpen} onClick={toggleJobDropdown}>
-                    <img src={isJobDropdownOpen ? Bpjob : Pjob} alt="직업 검색 아이콘" />
-                    <span style={{ fontWeight: isJobDropdownOpen ? '700' : '550', color: isJobDropdownOpen ? '#00257A' : '#cdd1dd' }}>
-                        직무 & 기술 스택 선택
-                    </span>
-                    <LocationArrowIcon src={isJobDropdownOpen ? Barrow : Garrow} alt="화살표 아이콘" />
-                </SelectBox>
-                {isJobDropdownOpen && (
-                    <JobDropdownContent>
-                        <SmallBox>
-                            <SectionTitle>직무 & 직업 선택</SectionTitle>
-                            <JobGrid>
-                                {jobRoles.map((job, index) => (
-                                    <JobGridItem
-                                        key={index}
-                                        isSelected={selectedJobs.includes(job)}
-                                        onClick={() => handleJobClick(job)}
-                                    >
-                                        {job}
-                                    </JobGridItem>
-                                ))}
-                            </JobGrid>
-                        </SmallBox>
-                        <SkillSmallBox>
-                            <SectionTitle>스킬 선택</SectionTitle>
-                            <SkillGrid>
-                                {skillStacks.map((skill, index) => (
-                                    <SkillGridItem
-                                        key={index}
-                                        isSelected={selectedSkills.includes(skill)}
-                                        onClick={() => handleSkillClick(skill)}
-                                    >
-                                        {skill}
-                                    </SkillGridItem>
-                                ))}
-                            </SkillGrid>
-                        </SkillSmallBox>
-                    </JobDropdownContent>
+                                </JobGrid>
+                            </SmallBox>
+                            <SkillSmallBox>
+                                <SectionTitle>스킬 선택</SectionTitle>
+                                <SkillGrid>
+                                    {skillStacks.map((skill, index) => (
+                                        <SkillGridItem
+                                            key={index}
+                                            isSelected={selectedSkills.includes(skill)}
+                                            onClick={() => handleSkillClick(skill)}
+                                        >
+                                            {skill}
+                                        </SkillGridItem>
+                                    ))}
+                                </SkillGrid>
+                            </SkillSmallBox>
+                        </JobDropdownContent>
+                    
+                    )}
+                    
+                    <SearchButton>
+                        검색
+                        <img src={Search2} alt="검색 아이콘" />
+                    </SearchButton>
+                </SearchContent>
                 
-                )}
-                
-                <SearchButton>
-                    검색
-                    <img src={Search2} alt="검색 아이콘" />
-                </SearchButton>
-            </SearchContent>
-            
-            <SearchBar isLocationDropdownOpen={isLocationDropdownOpen} isJobDropdownOpen={isJobDropdownOpen}>
-                {!selectedExperienceText && experienceOptions.length === 0 && 
-                !selectedEducationText && educationOptions.length === 0 && 
-                !selectedRegion && selectedCities.length === 0 && (
-                    <Message>검색 조건을 설정해 주세요.</Message>
-                )}
+                <SearchBar isLocationDropdownOpen={isLocationDropdownOpen} isJobDropdownOpen={isJobDropdownOpen}>
+                    {!selectedExperienceText && experienceOptions.length === 0 && 
+                    !selectedEducationText && educationOptions.length === 0 && 
+                    (
+                        <Message>검색 조건을 설정해 주세요.</Message>
+                    )}
 
-                {(experienceOptions.length > 0 || selectedExperienceText) && (
-                    <SearchItem>
-                        <img src={Experience} alt="경력 선택 아이콘" />
-                        <span>
-                            경력 선택{' > '}
-                            {experienceOptions.length > 0 ? experienceOptions.join(', ') : ''}
-                            {selectedExperienceText ? ` > ${selectedExperienceText}` : ''}
-                        </span>
-                        <RemoveButton onClick={() => {
-                            setExperienceOptions([]);
-                            setSelectedExperienceText('');
-                        }}>
-                            ✕
-                        </RemoveButton>
-                    </SearchItem>
-                )}
-
-                {(educationOptions.length > 0 || selectedEducationText) && (
-                    <SearchItem>
-                        <img src={Education} alt="학력 선택 아이콘" />
-                        <span>
-                            학력 선택{' > '}
-                            {educationOptions.length > 0 ? educationOptions.join(', ') : ''}
-                            {selectedEducationText ? ` > ${selectedEducationText}` : ''}
-                        </span>
-                        <RemoveButton onClick={() => {
-                            setEducationOptions([]);
-                            setSelectedEducationText('');
-                        }}>
-                            ✕
-                        </RemoveButton>
-                    </SearchItem>
-                )}
-
-                {Object.entries(selectedLocations).map(([region, cities]) => (
-                        <SearchItem key={region}>
-                            <img src={Glocation} alt={`${region} 선택 아이콘`} />
+                    {(experienceOptions.length > 0 || selectedExperienceText) && (
+                        <SearchItem>
+                            <img src={Experience} alt="경력 선택 아이콘" />
                             <span>
-                                지역 선택{' > '}
-                                {region} {'>'} {cities.join(', ')}
+                                경력 선택{' > '}
+                                {experienceOptions.length > 0 ? experienceOptions.join(', ') : ''}
+                                {selectedExperienceText ? ` > ${selectedExperienceText}` : ''}
                             </span>
-                            <RemoveButton
-                                onClick={() => {
-                                    setSelectedLocations((prev) => {
-                                        const updated = { ...prev };
-                                        delete updated[region];
-                                        return updated;
-                                    });
-                                }}
-                            >
+                            <RemoveButton onClick={() => {
+                                setExperienceOptions([]);
+                                setSelectedExperienceText('');
+                            }}>
                                 ✕
                             </RemoveButton>
                         </SearchItem>
+                    )}
+
+                    {(educationOptions.length > 0 || selectedEducationText) && (
+                        <SearchItem>
+                            <img src={Education} alt="학력 선택 아이콘" />
+                            <span>
+                                학력 선택{' > '}
+                                {educationOptions.length > 0 ? educationOptions.join(', ') : ''}
+                                {selectedEducationText ? ` > ${selectedEducationText}` : ''}
+                            </span>
+                            <RemoveButton onClick={() => {
+                                setEducationOptions([]);
+                                setSelectedEducationText('');
+                            }}>
+                                ✕
+                            </RemoveButton>
+                        </SearchItem>
+                    )}
+
+                    {Object.entries(selectedLocations).map(([region, cities]) => (
+                            <SearchItem key={region}>
+                                <img src={Glocation} alt={`${region} 선택 아이콘`} />
+                                <span>
+                                    지역 선택{' > '}
+                                    {region} {'>'} {cities.join(', ')}
+                                </span>
+                                <RemoveButton
+                                    onClick={() => {
+                                        setSelectedLocations((prev) => {
+                                            const updated = { ...prev };
+                                            delete updated[region];
+                                            return updated;
+                                        });
+                                    }}
+                                >
+                                    ✕
+                                </RemoveButton>
+                            </SearchItem>
+                        ))}
+
+                        {selectedJobs.length > 0 && (
+                            <SearchItem>
+                                <img src={Gjob} alt="직무 선택 아이콘" />
+                                <span>직무 선택 {'>'} {selectedJobs.join(', ')}</span>
+                                <RemoveButton onClick={() => setSelectedJobs([])}>✕</RemoveButton>
+                            </SearchItem>
+                        )}
+                        {selectedSkills.length > 0 && (
+                            <SearchItem>
+                                <img src={Skill} alt="스킬 선택 아이콘" />
+                                <span>스킬 선택 {'>'} {selectedSkills.join(', ')}</span>
+                                <RemoveButton onClick={() => setSelectedSkills([])}>✕</RemoveButton>
+                            </SearchItem>
+                        )}
+
+                </SearchBar>
+
+                <SecTitle>이 공고, 놓치지 마세요<img src={Highlight}/> </SecTitle>
+                <AdvertisementSection>
+                    {advertisements.map((ad) => (
+                        <Link 
+                        to={`/jobdetail/${ad.id}`} // JobDetail.js로 이동하며 id 전달
+                        style={{ textDecoration: 'none', color: 'inherit' }} // Link 스타일 조정
+                        key={ad.id}
+                        >
+                            <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
+                                <AdHeader>
+                                    <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                                    <Bookmark
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleBookmark(ad.id);
+                                    }}
+                                    >
+                                        <img
+                                            src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                            alt="북마크 아이콘"
+                                        />
+                                    </Bookmark>
+                                </AdHeader>
+                                <AdDetails>
+                                    <AdTitle>{ad.title}</AdTitle>
+                                    <AdCompany>{ad.company}</AdCompany>
+                                    <AdInfoLine>
+                                        <img src={Lo} alt="지역 아이콘" />
+                                        {ad.region} | {ad.experience} | {ad.education}
+                                    </AdInfoLine>
+                                </AdDetails>
+                                <AdDeadline>{ad.deadline}</AdDeadline>
+                            </AdCard>
+                        </Link>
                     ))}
+                </AdvertisementSection>
 
-                    {selectedJobs.length > 0 && (
-                        <SearchItem>
-                            <img src={Gjob} alt="직무 선택 아이콘" />
-                            <span>직무 선택 {'>'} {selectedJobs.join(', ')}</span>
-                            <RemoveButton onClick={() => setSelectedJobs([])}>✕</RemoveButton>
-                        </SearchItem>
-                    )}
-                    {selectedSkills.length > 0 && (
-                        <SearchItem>
-                            <img src={Gjob} alt="스킬 선택 아이콘" />
-                            <span>스킬 선택 {'>'} {selectedSkills.join(', ')}</span>
-                            <RemoveButton onClick={() => setSelectedSkills([])}>✕</RemoveButton>
-                        </SearchItem>
-                    )}
+                <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar}/> </SecTitle>
+                <AdvertisementSection>
+                    {advertisements.map((ad) => (
+                        <AdCard key={ad.id}>
+                            <AdHeader>
+                                <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                                <Bookmark
+                                    onClick={() => toggleBookmark(ad.id)}
+                                >
+                                    <img
+                                        src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                        alt="북마크 아이콘"
+                                    />
+                                </Bookmark>
+                            </AdHeader>
+                            <AdDetails>
+                                <AdTitle>{ad.title}</AdTitle>
+                                <AdCompany>{ad.company}</AdCompany>
+                                <AdInfoLine>
+                                    <img src={Lo} alt="지역 아이콘" />
+                                    {ad.region} | {ad.experience} | {ad.education}
+                                </AdInfoLine>
+                            </AdDetails>
+                            <AdDeadline>{ad.deadline}</AdDeadline>
+                        </AdCard>
+                    ))}
+                </AdvertisementSection>
 
-            </SearchBar>
-
-            <SecTitle>이 공고, 놓치지 마세요<img src={Highlight}/> </SecTitle>
-            <AdvertisementSection>
-                {advertisements.map((ad) => (
-                    <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
-                        <AdHeader>
-                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
-                            <Bookmark
-                               onClick={(e) => {
-                                e.stopPropagation();
-                                toggleBookmark(ad.id);
-                            }}
-                            >
-                                <img
-                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
-                                    alt="북마크 아이콘"
-                                />
-                            </Bookmark>
-                        </AdHeader>
-                        <AdDetails>
-                            <AdTitle>{ad.title}</AdTitle>
-                            <AdCompany>{ad.company}</AdCompany>
-                            <AdInfoLine>
-                                <img src={Lo} alt="지역 아이콘" />
-                                {ad.region} | {ad.experience} | {ad.education}
-                            </AdInfoLine>
-                        </AdDetails>
-                        <AdDeadline>{ad.deadline}</AdDeadline>
-                    </AdCard>
-                ))}
-            </AdvertisementSection>
-
-            <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar}/> </SecTitle>
-            <AdvertisementSection>
-                {advertisements.map((ad) => (
-                    <AdCard key={ad.id}>
-                        <AdHeader>
-                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
-                            <Bookmark
-                                onClick={() => toggleBookmark(ad.id)}
-                            >
-                                <img
-                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
-                                    alt="북마크 아이콘"
-                                />
-                            </Bookmark>
-                        </AdHeader>
-                        <AdDetails>
-                            <AdTitle>{ad.title}</AdTitle>
-                            <AdCompany>{ad.company}</AdCompany>
-                            <AdInfoLine>
-                                <img src={Lo} alt="지역 아이콘" />
-                                {ad.region} | {ad.experience} | {ad.education}
-                            </AdInfoLine>
-                        </AdDetails>
-                        <AdDeadline>{ad.deadline}</AdDeadline>
-                    </AdCard>
-                ))}
-            </AdvertisementSection>
-
-            <SecTitle>지금 눈여겨볼 공고<img src={Eye}/> </SecTitle>
-            <AdvertisementSection>
-                {advertisements.map((ad) => (
-                    <AdCard key={ad.id}>
-                        <AdHeader>
-                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
-                            <Bookmark
-                                onClick={() => toggleBookmark(ad.id)}
-                            >
-                                <img
-                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
-                                    alt="북마크 아이콘"
-                                />
-                            </Bookmark>
-                        </AdHeader>
-                        <AdDetails>
-                            <AdTitle>{ad.title}</AdTitle>
-                            <AdCompany>{ad.company}</AdCompany>
-                            <AdInfoLine>
-                                <img src={Lo} alt="지역 아이콘" />
-                                {ad.region}  |  {ad.experience}  |  {ad.education}
-                            </AdInfoLine>
-                        </AdDetails>
-                        <AdDeadline>{ad.deadline}</AdDeadline>
-                    </AdCard>
-                ))}
-            </AdvertisementSection>
-        </Container>
+                <SecTitle>지금 눈여겨볼 공고<img src={Eye}/> </SecTitle>
+                <AdvertisementSection>
+                    {advertisements.map((ad) => (
+                        <AdCard key={ad.id}>
+                            <AdHeader>
+                                <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                                <Bookmark
+                                    onClick={() => toggleBookmark(ad.id)}
+                                >
+                                    <img
+                                        src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                        alt="북마크 아이콘"
+                                    />
+                                </Bookmark>
+                            </AdHeader>
+                            <AdDetails>
+                                <AdTitle>{ad.title}</AdTitle>
+                                <AdCompany>{ad.company}</AdCompany>
+                                <AdInfoLine>
+                                    <img src={Lo} alt="지역 아이콘" />
+                                    {ad.region}  |  {ad.experience}  |  {ad.education}
+                                </AdInfoLine>
+                            </AdDetails>
+                            <AdDeadline>{ad.deadline}</AdDeadline>
+                        </AdCard>
+                    ))}
+                </AdvertisementSection>
+            </Container>
+        </>    
     );
 };
 
 export default JobSearch;
+
+
 
 
 const Container = styled.div`
@@ -1191,7 +1203,7 @@ const Message = styled.p`
     font-size: 18px;
     color: #746e6e;
     margin-left: 350px;
-    margin-top:  ${({ isOpen }) => (isOpen ? '275px' : '75px')};
+    margin-top:  ${({ isOpen }) => (isOpen ? '300px' : '100px')};
     text-align: center;
 `;
 
