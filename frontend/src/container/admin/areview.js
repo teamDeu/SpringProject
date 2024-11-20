@@ -70,13 +70,19 @@ const StyledDropdownSelect = styled(DropdownSelect)`
     border-color: #ccc;
     font-size: 14px; 
     margin-left: 20px;
+    color: ${({ status }) => {
+      if (status === '등록완료') return '#009E22'; // 녹색
+      if (status === '등록대기') return '#00257A'; // 주황색
+      if (status === '등록취소') return '#EA2D2E'; // 빨간색
+      return 'black'; // 기본 색상
+    }};
   }
 
   ${OptionList} {
     background-color: #fff;
     border-color: #ccc;
     width: 170px;
-    margin-top: -10px;
+    margin-top: -20px;
     margin-left: 20px;
   }
 
@@ -97,9 +103,18 @@ const StyledDropdownSelect = styled(DropdownSelect)`
 const Areview = () => {
   // 상태 변수들
   const [reviewData, setReviewData] = useState([
-    { reviewId: 1, id: 1234, date: "2023-11-10", result: "합격", areview: "쿠팡", file: "file1.pdf", state: "등록완료" },
-    { reviewId: 2, id: 1234, date: "2023-11-11", result: "불합격", areview: "네이버", file: "file2.pdf", state: "등록대기" },
-    { reviewId: 3, id: 1234, date: "2023-11-12", result: "합격", areview: "카카오", file: "file3.pdf", state: "등록취소" },
+    { reviewId: 1, id: 1234, date: "2023-11-10", result: "합격", areview: "쿠팡", file: "file1.pdf", status: "등록완료" },
+    { reviewId: 2, id: 1234, date: "2023-11-11", result: "불합격", areview: "네이버", file: "file2.pdf", status: "등록대기" },
+    { reviewId: 3, id: 1234, date: "2023-11-12", result: "합격", areview: "카카오", file: "file3.pdf", status: "등록취소" },
+    { reviewId: 4, id: 1234, date: "2023-11-10", result: "합격", areview: "쿠팡", file: "file1.pdf", status: "등록완료" },
+    { reviewId: 5, id: 1234, date: "2023-11-11", result: "불합격", areview: "네이버", file: "file2.pdf", status: "등록대기" },
+    { reviewId: 6, id: 1234, date: "2023-11-12", result: "합격", areview: "카카오", file: "file3.pdf", status: "등록취소" },
+    { reviewId: 7, id: 1234, date: "2023-11-10", result: "합격", areview: "쿠팡", file: "file1.pdf", status: "등록완료" },
+    { reviewId: 8, id: 1234, date: "2023-11-11", result: "불합격", areview: "네이버", file: "file2.pdf", status: "등록대기" },
+    { reviewId: 9, id: 1234, date: "2023-11-12", result: "합격", areview: "카카오", file: "file3.pdf", status: "등록취소" },
+    { reviewId: 10, id: 1234, date: "2023-11-10", result: "합격", areview: "쿠팡", file: "file1.pdf", status: "등록완료" },
+    { reviewId: 11, id: 1234, date: "2023-11-11", result: "불합격", areview: "네이버", file: "file2.pdf", status: "등록대기" },
+    { reviewId: 12, id: 1234, date: "2023-11-12", result: "합격", areview: "카카오", file: "file3.pdf", status: "등록취소" },
     // 필요한 만큼 데이터 추가
   ]);
 
@@ -128,7 +143,7 @@ const Areview = () => {
           ? review.areview
           : selectedFilter === "첨부파일"
           ? review.file
-          : review.state;
+          : review.status;
 
       return targetField.toLowerCase().includes(searchQuery.toLowerCase());
     });
@@ -137,10 +152,10 @@ const Areview = () => {
     setCurrentPage(1);
   };
 
-  const handleStateChange = (reviewId, newState) => {
+  const handleStateChange = (reviewId, newStatus) => {
     setReviewData((prevData) =>
       prevData.map((item) =>
-        item.reviewId === reviewId ? { ...item, state: newState } : item
+        item.reviewId === reviewId ? { ...item, status: newStatus } : item
       )
     );
   };
@@ -164,16 +179,17 @@ const Areview = () => {
     { header: '첨부파일', accessor: 'file' },
     {
       header: '등록현황',
-      accessor: 'state',
+      accessor: 'status',
       Cell: (row) => (
         <StyledDropdownSelect
           initialOptions={['등록대기', '등록완료', '등록취소']}
-          defaultOption={row.state}
+          defaultOption={row.status}
           onChange={(selectedOption) => handleStateChange(row.reviewId, selectedOption)}
           showPlusButton={false}
           showDeleteButton={false}
           width="100px"
           margin="0"
+          status={row.status} // status prop 전달
         />
       ),
     },

@@ -1,24 +1,35 @@
 import React from 'react';
+import styled from 'styled-components';
 import Menu from '../../components/admin/Menu';
-import './announcements.css';
 import PageHeader from '../../components/admin/PageHeader';
-import { Link } from 'react-router-dom';
+import AddButton from '../../components/admin/AddButton';
+
+const Container = styled.div`
+  display: flex;
+  
+`;
+
+const Content = styled.div`
+  padding: 20px;
+  flex: 1;
+  position: relative;
+`;
 
 const Announcements = () => {
     return (
-        <div style={{ display: 'flex' }}>
-            <Menu />
-            <div style={{ padding: '20px', flex: 1, position: 'relative' }}>
-                <PageHeader title="공지사항" />
-                
-                <Link to="/awrite" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <button className="add-button">
-                        <img src="/icons/plusbtn.png" alt="Plus Button" className="button-icon" />
-                        추가
-                    </button>
-                </Link>
-            </div>
-        </div>
+        <Container>
+        <Menu />
+        <Content>
+          <PageHeader title="공지사항" />
+          <AddButton
+            to="/awrite"
+            iconSrc="/icons/plusbtn.png"
+            altText="Plus Button"
+          >
+            추가
+          </AddButton>
+        </Content>
+      </Container>
     );
 };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import JobTopBar from '../../components/JobTopBar';
 import JobSearch from '../../container/jobPosting/JobSearch';
 
+
 function JobPosting() {
     const [showJobSearch, setShowJobSearch] = useState(false);
 

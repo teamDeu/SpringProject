@@ -39,6 +39,7 @@
     text-align: left;
     padding: 10px; /* 버튼의 높이를 조절하는 패딩 */
     font-weight: lighter;
+    font-family: 'Nanum Square Neo', sans-serif;
 }
 
 .menu-button:hover {

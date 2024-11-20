@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Barrow2 from './img/barrow2.png';
 import Garrow from './img/garrow.png';
@@ -10,13 +11,22 @@ import Pjob from './img/pjob.png';
 import Search2 from './img/search2.png';
 import Experience from './img/experience.png';
 import Education from './img/education.png';
+import Bpjob from './img/bpjob.png';
+import Gjob from './img/gjob.png';
+import Highlight from './img/highlight.png';
+import Nonheart from './img/nonheart.png';
+import Heart from './img/heart.png';
+import Lo from './img/lo.png';
+import Eye from './img/eye.png';
+import Gstar from './img/gstar.png';
+import { jobRoles, skillStacks } from './job';
 
 const regions = [
     {
         
         name: "전국",
         cities: [
-            "전체", "서울시", "경기도", "부산광역시", "대구광역시", "광주광역시", "대전광역시", "울산광역시", "세종시",
+            "전체", "서울특별시", "경기도", "부산광역시", "대구광역시", "광주광역시", "대전광역시", "울산광역시", "세종시",
             "강원도", "충청북도", "충청남도", "전라북도", "전라남도", "경상북도", "경상남도", "제주시"
         ]
     },
@@ -140,13 +150,20 @@ const regions = [
 ];
 
 const JobSearch = () => {
+    const navigate = useNavigate();
+
+    const handleCardClick = (id) => {
+        navigate(`/job-detail/${id}`);
+    };
+
+    const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
     const [isExperienceDropdownOpen, setIsExperienceDropdownOpen] = useState(false);
     const [isEducationDropdownOpen, setIsEducationDropdownOpen] = useState(false);
     const [selectedExperienceItem, setSelectedExperienceItem] = useState(null);
     const [selectedEducationItem, setSelectedEducationItem] = useState(null);
     const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
     const [selectedRegion, setSelectedRegion] = useState(regions[0]);
-    
+    const [advertisements, setAdvertisements] = useState([]);
 
     const [selectedExperienceText, setSelectedExperienceText] = useState('');
     const [selectedEducationText, setSelectedEducationText] = useState('');
@@ -155,9 +172,84 @@ const JobSearch = () => {
     const [educationOptions, setEducationOptions] = useState([]);
 
     const [selectedLocationOptions, setSelectedLocationOptions] = useState([]);
+    const [selectedLocations, setSelectedLocations] = useState({});
 
-    const [selectedCities, setSelectedCities] = useState([""]);
+    const [selectedCities, setSelectedCities] = useState(["전체"]);
 
+    const [selectedJobs, setSelectedJobs] = useState([]);
+    const [selectedSkills, setSelectedSkills] = useState([]);
+
+    const [bookmarkedAds, setBookmarkedAds] = useState([]);
+
+    useEffect(() => {
+        const fetchAdvertisements = async () => {
+            const data = [
+                {
+                    id: 1,
+                    title: "전기전자 H/W, F/W 설계",
+                    company: "한전 KPS",
+                    logo: "https://via.placeholder.com/50", // Placeholder for company logo
+                    region: "경기권역",
+                    experience: "신입",
+                    education: "대졸 이상",
+                    deadline: "11.23(목)"
+                },
+                {
+                    id: 2,
+                    title: "온라인 AMD 채용",
+                    company: "Parity",
+                    logo: "https://via.placeholder.com/50",
+                    region: "서울권역",
+                    experience: "1년",
+                    education: "대졸 이상",
+                    deadline: "11.29(수)"
+                },
+                {
+                    id: 3,
+                    title: "설계/CAD/CAM 전장 설계",
+                    company: "씨에이치티",
+                    logo: "https://via.placeholder.com/50",
+                    region: "강원지역",
+                    experience: "2년",
+                    education: "고졸 이상",
+                    deadline: "11.30(금)"
+                },
+                {
+                    id: 4,
+                    title: "해외파견 영업 경력직",
+                    company: "에이피솔루션",
+                    logo: "https://via.placeholder.com/50",
+                    region: "인천권역",
+                    experience: "5년",
+                    education: "대졸 이상",
+                    deadline: "D-6"
+                },
+                {
+                    id: 5,
+                    title: "시스템 및 운전 경력",
+                    company: "이노비즈테크",
+                    logo: "https://via.placeholder.com/50",
+                    region: "울산권역",
+                    experience: "2년",
+                    education: "대졸 이상",
+                    deadline: "오늘마감"
+                },
+                {
+                    id: 6,
+                    title: "기술평가 및 컨설팅 전문가",
+                    company: "NICE 평가정보",
+                    logo: "https://via.placeholder.com/50",
+                    region: "서울권역",
+                    experience: "1년 이상",
+                    education: "석사 이상",
+                    deadline: "11.17(금)"
+                },
+            ];
+            setAdvertisements(data);
+        };
+    
+        fetchAdvertisements();
+    }, []);
     
     const toggleExperienceDropdown = () => {
         setIsExperienceDropdownOpen((prev) => !prev);
@@ -171,10 +263,25 @@ const JobSearch = () => {
         setIsLocationDropdownOpen((prev) => !prev);
     };
 
-    const handleRegionClick = (region) => {
-        setSelectedRegion((prev) => (prev === region ? null : region));
-        setSelectedCities([]);
+    const toggleJobDropdown = () => {
+        setIsJobDropdownOpen((prev) => !prev); 
     };
+
+    const toggleBookmark = (adId) => {
+        setBookmarkedAds((prev) =>
+            prev.includes(adId) ? prev.filter((id) => id !== adId) : [...prev, adId]
+        );
+    };
+
+    const handleRegionClick = (region) => {
+        setSelectedRegion(region);
+        setSelectedLocations((prev) => ({
+            ...prev,
+            [region.name]: prev[region.name] || [] 
+        }));
+    };
+    
+    
 
     const handleExperienceItemClick = (index) => {
         const options = ['~ 1년', '1년', '2년', '3년', '4년', '5년', '6년', '7년', '8년', '9년', '10년', '10년 ~'];
@@ -187,6 +294,19 @@ const JobSearch = () => {
         setSelectedEducationItem((prevSelected) => (prevSelected === index ? null : index));
         setSelectedEducationText((prevSelected) => (prevSelected === index ? '' : options[index]));
     };
+
+    const handleJobClick = (job) => {
+        setSelectedJobs((prev) =>
+            prev.includes(job) ? prev.filter((item) => item !== job) : [...prev, job]
+        );
+    };
+    
+    const handleSkillClick = (skill) => {
+        setSelectedSkills((prev) =>
+            prev.includes(skill) ? prev.filter((item) => item !== skill) : [...prev, skill]
+        );
+    };
+    
 
     const handleExperienceCheckboxChange = (event) => {
         const { value, checked } = event.target;
@@ -209,21 +329,18 @@ const JobSearch = () => {
         );
     };
 
-    const handleCityCheckboxChange = (city) => {
-        if (city === "전체") {
-            setSelectedCities((prev) =>
-                prev.includes(city) ? [] : ["전체"]
-            );
-        } else {
-            setSelectedCities((prev) => {
-                const newCities = prev.includes("전체")
-                    ? [city]
-                    : prev.includes(city)
-                    ? prev.filter((item) => item !== city) 
-                    : [...prev, city]; 
-                return newCities;
-            });
-        }
+    const handleCityCheckboxChange = (regionName, city) => {
+        setSelectedLocations((prev) => {
+            const regionCities = prev[regionName] || [];
+            const updatedCities = regionCities.includes(city)
+                ? regionCities.filter((item) => item !== city) 
+                : [...regionCities, city]; 
+    
+            return {
+                ...prev,
+                [regionName]: updatedCities
+            };
+        });
     };
 
     const handleRemoveCity = (city) => {
@@ -340,8 +457,8 @@ const JobSearch = () => {
                                         <label key={index}>
                                             <input
                                                 type="checkbox"
-                                                checked={selectedCities.includes(city)}
-                                                onChange={() => handleCityCheckboxChange(city)}
+                                                checked={selectedLocations[selectedRegion.name]?.includes(city)}
+                                                onChange={() => handleCityCheckboxChange(selectedRegion.name, city)}
                                             />
                                             {city}
                                         </label>
@@ -349,15 +466,51 @@ const JobSearch = () => {
                                 </CityCheckboxContainer>
                             </CityCheckboxWrapper>
                         )}
+
                     </LocationDropdownContent>
                 )}   
                          
 
-                <SelectBox>
-                    <img src={Pjob} alt="직업 검색 아이콘" />
-                    <span>직무 & 기술 스택 선택</span>
-                    <img src={Garrow}/> 
+                <SelectBox isOpen={isJobDropdownOpen} onClick={toggleJobDropdown}>
+                    <img src={isJobDropdownOpen ? Bpjob : Pjob} alt="직업 검색 아이콘" />
+                    <span style={{ fontWeight: isJobDropdownOpen ? '700' : '550', color: isJobDropdownOpen ? '#00257A' : '#cdd1dd' }}>
+                        직무 & 기술 스택 선택
+                    </span>
+                    <LocationArrowIcon src={isJobDropdownOpen ? Barrow : Garrow} alt="화살표 아이콘" />
                 </SelectBox>
+                {isJobDropdownOpen && (
+                    <JobDropdownContent>
+                        <SmallBox>
+                            <SectionTitle>직무 & 직업 선택</SectionTitle>
+                            <JobGrid>
+                                {jobRoles.map((job, index) => (
+                                    <JobGridItem
+                                        key={index}
+                                        isSelected={selectedJobs.includes(job)}
+                                        onClick={() => handleJobClick(job)}
+                                    >
+                                        {job}
+                                    </JobGridItem>
+                                ))}
+                            </JobGrid>
+                        </SmallBox>
+                        <SkillSmallBox>
+                            <SectionTitle>스킬 선택</SectionTitle>
+                            <SkillGrid>
+                                {skillStacks.map((skill, index) => (
+                                    <SkillGridItem
+                                        key={index}
+                                        isSelected={selectedSkills.includes(skill)}
+                                        onClick={() => handleSkillClick(skill)}
+                                    >
+                                        {skill}
+                                    </SkillGridItem>
+                                ))}
+                            </SkillGrid>
+                        </SkillSmallBox>
+                    </JobDropdownContent>
+                
+                )}
                 
                 <SearchButton>
                     검색
@@ -365,7 +518,7 @@ const JobSearch = () => {
                 </SearchButton>
             </SearchContent>
             
-            <SearchBar isLocationDropdownOpen={isLocationDropdownOpen}>
+            <SearchBar isLocationDropdownOpen={isLocationDropdownOpen} isJobDropdownOpen={isJobDropdownOpen}>
                 {!selectedExperienceText && experienceOptions.length === 0 && 
                 !selectedEducationText && educationOptions.length === 0 && 
                 !selectedRegion && selectedCities.length === 0 && (
@@ -406,31 +559,136 @@ const JobSearch = () => {
                     </SearchItem>
                 )}
 
-                {(selectedRegion || selectedCities.length > 0) && (
-                    <SearchItem>
-                        <img src={Glocation} alt="지역 선택 아이콘" />
-                        <span>
-                            지역 선택{' > '}
-                            {selectedRegion ? selectedRegion.name : ''} 
-                            {selectedRegion && selectedCities.length > 0 ? ' > ' : ''}
-                            {selectedCities.length > 0 ? selectedCities.join(', ') : ''}
-                        </span>
-                        <RemoveButton
-                            onClick={() => {
-                                setSelectedRegion(null);
-                                setSelectedCities([]);
-                            }}
-                        >
-                            ✕
-                        </RemoveButton>
-                    </SearchItem>
-                )}
+                {Object.entries(selectedLocations).map(([region, cities]) => (
+                        <SearchItem key={region}>
+                            <img src={Glocation} alt={`${region} 선택 아이콘`} />
+                            <span>
+                                지역 선택{' > '}
+                                {region} {'>'} {cities.join(', ')}
+                            </span>
+                            <RemoveButton
+                                onClick={() => {
+                                    setSelectedLocations((prev) => {
+                                        const updated = { ...prev };
+                                        delete updated[region];
+                                        return updated;
+                                    });
+                                }}
+                            >
+                                ✕
+                            </RemoveButton>
+                        </SearchItem>
+                    ))}
+
+                    {selectedJobs.length > 0 && (
+                        <SearchItem>
+                            <img src={Gjob} alt="직무 선택 아이콘" />
+                            <span>직무 선택 {'>'} {selectedJobs.join(', ')}</span>
+                            <RemoveButton onClick={() => setSelectedJobs([])}>✕</RemoveButton>
+                        </SearchItem>
+                    )}
+                    {selectedSkills.length > 0 && (
+                        <SearchItem>
+                            <img src={Gjob} alt="스킬 선택 아이콘" />
+                            <span>스킬 선택 {'>'} {selectedSkills.join(', ')}</span>
+                            <RemoveButton onClick={() => setSelectedSkills([])}>✕</RemoveButton>
+                        </SearchItem>
+                    )}
+
             </SearchBar>
+
+            <SecTitle>이 공고, 놓치지 마세요<img src={Highlight}/> </SecTitle>
+            <AdvertisementSection>
+                {advertisements.map((ad) => (
+                    <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
+                        <AdHeader>
+                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                            <Bookmark
+                               onClick={(e) => {
+                                e.stopPropagation();
+                                toggleBookmark(ad.id);
+                            }}
+                            >
+                                <img
+                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                    alt="북마크 아이콘"
+                                />
+                            </Bookmark>
+                        </AdHeader>
+                        <AdDetails>
+                            <AdTitle>{ad.title}</AdTitle>
+                            <AdCompany>{ad.company}</AdCompany>
+                            <AdInfoLine>
+                                <img src={Lo} alt="지역 아이콘" />
+                                {ad.region} | {ad.experience} | {ad.education}
+                            </AdInfoLine>
+                        </AdDetails>
+                        <AdDeadline>{ad.deadline}</AdDeadline>
+                    </AdCard>
+                ))}
+            </AdvertisementSection>
+
+            <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar}/> </SecTitle>
+            <AdvertisementSection>
+                {advertisements.map((ad) => (
+                    <AdCard key={ad.id}>
+                        <AdHeader>
+                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                            <Bookmark
+                                onClick={() => toggleBookmark(ad.id)}
+                            >
+                                <img
+                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                    alt="북마크 아이콘"
+                                />
+                            </Bookmark>
+                        </AdHeader>
+                        <AdDetails>
+                            <AdTitle>{ad.title}</AdTitle>
+                            <AdCompany>{ad.company}</AdCompany>
+                            <AdInfoLine>
+                                <img src={Lo} alt="지역 아이콘" />
+                                {ad.region} | {ad.experience} | {ad.education}
+                            </AdInfoLine>
+                        </AdDetails>
+                        <AdDeadline>{ad.deadline}</AdDeadline>
+                    </AdCard>
+                ))}
+            </AdvertisementSection>
+
+            <SecTitle>지금 눈여겨볼 공고<img src={Eye}/> </SecTitle>
+            <AdvertisementSection>
+                {advertisements.map((ad) => (
+                    <AdCard key={ad.id}>
+                        <AdHeader>
+                            <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                            <Bookmark
+                                onClick={() => toggleBookmark(ad.id)}
+                            >
+                                <img
+                                    src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                    alt="북마크 아이콘"
+                                />
+                            </Bookmark>
+                        </AdHeader>
+                        <AdDetails>
+                            <AdTitle>{ad.title}</AdTitle>
+                            <AdCompany>{ad.company}</AdCompany>
+                            <AdInfoLine>
+                                <img src={Lo} alt="지역 아이콘" />
+                                {ad.region}  |  {ad.experience}  |  {ad.education}
+                            </AdInfoLine>
+                        </AdDetails>
+                        <AdDeadline>{ad.deadline}</AdDeadline>
+                    </AdCard>
+                ))}
+            </AdvertisementSection>
         </Container>
     );
 };
 
 export default JobSearch;
+
 
 const Container = styled.div`
     padding: 20px;
@@ -486,7 +744,6 @@ const CityCheckboxContainer = styled.div`
 `;
 
 
-
 const Dropdown = styled.div`
     font-size: 14px;
     color: #000;    
@@ -505,15 +762,18 @@ const Dropdown = styled.div`
 
 const ArrowIcon = styled.img`
     transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-    transition: transform 0.3s ease;
+    
 `;
 
 const LocationArrowIcon = styled.img`
     transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-    transition: transform 0.4s ease;
+    
 `;
 
 const RegionButton = styled.button`
+    position: relative;
+    top: 10px;
+    margin-bottom: 10px;
     background-color: none;
     background: none;
     color: ${({ isSelected }) => (isSelected ? '#00257A' : '#CDD1DD')};
@@ -554,7 +814,7 @@ const LocationDropdownContent = styled.div`
     background: #fff;
     border: 1.2px solid #000000;
     width: 66.9%;
-    height: 200px;
+    height: 210px;
     padding: 10px;
     z-index: 10;
     margin-top: 270px;
@@ -563,6 +823,106 @@ const LocationDropdownContent = styled.div`
     justify-content: flex-start; 
     gap: 20px;
 `;
+
+const JobDropdownContent = styled.div`
+    position: absolute;
+    background: #fff;
+    border: 1.2px solid #000000;
+    width: 65.9%;
+    height: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 20px;
+    margin-top: 290px;
+    display: flex; 
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    &::-webkit-scrollbar {
+        display: none; 
+    }
+    
+`;
+
+const SmallBox = styled.div`
+    max-height: 100px; 
+    width: 1230px;
+    display: flex;
+    flex-direction: column;
+    border: 1.2px solid #000000; 
+    padding: 10px;
+    background-color: none; 
+    background: none;
+    position: relative;
+    border-bottom: none;
+    overflow-y: auto; 
+    scrollbar-width: thin; 
+    scrollbar-color: #cdd1dd transparent;
+
+    &::-webkit-scrollbar {
+        display: none; 
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cdd1dd;
+        border-radius: 4px; 
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 200px; 
+        width: 1px; 
+        height: 400px;
+        background-color: #000;
+    }
+`;
+
+const SkillSmallBox = styled.div`
+    max-height: 140px; 
+    width: 1230px;
+    display: flex;
+    flex-direction: column;
+    border: 1.2px solid #000000; 
+    padding: 10px;
+    background-color: none; 
+    background: none;
+    position: relative;
+    overflow-y: auto; 
+    scrollbar-width: thin; 
+    scrollbar-color: #cdd1dd transparent;
+
+    &::-webkit-scrollbar {
+        display: none; 
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cdd1dd;
+        border-radius: 4px; 
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 200px; 
+        width: 1px; 
+        height: 900px;
+        background-color: #000;
+    }
+`;
+
 
 const CheckboxGroup = styled.div`
     display: flex;
@@ -639,6 +999,70 @@ const GridItem = styled.div`
     }
 `;
 
+const SkillGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 8px; 
+    align-items: flex-start;
+    margin-top: -35px;
+    margin-left: 200px;
+    padding: 10px;
+`;
+
+const SkillGridItem = styled.div`
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px 15px; 
+    border: 1.2px solid #CDD1DD; 
+    background-color: ${({ isSelected }) => (isSelected ? '#F0F4FF' : '#fff')};
+    color: ${({ isSelected }) => (isSelected ? '#00257A' : '#000')};
+    font-size: 14px; 
+    font-weight: ${({ isSelected }) => (isSelected ? '700' : '500')};
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+
+    &:hover {
+        background-color: #E8F0FE; 
+    }
+`;
+
+
+const JobGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 8px; 
+    align-items: flex-start;
+    margin-top: -35px;
+    margin-left: 200px;
+    padding: 10px;
+    
+`;
+
+const JobGridItem = styled.div`
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px 15px; 
+    border: 1.2px solid #CDD1DD; 
+    background-color: ${({ isSelected }) => (isSelected ? '#F0F4FF' : '#fff')};
+    color: ${({ isSelected }) => (isSelected ? '#00257A' : '#000')};
+    font-size: 14px; 
+    font-weight: ${({ isSelected }) => (isSelected ? '700' : '500')};
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+
+    &:hover {
+        background-color: #E8F0FE; 
+    }
+`;
+
 const EducationGridItem = styled.div`
     text-align: center;
     padding: 18px 14px;
@@ -675,11 +1099,16 @@ const SearchBar = styled.div`
     align-items: flex-start;
     flex-direction: column;
     width: 97%;
-    height: 160px;
+    height: 210px;
     background-color: #f9f9fb;
     border: 1.2px solid #CDD1DD;
     padding: 10px;
-    margin-top: ${({ isLocationDropdownOpen }) => (isLocationDropdownOpen ? '220px' : '-20px')};
+    margin-top: ${({ isLocationDropdownOpen, isJobDropdownOpen }) => 
+        isLocationDropdownOpen 
+            ? '220px' 
+            : isJobDropdownOpen 
+            ? '240px' 
+            : '-20px'};
     
 `;
 
@@ -797,3 +1226,133 @@ const RemoveButton = styled.button`
         color: #333;
     }
 `;
+
+const DropdownContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+`;
+
+const Section = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+`;
+
+const SectionTitle = styled.h2`
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #000000;
+    padding-left: 4px;
+`;
+
+const SecTitle = styled.h2`
+    margin-top: 130px;
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #000000;
+    padding-left: 4px;
+
+    img {
+        margin-left: 5px;
+        margin-bottom: -10px;
+        width: 35px;
+        height: 35px;
+    }
+`;
+
+
+const AdvertisementSection = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+`;
+
+const AdCard = styled.div`
+    margin-top: 15px;
+    border: 1.3px solid #CDD1DD;
+    border-radius: 20px;
+    padding: 20px;
+    height: 180px;
+    width: 370px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+`;
+
+const AdHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 350px;
+    margin-bottom: 8px;
+`;
+
+const AdLogo = styled.img`
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 50%;
+`;
+
+const AdTitle = styled.h4`
+    font-size: 17px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+`;
+
+const Bookmark = styled.span`
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+
+    img {
+        width: 25px;
+        height: 25px;
+    }
+`;
+
+const AdDetails = styled.div`
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+`;
+
+const AdCompany = styled.p`
+    font-size: 14px;
+    color: #939498;
+    margin-top: 7px;
+    font-weight: 400px;
+
+`;
+
+const AdInfoLine = styled.p`
+    margin-top: 5px;
+    font-size: 14px;
+    color: #939498;
+    font-weight: 400px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+`;
+
+const AdDeadline = styled.p`
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+    text-align: right;
+    
+`;
+
