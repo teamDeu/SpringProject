@@ -17,6 +17,10 @@ const MyResume = ({ onAddResumeClick }) => {
     ]); 
     const navigate = useNavigate();
 
+    const handleResumeEdit = (id) => {
+        navigate(`/editresume/${id}`);
+    };
+
     const handleMenuToggle = (id) => {
         setShowMenu(showMenu === id ? null : id); 
     };
@@ -73,7 +77,7 @@ const MyResume = ({ onAddResumeClick }) => {
                         {resumes.map((resume) => (
                             <ResumeItem key={resume.id} id={`resume-${resume.id}`}>
                                 <TitleContainer>
-                                    <ResumeTitle>{resume.title}</ResumeTitle>
+                                    <ResumeTitle onClick={() => handleResumeEdit(resume.id)}>{resume.title}</ResumeTitle>
                                     <MenuButton onClick={() => handleMenuToggle(resume.id)}>
                                         <MenuIcon src={Png} alt="메뉴 아이콘" />
                                         {showMenu === resume.id && (

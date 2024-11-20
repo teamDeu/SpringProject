@@ -10,7 +10,6 @@ import BworkIcon from './img/BworkIcon.png';
 import BpnumberIcon from './img/BpnumberIcon.png';
 import BbirthIcon from './img/BbirthIcon.png';
 import Delw from './img/Delw.png';
-import JobTopBar from '../../components/JobTopBar';
 
 
 const ResumeForm = () => {
@@ -132,179 +131,176 @@ const ResumeForm = () => {
 
 
     return (
-        <>
-            <JobTopBar />
-            <FormContainer>
-                <Title>이력서 작성</Title>
-                <Form>
-                    <InputGroup>
-                        <Input type="text" placeholder="이력서 제목을 입력해주세요." />
-                        <Input type="text" placeholder="이력서에 대한 간단한 설명을 입력해주세요." />
-                    </InputGroup>
+        <FormContainer>
+            <Title>이력서 작성</Title>
+            <Form>
+                <InputGroup>
+                    <Input type="text" placeholder="이력서 제목을 입력해주세요." />
+                    <Input type="text" placeholder="이력서에 대한 간단한 설명을 입력해주세요." />
+                </InputGroup>
 
-                    <Divider />
+                <Divider />
 
-                    <ContactRow>
-                        <ContactInfo>
-                            <UserNameDisplay>김세영</UserNameDisplay>
+                <ContactRow>
+                    <ContactInfo>
+                        <UserNameDisplay>김세영</UserNameDisplay>
 
-                            <InfoField>
-                                <Icon src={email ? BemailIcon : emailIcon} alt="이메일 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
-                                    placeholder="이메일을 입력해주세요."
-                                    value={email}
-                                    onChange={handleInputChange(setEmail)}
-                                />
-                            </InfoField>
+                        <InfoField>
+                            <Icon src={email ? BemailIcon : emailIcon} alt="이메일 아이콘" />
+                            <InfoFieldInput 
+                                type="text" 
+                                placeholder="이메일을 입력해주세요."
+                                value={email}
+                                onChange={handleInputChange(setEmail)}
+                            />
+                        </InfoField>
 
-                            <InfoField>
-                                <Icon src={birthDate ? BbirthIcon : birthIcon} alt="생년월일 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
-                                    placeholder="생년월일을 입력해주세요."
-                                    value={birthDate}
-                                    onChange={handleInputChange(setBirthDate)}
-                                />
-                            </InfoField>
+                        <InfoField>
+                            <Icon src={birthDate ? BbirthIcon : birthIcon} alt="생년월일 아이콘" />
+                            <InfoFieldInput 
+                                type="text" 
+                                placeholder="생년월일을 입력해주세요."
+                                value={birthDate}
+                                onChange={handleInputChange(setBirthDate)}
+                            />
+                        </InfoField>
 
-                            <InfoField>
-                                <Icon src={experience ? BworkIcon : workIcon} alt="경력 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
-                                    placeholder="총 경력을 입력해주세요."
-                                    value={experience}
-                                    onChange={handleInputChange(setExperience)}
-                                />
-                            </InfoField>
+                        <InfoField>
+                            <Icon src={experience ? BworkIcon : workIcon} alt="경력 아이콘" />
+                            <InfoFieldInput 
+                                type="text" 
+                                placeholder="총 경력을 입력해주세요."
+                                value={experience}
+                                onChange={handleInputChange(setExperience)}
+                            />
+                        </InfoField>
 
-                            <InfoField>
-                                <Icon src={phoneNumber ? BpnumberIcon : pnumberIcon} alt="전화번호 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
-                                    placeholder="전화번호를 입력해주세요."
-                                    value={phoneNumber}
-                                    onChange={handleInputChange(setPhoneNumber)}
-                                />
-                            </InfoField>
-                        </ContactInfo>
-                        
-                        {photoPreview ? (
-                            <PreviewContainer>
-                                <PreviewImage src={photoPreview} alt="미리보기" />
-                            </PreviewContainer>
-                        ) : (
-                            <PhotoUpload onClick={handlePhotoClick}>
-                                <img src={addPhotoIcon} alt="사진 추가 아이콘" />
-                                <p>사진 추가</p>
-                                <input
-                                    id="photoUploadInput"
-                                    type="file"
-                                    style={{ display: "none" }}
-                                    accept="image/*"
-                                    onChange={handlePhotoChange}
-                                />
-                            </PhotoUpload>
-                        )}
-                    </ContactRow>
+                        <InfoField>
+                            <Icon src={phoneNumber ? BpnumberIcon : pnumberIcon} alt="전화번호 아이콘" />
+                            <InfoFieldInput 
+                                type="text" 
+                                placeholder="전화번호를 입력해주세요."
+                                value={phoneNumber}
+                                onChange={handleInputChange(setPhoneNumber)}
+                            />
+                        </InfoField>
+                    </ContactInfo>
+                    
+                    {photoPreview ? (
+                        <PreviewContainer>
+                            <PreviewImage src={photoPreview} alt="미리보기" />
+                        </PreviewContainer>
+                    ) : (
+                        <PhotoUpload onClick={handlePhotoClick}>
+                            <img src={addPhotoIcon} alt="사진 추가 아이콘" />
+                            <p>사진 추가</p>
+                            <input
+                                id="photoUploadInput"
+                                type="file"
+                                style={{ display: "none" }}
+                                accept="image/*"
+                                onChange={handlePhotoChange}
+                            />
+                        </PhotoUpload>
+                    )}
+                </ContactRow>
 
-                    <SelectContainer>
-                        <Label>희망 근무 지역</Label>
-                        <SelectRow>
-                            <Select onChange={handleRegionChange} value={selectedRegion} color={selectedRegion ? '#000' : '#BABABA'}>
-                                <option value="">지역</option>
-                                {Object.keys(cities).map((region) => (
-                                    <option key={region} value={region}>{region}</option>
-                                ))}
-                            </Select>
-                            <Select onChange={handleDistrictChange} value={selectedDistrict} color={selectedDistrict ? '#000' : '#BABABA'}>
-                                <option value="">행정구역</option>
-                                {districts.map((district) => (
-                                    <option key={district} value={district}>{district}</option>
-                                ))}
-                            </Select>
-                            <AddButton onClick={handleAddLocation}>등록</AddButton>
-                        </SelectRow>
-                        <LocationTags>
-                            {desiredLocations.map((location, index) => (
-                                <LocationTag key={index}>
-                                    {location}
-                                    <DeleteButton onClick={() => handleRemoveLocation(location)}>
+                <SelectContainer>
+                    <Label>희망 근무 지역</Label>
+                    <SelectRow>
+                        <Select onChange={handleRegionChange} value={selectedRegion} color={selectedRegion ? '#000' : '#BABABA'}>
+                            <option value="">지역</option>
+                            {Object.keys(cities).map((region) => (
+                                <option key={region} value={region}>{region}</option>
+                            ))}
+                        </Select>
+                        <Select onChange={handleDistrictChange} value={selectedDistrict} color={selectedDistrict ? '#000' : '#BABABA'}>
+                            <option value="">행정구역</option>
+                            {districts.map((district) => (
+                                <option key={district} value={district}>{district}</option>
+                            ))}
+                        </Select>
+                        <AddButton onClick={handleAddLocation}>등록</AddButton>
+                    </SelectRow>
+                    <LocationTags>
+                        {desiredLocations.map((location, index) => (
+                            <LocationTag key={index}>
+                                {location}
+                                <DeleteButton onClick={() => handleRemoveLocation(location)}>
+                                <img src={Delw} alt="삭제 아이콘" />
+                                </DeleteButton>
+                            </LocationTag>
+                        ))}
+                    </LocationTags>
+                </SelectContainer>
+
+                <InputContainer>
+                    <Label>간단 소개</Label>
+                    <InputContainerInput type="text" placeholder="간략하게 요약해서 3~5줄의 읽기 쉬운 내용으로 작성해주세요." />
+                </InputContainer>
+
+                <InputContainer>
+                    <Label>개발 직무</Label>
+                    <InputRow>
+                        <InputContainerInput 
+                            type="text" 
+                            placeholder="직무를 입력해주세요."
+                            value={currentJobRole}
+                            onChange={(e) => setCurrentJobRole(e.target.value)}
+                        />
+                        <AddButton2 onClick={handleAddJobRole}>등록</AddButton2>
+                    </InputRow>
+                    <LocationTags>
+                        {jobRoles.map((role, index) => (
+                            <LocationTag key={index}>
+                                {role}
+                                <DeleteButton onClick={() => handleRemoveJobRole(role)}>
                                     <img src={Delw} alt="삭제 아이콘" />
-                                    </DeleteButton>
-                                </LocationTag>
-                            ))}
-                        </LocationTags>
-                    </SelectContainer>
+                                </DeleteButton>
+                            </LocationTag>
+                        ))}
+                    </LocationTags>
+                </InputContainer>
 
-                    <InputContainer>
-                        <Label>간단 소개</Label>
-                        <InputContainerInput type="text" placeholder="간략하게 요약해서 3~5줄의 읽기 쉬운 내용으로 작성해주세요." />
-                    </InputContainer>
+                <InputContainer>
+                    <Label>기술스택(업무 툴/스킬)</Label>
+                    <InputRow>
+                        <InputContainerInput 
+                            type="text" 
+                            placeholder="기술스택을 등록해주세요."
+                            value={currentSkill}
+                            onChange={(e) => setCurrentSkill(e.target.value)}
+                        />
+                        <AddButton2 onClick={handleAddSkill}>등록</AddButton2>
+                    </InputRow>
+                    <LocationTags>
+                        {skills.map((skill, index) => (
+                            <LocationTag key={index}>
+                                {skill}
+                                <DeleteButton onClick={() => handleRemoveSkill(skill)}>
+                                    <img src={Delw} alt="삭제 아이콘" />
+                                </DeleteButton>
+                            </LocationTag>
+                        ))}
+                    </LocationTags>
+                </InputContainer>
 
-                    <InputContainer>
-                        <Label>개발 직무</Label>
-                        <InputRow>
-                            <InputContainerInput 
-                                type="text" 
-                                placeholder="직무를 입력해주세요."
-                                value={currentJobRole}
-                                onChange={(e) => setCurrentJobRole(e.target.value)}
-                            />
-                            <AddButton2 onClick={handleAddJobRole}>등록</AddButton2>
-                        </InputRow>
-                        <LocationTags>
-                            {jobRoles.map((role, index) => (
-                                <LocationTag key={index}>
-                                    {role}
-                                    <DeleteButton onClick={() => handleRemoveJobRole(role)}>
-                                        <img src={Delw} alt="삭제 아이콘" />
-                                    </DeleteButton>
-                                </LocationTag>
-                            ))}
-                        </LocationTags>
-                    </InputContainer>
-
-                    <InputContainer>
-                        <Label>기술스택(업무 툴/스킬)</Label>
-                        <InputRow>
-                            <InputContainerInput 
-                                type="text" 
-                                placeholder="기술스택을 등록해주세요."
-                                value={currentSkill}
-                                onChange={(e) => setCurrentSkill(e.target.value)}
-                            />
-                            <AddButton2 onClick={handleAddSkill}>등록</AddButton2>
-                        </InputRow>
-                        <LocationTags>
-                            {skills.map((skill, index) => (
-                                <LocationTag key={index}>
-                                    {skill}
-                                    <DeleteButton onClick={() => handleRemoveSkill(skill)}>
-                                        <img src={Delw} alt="삭제 아이콘" />
-                                    </DeleteButton>
-                                </LocationTag>
-                            ))}
-                        </LocationTags>
-                    </InputContainer>
-
-                    <InputContainer>
-                        <Label>이력서 / 자기소개서 등록</Label>
-                        <FileUploadContainer>
-                            <FileUploadInput ref={fileUploadInputRef} type="text" placeholder="이력서 및 자기소개서 파일을 등록해주세요." readOnly />
-                            <FileInputLabel>
-                                <img src={addPhotoIcon} alt="파일 추가 아이콘" />
-                                파일 등록
-                                <FileInput type="file"  onChange={handleFileChange} multiple/>
-                            </FileInputLabel>
-                        </FileUploadContainer>
-                    </InputContainer>
-                </Form>
-                <ButtonContainer>
-                    <SaveButton>저장하기</SaveButton>
-                </ButtonContainer>
-            </FormContainer>
-        </>
+                <InputContainer>
+                    <Label>이력서 / 자기소개서 등록</Label>
+                    <FileUploadContainer>
+                        <FileUploadInput ref={fileUploadInputRef} type="text" placeholder="이력서 및 자기소개서 파일을 등록해주세요." readOnly />
+                        <FileInputLabel>
+                            <img src={addPhotoIcon} alt="파일 추가 아이콘" />
+                            파일 등록
+                            <FileInput type="file"  onChange={handleFileChange} multiple/>
+                        </FileInputLabel>
+                    </FileUploadContainer>
+                </InputContainer>
+            </Form>
+            <ButtonContainer>
+                <SaveButton>저장하기</SaveButton>
+            </ButtonContainer>
+        </FormContainer>
     );
 };
 

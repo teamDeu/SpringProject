@@ -7,6 +7,7 @@ import JobDetail from './container/jobPosting/JobDetail';
 import Resume from './container/Resume';
 import MyResume from './container/Resume/MyResume';
 import ResumeForm from './container/Resume/ResumeForm';
+import EditResume from './container/Resume/EditResume';
 import Main from './container/Main';
 import PersonalMain from './container/Main/PersonalMain';
 
@@ -80,6 +81,7 @@ function App() {
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
+            <Route path="/editresume/:id" element={<EditResume />} />
             <Route path="findpwd" element={<Findpwd/>}/>
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="basic" element={<Basic/>}/>

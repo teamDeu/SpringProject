@@ -68,6 +68,114 @@ const JobDetail = () => {
             },
         
         },
+        3: {
+            title: "온라인 AMD 채용",
+            company: "Parity",
+            logo: "https://via.placeholder.com/50",
+            region: "서울권역",
+            experience: "1년",
+            education: "대졸 이상",
+            deadline: "11.29(수)",
+            location: "서울 중구 을지로1가 100",
+            description: "AMD와 관련된 업무...",
+            skills: ["JavaScript", "React", "CSS"],
+            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
+            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
+            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
+            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
+            companyDescription: {
+                images: [
+                    "https://via.placeholder.com/600x400?text=GNA+Company",
+                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
+                ],
+                description: [
+                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
+                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
+                ],
+            },
+        
+        },
+        4: {
+            title: "온라인 AMD 채용",
+            company: "Parity",
+            logo: "https://via.placeholder.com/50",
+            region: "서울권역",
+            experience: "1년",
+            education: "대졸 이상",
+            deadline: "11.29(수)",
+            location: "서울 중구 을지로1가 100",
+            description: "AMD와 관련된 업무...",
+            skills: ["JavaScript", "React", "CSS"],
+            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
+            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
+            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
+            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
+            companyDescription: {
+                images: [
+                    "https://via.placeholder.com/600x400?text=GNA+Company",
+                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
+                ],
+                description: [
+                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
+                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
+                ],
+            },
+        
+        },
+        5: {
+            title: "온라인 AMD 채용",
+            company: "Parity",
+            logo: "https://via.placeholder.com/50",
+            region: "서울권역",
+            experience: "1년",
+            education: "대졸 이상",
+            deadline: "11.29(수)",
+            location: "서울 중구 을지로1가 100",
+            description: "AMD와 관련된 업무...",
+            skills: ["JavaScript", "React", "CSS"],
+            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
+            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
+            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
+            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
+            companyDescription: {
+                images: [
+                    "https://via.placeholder.com/600x400?text=GNA+Company",
+                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
+                ],
+                description: [
+                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
+                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
+                ],
+            },
+        
+        },
+        6: {
+            title: "온라인 AMD 채용",
+            company: "Parity",
+            logo: "https://via.placeholder.com/50",
+            region: "서울권역",
+            experience: "1년",
+            education: "대졸 이상",
+            deadline: "11.29(수)",
+            location: "서울 중구 을지로1가 100",
+            description: "AMD와 관련된 업무...",
+            skills: ["JavaScript", "React", "CSS"],
+            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
+            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
+            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
+            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
+            companyDescription: {
+                images: [
+                    "https://via.placeholder.com/600x400?text=GNA+Company",
+                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
+                ],
+                description: [
+                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
+                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
+                ],
+            },
+        
+        },
     };
 
     const { jobId } = useParams();

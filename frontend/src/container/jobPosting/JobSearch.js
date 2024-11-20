@@ -522,9 +522,11 @@ const JobSearch = ({ onJobSelect }) => {
                 </SearchContent>
                 
                 <SearchBar isLocationDropdownOpen={isLocationDropdownOpen} isJobDropdownOpen={isJobDropdownOpen}>
-                    {!selectedExperienceText && experienceOptions.length === 0 && 
+                    {(!selectedExperienceText && experienceOptions.length === 0 && 
                     !selectedEducationText && educationOptions.length === 0 && 
-                    (
+                    Object.keys(selectedLocations).length === 0 && 
+                    selectedJobs.length === 0 && 
+                    selectedSkills.length === 0) && (
                         <Message>검색 조건을 설정해 주세요.</Message>
                     )}
 
