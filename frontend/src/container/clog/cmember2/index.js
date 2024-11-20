@@ -83,7 +83,7 @@ const Cmember2 = () => {
             return;
         }
 
-        axios.get(`http://localhost:8080/cmember/check-duplicate?id=${formData.id}`)
+        axios.get(`http://localhost:8080/check-duplicate_company?id=${formData.id}`)
             .then((response) => {
                 if (response.status === 200) {
                     alert('아이디 사용 가능');
@@ -106,7 +106,7 @@ const Cmember2 = () => {
             return;
         }
 
-        axios.post('http://localhost:8080/api/request', { phone: formData.manager_phone })
+        axios.post('http://localhost:8080/api/request_company', { phone: formData.manager_phone })
             .then(() => {
                 alert('인증번호가 발송되었습니다.');
             })
@@ -121,7 +121,7 @@ const Cmember2 = () => {
             return;
         }
 
-        axios.post('http://localhost:8080/api/verify-code', {
+        axios.post('http://localhost:8080/api/verify-code_company', {
             phone: formData.manager_phone,
             code: formData.verificationCode
         })
@@ -153,15 +153,15 @@ const Cmember2 = () => {
             return;
         }
 
-        axios.post('http://localhost:8080/api/cmember/register', {
+        axios.post('http://localhost:8080/api/register_company', {
             id: formData.id,
             pwd: formData.pwd,
-            manager_name: formData.manager_name,
-            manager_phone: formData.manager_phone
+            managerName: formData.manager_name,
+            managerPhone: formData.manager_phone
         })
         .then(() => {
             alert('회원가입 성공');
-            navigate('/login'); // 로그인 페이지로 이동
+            navigate('/clogin'); // 로그인 페이지로 이동
         })
         .catch((error) => {
             console.error("회원가입 오류: ", error);
