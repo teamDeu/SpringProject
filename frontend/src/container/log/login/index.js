@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../../../components/log/Tabs';
 import InputField from '../../../components/log/InputField';
@@ -41,15 +41,26 @@ const Form = styled.div`
 `;
 
 const Index = () => {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         id: '',
         password: '',
         rememberLogin: false,
-        saveId: false,
-        simpleLogin: false,
+        saveId: false, // 아이디 저장 체크박스
+        simpleLogin: false, // 관리자 로그인 체크박스
     });
-    const [activeTab, setActiveTab] = useState('individual');
-    const navigate = useNavigate();
+
+    // 페이지 로드 시 localStorage에서 아이디 불러오기
+    useEffect(() => {
+        const savedId = localStorage.getItem('savedId');
+        if (savedId) {
+            setForm((prevForm) => ({
+                ...prevForm,
+                id: savedId,
+                saveId: true, // 저장된 아이디가 있다면 체크박스도 선택 상태로
+            }));
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -59,46 +70,66 @@ const Index = () => {
         }));
     };
 
-const handleLogin = async () => {
-    if (!form.id || !form.password) {
-        alert('아이디와 비밀번호를 입력해주세요.');
-        return;
-    }
-
-    try {
-        const response = await axios.post('http://localhost:8080/api/login', {
-            id: form.id,
-            password: form.password,
-        });
-
-        if (response.status === 200) {
-            alert('로그인 성공');
-            localStorage.setItem('userId', form.id); // userId 저장
-
-            // 기본 정보 입력 여부 확인
-            const checkBasicResponse = await axios.get(
-                `http://localhost:8080/api/check-user-basic?id=${form.id}`
-            );
-
-            if (checkBasicResponse.data) {
-                // 기본 정보가 입력되어 있다면 대시보드로 이동
-                navigate('/dashboard');
-            } else {
-                // 기본 정보가 입력되어 있지 않다면 basic 페이지로 이동
-                navigate('/basic');
-            }
+    const handleLogin = async () => {
+        if (!form.id || !form.password) {
+            alert('아이디와 비밀번호를 입력해주세요.');
+            return;
         }
-    } catch (error) {
-        console.error('로그인 실패: ', error);
-        alert('로그인 실패. 아이디와 비밀번호를 확인해주세요.');
-    }
-};
+
+        try {
+            // 관리자 로그인
+            if (form.simpleLogin) {
+                const response = await axios.post('http://localhost:8080/api/admin-login', {
+                    admin_id: form.id,
+                    admin_pwd: form.password,
+                });
+                if (response.status === 200) {
+                    alert('관리자 로그인 성공');
+                    localStorage.setItem('adminId', form.id); // adminId 저장
+                    navigate('/amember');
+                }
+                return;
+            }
+
+            // 일반 사용자 로그인
+            const response = await axios.post('http://localhost:8080/api/login', {
+                id: form.id,
+                password: form.password,
+            });
+
+            if (response.status === 200) {
+                alert('로그인 성공');
+                localStorage.setItem('userId', form.id); // userId 저장
+
+                // 아이디 저장 옵션 처리
+                if (form.saveId) {
+                    localStorage.setItem('savedId', form.id); // 아이디 저장
+                } else {
+                    localStorage.removeItem('savedId'); // 저장된 아이디 제거
+                }
+
+                // 기본 정보 입력 여부 확인
+                const checkBasicResponse = await axios.get(
+                    `http://localhost:8080/api/check-user-basic?id=${form.id}`
+                );
+
+                if (checkBasicResponse.data) {
+                    navigate('/dashboard'); // 기본 정보 입력 완료 시
+                } else {
+                    navigate('/basic'); // 기본 정보 입력 미완료 시
+                }
+            }
+        } catch (error) {
+            console.error('로그인 실패: ', error);
+            alert('로그인 실패. 아이디와 비밀번호를 확인해주세요.');
+        }
+    };
 
     return (
         <Container>
             <Title>구인구직</Title>
             <Form>
-                <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
+                <Tabs activeTab="individual" />
                 <InputField
                     type="text"
                     placeholder="아이디"
@@ -124,7 +155,7 @@ const handleLogin = async () => {
                 <LoginButton type="button" onClick={handleLogin}>
                     로그인
                 </LoginButton>
-                <Links/>
+                <Links />
                 <SocialButtons />
             </Form>
         </Container>

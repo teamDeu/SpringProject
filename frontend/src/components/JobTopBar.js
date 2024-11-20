@@ -22,8 +22,8 @@ const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick}) => {
                         <NavItem>
                             <NavButton>채용 정보</NavButton>
                             <DropdownContent>
+                        
                                 <DropdownButton onClick={onJobSearchClick}>지역/산업별 채용 정보</DropdownButton>
-                                <DropdownButton>관심 채용 정보 보기</DropdownButton>
                             </DropdownContent>
                         </NavItem>
                         <NavItem>

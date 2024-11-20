@@ -19,6 +19,7 @@ import Heart from './img/heart.png';
 import Lo from './img/lo.png';
 import Eye from './img/eye.png';
 import Gstar from './img/gstar.png';
+import Skill from './img/skill.png';
 import { jobRoles, skillStacks } from './job';
 
 const regions = [
@@ -149,11 +150,9 @@ const regions = [
     }
 ];
 
-const JobSearch = () => {
-    const navigate = useNavigate();
-
+const JobSearch = ({ onJobSelect }) => {
     const handleCardClick = (id) => {
-        navigate(`/job-detail/${id}`);
+        onJobSelect(id); 
     };
 
     const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
@@ -521,7 +520,7 @@ const JobSearch = () => {
             <SearchBar isLocationDropdownOpen={isLocationDropdownOpen} isJobDropdownOpen={isJobDropdownOpen}>
                 {!selectedExperienceText && experienceOptions.length === 0 && 
                 !selectedEducationText && educationOptions.length === 0 && 
-                !selectedRegion && selectedCities.length === 0 && (
+                (
                     <Message>검색 조건을 설정해 주세요.</Message>
                 )}
 
@@ -589,7 +588,7 @@ const JobSearch = () => {
                     )}
                     {selectedSkills.length > 0 && (
                         <SearchItem>
-                            <img src={Gjob} alt="스킬 선택 아이콘" />
+                            <img src={Skill} alt="스킬 선택 아이콘" />
                             <span>스킬 선택 {'>'} {selectedSkills.join(', ')}</span>
                             <RemoveButton onClick={() => setSelectedSkills([])}>✕</RemoveButton>
                         </SearchItem>
@@ -1191,7 +1190,7 @@ const Message = styled.p`
     font-size: 18px;
     color: #746e6e;
     margin-left: 350px;
-    margin-top:  ${({ isOpen }) => (isOpen ? '275px' : '75px')};
+    margin-top:  ${({ isOpen }) => (isOpen ? '300px' : '100px')};
     text-align: center;
 `;
 
