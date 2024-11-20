@@ -7,7 +7,8 @@ import JobDetail from './container/jobPosting/JobDetail';
 import Resume from './container/Resume';
 import MyResume from './container/Resume/MyResume';
 import ResumeForm from './container/Resume/ResumeForm';
-
+import Main from './container/Main';
+import PersonalMain from './container/Main/PersonalMain';
 
 import Home from './container';
 import Test from './container/test';
@@ -40,7 +41,7 @@ import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 
-import InputCompanyInfo from './container/company/InputCompanyInfo'
+import InputCompanyInfo from './container/company/inputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
@@ -67,6 +68,8 @@ function App() {
             <Route path="areview" element={<Areview/>}/>
             <Route path="faqwrite" element={<Faqwrite/>}/>
             <Route path="Awrite" element={<Awrite/>}/>
+            <Route path="main" element={<Main/>}/>
+            <Route path="personalmain" element={<PersonalMain/>}/>
             <Route path="jobposting" element={<JobPosting/>}/>
             <Route path="jobSearch" element={<JobSearch />} />
             <Route path="/job-detail/:id" element={<JobDetail />} />

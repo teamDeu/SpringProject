@@ -19,7 +19,6 @@
     "styled-components": "^6.1.13",
     "styled-reset": "^4.5.2",
     "web-vitals": "^2.1.4"
-    
   },
   "scripts": {
     "start": "react-scripts start",
