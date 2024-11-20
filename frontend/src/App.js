@@ -49,7 +49,7 @@ import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 
-import InputCompanyInfo from './container/company/InputCompanyInfo'
+import InputCompanyInfo from './container/company/inputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
@@ -91,11 +91,10 @@ function App() {
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
-<<<<<<< HEAD
+
             <Route path="/editresume/:id" element={<EditResume />} />
             <Route path="findpwd" element={<Findpwd/>}/>
-=======
->>>>>>> babfc5910f43d39b65431d49c1e5948ff1c7b79a
+
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="crpwd" element={<Crpwd/>}/>
             <Route path="basic" element={<Basic/>}/>
