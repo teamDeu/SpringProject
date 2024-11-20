@@ -30,25 +30,21 @@ public class SmsService {
     }
 
     public String sendVerificationCode(String phone) {
+        System.out.println("[SmsService] 발송 요청 전화번호: " + phone); // 전화번호 출력
         String code = generateVerificationCode();
-        System.out.println(senderPhone);
-        System.out.println(phone);
-        System.out.println("Generated Code: " + code);
-        // 메시지 객체 생성 및 설정
+        System.out.println("[SmsService] 생성된 인증번호: " + code); // 생성된 인증번호 출력
+
         Message message = new Message();
         message.setFrom(senderPhone);
         message.setTo(phone);
         message.setText("[구인구직] 인증번호는 " + code + " 입니다.");
 
         try {
-            // 메시지 전송
-            messageService.send(message);
-            System.out.println("메시지 전송 성공");
-            verificationStorage.put(phone, code); // 발송된 인증번호 저장
-        }
-         catch (Exception e) {
-            // 기타 예외 처리
-            System.err.println("메시지 전송 중 오류 발생: " + e.getMessage());
+            messageService.send(message); // SMS 전송
+            System.out.println("[SmsService] 메시지 전송 성공");
+            verificationStorage.put(phone, code); // 인증번호 저장
+        } catch (Exception e) {
+            System.err.println("[SmsService] 메시지 전송 실패: " + e.getMessage());
             e.printStackTrace();
         }
 

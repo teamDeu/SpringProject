@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate import
-import Tabs from '../../../components/log/Tabs';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import InputField from '../../../components/log/InputField2';
 import LoginButton from '../../../components/log/LoginButton';
 import SmallButton from '../../../components/log/SmallButton';
+import Modal from '../../../components/log/Modal'; // Modal 컴포넌트 import
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -61,77 +62,126 @@ const InputWrapper = styled.div`
     margin-right: 2px;
 `;
 
-const LinkText = styled.div`
-    text-align: center;
-    font-size: 14px;
-    color: #888;
-    margin-top: 20px;
-`;
-
-const Link = styled.span`
-    font-weight: bold;
-    cursor: pointer;
-    margin: 0 5px;
-    text-decoration: underline;
-    &:hover {
-        color: #003366;
-    }
-`;
-
 const Index = () => {
-    const navigate = useNavigate(); // useNavigate 훅 사용
+    const navigate = useNavigate();
+    const [form, setForm] = useState({
+        name: '',
+        phone: '',
+        verificationCode: '',
+        verified: false,
+    });
+    const [foundId, setFoundId] = useState(null); // 찾은 아이디 저장
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
 
-    const handleLinkClick = (type) => {
-        switch (type) {
-            case 'login':
-                navigate('/login'); // 로그인 페이지로 이동
-                break;
-            case 'signup':
-                navigate('/member'); // 회원가입 페이지로 이동
-                break;
-            case 'findPassword':
-                navigate('/findpwd'); // 비밀번호 찾기 페이지로 이동
-                break;
-            default:
-                break;
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
+
+    const sendVerificationCode = async () => {
+        try {
+            await axios.post('http://localhost:8080/api/find-id/request-verification', {
+                phone: form.phone,
+            });
+            alert('인증번호가 발송되었습니다.');
+        } catch (error) {
+            console.error('인증번호 발송 실패:', error);
+            alert('인증번호 발송에 실패했습니다.');
         }
+    };
+
+    const verifyCode = async () => {
+        try {
+            const response = await axios.post(
+                `http://localhost:8080/api/find-id/verify-code?phone=${form.phone}&code=${form.verificationCode}`
+            );
+            if (response.data) {
+                alert('인증 성공');
+                setForm((prevForm) => ({ ...prevForm, verified: true }));
+            } else {
+                alert('인증 실패');
+            }
+        } catch (error) {
+            console.error('인증 실패:', error);
+            alert('인증에 실패했습니다.');
+        }
+    };
+
+    const findId = async () => {
+        if (!form.verified) {
+            alert('먼저 전화번호 인증을 완료해주세요.');
+            return;
+        }
+        try {
+            const response = await axios.get(
+                `http://localhost:8080/api/find-id/search?name=${form.name}&phone=${form.phone}`
+            );
+            setFoundId(response.data); // 아이디 저장
+            setIsModalOpen(true); // 모달 열기
+        } catch (error) {
+            console.error('아이디 찾기 실패:', error);
+            alert('일치하는 사용자 정보를 찾을 수 없습니다.');
+        }
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // 모달 닫기
     };
 
     return (
         <Container>
             <Title>구인구직</Title>
             <FormContainer>
-                <Tabs />
                 <InnerForm>
                     <FormRow>
-                        <InputField placeholder="이름" />
+                        <InputField
+                            name="name"
+                            placeholder="이름"
+                            value={form.name}
+                            onChange={handleInputChange}
+                        />
                     </FormRow>
                     <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="전화번호" />
+                                <InputField
+                                    name="phone"
+                                    placeholder="전화번호"
+                                    value={form.phone}
+                                    onChange={handleInputChange}
+                                />
                             </InputWrapper>
-                            <SmallButton>인증번호</SmallButton>
+                            <SmallButton onClick={sendVerificationCode}>인증번호</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
                         <InputWithButton>
                             <InputWrapper>
-                                <InputField placeholder="인증번호" />
+                                <InputField
+                                    name="verificationCode"
+                                    placeholder="인증번호"
+                                    value={form.verificationCode}
+                                    onChange={handleInputChange}
+                                />
                             </InputWrapper>
-                            <SmallButton>확인</SmallButton>
+                            <SmallButton onClick={verifyCode}>확인</SmallButton>
                         </InputWithButton>
                     </FormRow>
                     <FormRow>
-                        <LoginButton>아이디 찾기</LoginButton>
+                        <LoginButton onClick={findId}>아이디 찾기</LoginButton>
                     </FormRow>
-                    <LinkText>
-                        <Link onClick={() => handleLinkClick('login')}>로그인</Link> | 
-                        <Link onClick={() => handleLinkClick('signup')}>회원가입</Link> | 
-                        <Link onClick={() => handleLinkClick('findPassword')}>비밀번호 찾기</Link>
-                    </LinkText>
                 </InnerForm>
             </FormContainer>
+            {isModalOpen && (
+                <Modal
+                    title="아이디 찾기 결과"
+                    content={`회원님의 아이디는 "${foundId}" 입니다.`}
+                    onClose={closeModal}
+                />
+            )}
         </Container>
     );
 };

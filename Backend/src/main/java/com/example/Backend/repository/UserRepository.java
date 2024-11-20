@@ -1,8 +1,11 @@
 package com.example.Backend.repository;
 
-import com.example.Backend.model.Users;
+import com.example.Backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<Users, String> {
+import java.util.Optional;
 
+public interface UserRepository extends JpaRepository<User, String> {
+    Optional<User> findByNameAndPhone(String name, String phone);
+    Optional<User> findByIdAndPhone(String id, String phone);
 }
