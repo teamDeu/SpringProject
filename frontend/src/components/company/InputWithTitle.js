@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import InputTitle from './InputTitle';
 
 
-function InputWithTitle({title,placeholder}) {
+function InputWithTitle({title,placeholder,value,onChange,type}) {
     return(
         <Container>
             <InputTitle>{title}</InputTitle>
-            <Input placeholder={placeholder}></Input>
+            <Input type = {type} value = {value} onChange = {onChange} placeholder={placeholder}></Input>
         </Container>
     );
 }

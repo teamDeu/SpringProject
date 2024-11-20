@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 
-const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick }) => {
+const JobTopBar = ({ onResumeClick, onMyResumeClick, onJobSearchClick}) => {
     const location = useLocation();
 
     return (

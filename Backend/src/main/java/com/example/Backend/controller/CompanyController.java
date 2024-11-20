@@ -17,7 +17,7 @@ public class CompanyController {
     CompanyService companyService = new CompanyService();
 
 
-    @GetMapping("/api/data")
+    @GetMapping("/api/companies")
     public ResponseEntity<List<Company>> getData() {
         // 데이터 반환 로직
         return ResponseEntity.ok(companyService.getAllCompany());
