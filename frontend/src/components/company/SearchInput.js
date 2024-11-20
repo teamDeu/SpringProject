@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import InputArrayTitle from './InputArrayTitle'
 import TextButton from '../../components/common/TextButton'
 
 const searchIcon = process.env.PUBLIC_URL + '/icons/search.png';
-const SearchInput = ({title,data,placeholder}) => {
+const SearchInput = ({title,data,placeholder,onChange}) => {
   const [searchData , setSearchData] = useState(data);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedData , setSelectedData] = useState([]);
   const [inputValue , setInputValue] = useState("");
-  const onClickItem = (img,name) => {
-    if(selectedData.findIndex((item) => item.name == name) === -1){
-      setSelectedData([...selectedData,{img,name}])
+  const onClickItem = (getitem) => {
+    if(selectedData.findIndex((item) => item.name == getitem.name) === -1){
+      setSelectedData([...selectedData,getitem])
     }
     else{
       alert("이미 선택된 기술스택입니다.")
@@ -25,9 +25,12 @@ const SearchInput = ({title,data,placeholder}) => {
   }
 
   const onClickDeleteButton = (item) => {
-    console.log(item);
     setSelectedData(selectedData.filter((value) => value.name != item.name));
   }
+
+  useEffect(() =>{
+    onChange(selectedData);
+  },[selectedData])
   return (
     <Container>
       <InputArrayTitle>{title}</InputArrayTitle>
@@ -47,7 +50,7 @@ const SearchInput = ({title,data,placeholder}) => {
           <SelectBox>
           {searchData.map((item,index) => <SelectItem onClick = {() => {
             setIsSearching(false)
-            onClickItem(item.img,item.name)}} key ={`selcectItem-${index}`}><Icon src ={item.img}/>{item.name}</SelectItem>)}
+            onClickItem(item)}} key ={`selcectItem-${index}`}><Icon src ={item.img}/>{item.name}</SelectItem>)}
         </SelectBox>)}
       </InputSection>
     </Container>

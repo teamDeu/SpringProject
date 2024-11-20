@@ -2,7 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import InputArrayTitle from './InputArrayTitle'
 import PhotoInput from './PhotoInput'
-const InputWithPhoto = ({title}) => {
+const InputWithPhoto = ({title,updateValue}) => {
+    const handleChange = (e) =>{
+        updateValue(e.target.value);
+    }
   return (
     <Container>
         <InputArrayTitle>{title}</InputArrayTitle>
@@ -12,7 +15,9 @@ const InputWithPhoto = ({title}) => {
         <TextInput onInput = {(e) => {
             e.target.style.height = "auto"; // 높이를 초기화
             e.target.style.height = e.target.scrollHeight + "px"; // 내용에 맞게 높이 조정
-        }} placeholder='기업 소개글을 작성해주세요'/>
+        }} 
+        onChange = {(e) => {handleChange(e)}}
+        placeholder='기업 소개글을 작성해주세요'/>
         </TextSection>
 
         </MainSection>
