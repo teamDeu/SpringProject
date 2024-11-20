@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Link 컴포넌트 추가
-import Tabs from '../../../components/log/Tabs';
 import SocialButtons from '../../../components/log/SocialButtons';
 import LoginButton from '../../../components/log/LoginButton'; // 기존 버튼 컴포넌트 사용
 import styled from 'styled-components';
@@ -77,7 +76,6 @@ const Index = () => {
         <Container>
             <Title>구인구직</Title>
             <Form>
-                <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
                 <Separator />
                 <div>소셜 계정으로 간편 로그인</div>
                 <SocialButtons />

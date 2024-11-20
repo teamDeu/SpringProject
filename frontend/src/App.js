@@ -15,6 +15,7 @@ import Test from './container/test';
 import Login from './container/log/login';
 import Member from './container/log/member';
 import Member2 from './container/log/member2';
+import Cmember2 from './container/clog/cmember2';
 import Findid from './container/log/findid';
 import Findpwd from './container/log/findpwd';
 import Rpwd from './container/log/rpwd';
@@ -37,6 +38,7 @@ import Mp5 from "./container/mypage/mp5";
 import Mp6 from "./container/mypage/mp6";
 import GlobalStyle from './GlobalStyles';
 import GlobalFont from './GlobalFont';
+import Test_Review_Write from './container/yangji/test_review_write'
 import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
@@ -60,6 +62,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="member" element={<Member/>}/>
             <Route path="member2" element={<Member2/>}/>
+            <Route path="cmember2" element={<Cmember2/>}/>
             <Route path="findid" element={<Findid/>}/>
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
@@ -88,6 +91,7 @@ function App() {
             <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
             <Route path="test_review_home1" element={<Test_Review_Home />} />
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
+            <Route path="test_review_home3" element={<Test_Review_Write />} />
             <Route path="myreview" element={<Myreview />} />
             <Route path="usersearch" element ={<UserSearch/>}/>
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>

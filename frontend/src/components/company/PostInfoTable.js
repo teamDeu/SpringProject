@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import InputArrayTitle from './InputArrayTitle'
 import styled from 'styled-components'
 import CustomCalendar from '../common/CustomCalender'
-import Calendar from 'react-calendar'
 const calendarIcon = process.env.PUBLIC_URL + '/icons/calender.png';
 
 const PostInfoTable = () => {

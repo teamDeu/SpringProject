@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HiddenBox from './hiddenbox'; // HiddenBox 컴포넌트를 가져옵니다.
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Container = styled.div`
     position: relative;
@@ -16,10 +17,10 @@ const OuterBox = styled.div`
     width: 100%;
     height: 153px;
     position: relative;
-    border-bottom: ${({ isHiddenBoxVisible }) => (isHiddenBoxVisible ? 'none' : '1px solid rgba(0, 0, 0, 0.3)')};
-    display: flex; /* Flexbox 레이아웃 */
-    align-items: center; /* 세로 중앙 정렬 */
-    padding: 0 20px; /* 양쪽 패딩 */
+    border-bottom: ${({ $isHiddenBoxVisible }) => ($isHiddenBoxVisible ? 'none' : '1px solid rgba(0, 0, 0, 0.3)')};
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
     box-sizing: border-box;
 `;
 
@@ -72,52 +73,58 @@ const ArrowIcon = styled.img`
     left: 1200px;
     top: 62px;
     cursor: pointer;
-    transform: ${({ isRotated }) => (isRotated ? 'rotate(180deg)' : 'rotate(0deg)')};
+    transform: ${({ $isRotated }) => ($isRotated ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 
-const TestBox = ({
-    companyName,
-    manufacturing,
-    period,
-    type,
-    status,
-    date,
-}) => {
-    const [isHiddenBoxVisible, setIsHiddenBoxVisible] = useState(false);
+const TestBox = () => {
+    const [data, setData] = useState([]); // 서버에서 가져온 데이터
+    const [visibleItems, setVisibleItems] = useState({}); // 각 아이템별로 HiddenBox 상태를 관리
 
-    const toggleHiddenBox = () => {
-        setIsHiddenBoxVisible((prev) => !prev);
+    const toggleHiddenBox = (id) => {
+        setVisibleItems((prev) => ({
+            ...prev,
+            [id]: !prev[id], // 아이템별로 상태를 토글
+        }));
     };
+
+    useEffect(() => {
+        // 서버에서 데이터를 가져오는 GET 요청
+        axios.get('http://localhost:8080/api/interview-reviews')
+            .then((response) => setData(response.data))
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
 
     return (
         <Container>
-            <OuterBox isHiddenBoxVisible={isHiddenBoxVisible}>
-                <CompanyName>{companyName}</CompanyName>
-                <JobDetails>
-                    {manufacturing} | {period} | {type}
-                </JobDetails>
-                <StatusBox>
-                    <StatusText status={status}>{status}</StatusText>
-                </StatusBox>
-                <DateText>{date}</DateText>
-                <ArrowIcon
-                    src="/img/arrow_bot.png"
-                    alt="Toggle Arrow"
-                    onClick={toggleHiddenBox}
-                    isRotated={isHiddenBoxVisible}
-                />
-            </OuterBox>
-            <HiddenBox
-                isVisible={isHiddenBoxVisible}
-                interviewType="직무 및 인성 면접"
-                interviewPeople="지원자 1명, 면접관 다수"
-                interviewQuestions={[
-                    "지원 동기와 본인의 장단점은 무엇인가요?",
-                    "이전에 겪었던 갈등 상황과 해결 방법은?",
-                    "회사를 선택한 이유는 무엇인가요?"
-                ]}
-                tips="준비한 답변을 자연스럽게 말하고, 회사에 대한 정보를 충분히 숙지하세요."
-            />
+            {data.map((item) => (
+                <div key={item.id}>
+                    <OuterBox $isHiddenBoxVisible={visibleItems[item.id]}>
+                        <CompanyName>{item.companyId}</CompanyName>
+                        <JobDetails>
+                            {item.jobCategoryId} | {item.interviewDate} | {item.experience}
+                        </JobDetails>
+                        <StatusBox>
+                            <StatusText status={item.interviewPassFail}>{item.interviewPassFail}</StatusText>
+                        </StatusBox>
+                        <DateText>{item.interviewRegisterDate}</DateText>
+                        <ArrowIcon
+                            src="/img/arrow_bot.png"
+                            alt="Toggle Arrow"
+                            onClick={() => toggleHiddenBox(item.id)}
+                            $isRotated={visibleItems[item.id]}
+                        />
+                    </OuterBox>
+                    {visibleItems[item.id] && (
+                        <HiddenBox
+                            isVisible={visibleItems[item.id]}
+                            interviewType={item.interviewType}
+                            interviewPeople={item.interviewNum}
+                            interviewQuestions={item.interviewQuestion}
+                            tips={item.interviewDetail}
+                        />
+                    )}
+                </div>
+            ))}
         </Container>
     );
 };

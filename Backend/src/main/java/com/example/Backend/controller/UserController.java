@@ -1,6 +1,8 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.model.Admin;
 import com.example.Backend.model.User;
+import com.example.Backend.repository.AdminRepository;
 import com.example.Backend.repository.UserRepository;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
@@ -24,6 +26,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AdminRepository adminRepository;
 
     // DTO 클래스
     public static class PhoneRequest {
@@ -222,6 +226,19 @@ public class UserController {
             return ResponseEntity.ok(hasBasicInfo); // 기본 정보가 모두 있는지 여부 반환
         }
         return ResponseEntity.badRequest().body(false);
+    }
+
+    @PostMapping("/api/admin-login")
+    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData) {
+        String adminId = loginData.get("admin_id");
+        String adminPwd = loginData.get("admin_pwd");
+
+        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+        if (adminOptional.isPresent() && adminOptional.get().getPassword().equals(adminPwd)) {
+            return ResponseEntity.ok("관리자 로그인 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
+        }
     }
 
 

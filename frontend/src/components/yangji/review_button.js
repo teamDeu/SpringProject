@@ -6,6 +6,7 @@ const ButtonContainer = styled.div`
     position: relative;
     box-sizing: border-box;
     font-family: 'Nanum Square Neo', sans-serif;
+    cursor: pointer;
 `;
 
 const ButtonBackground = styled.div`
@@ -33,9 +34,9 @@ const ButtonText = styled.div`
     text-align: center; /* 텍스트 중앙 정렬 */
 `;
 
-const ReviewButton = ({ text }) => {
+const ReviewButton = ({ text, onClick }) => {
     return (
-        <ButtonContainer>
+        <ButtonContainer onClick={onClick}>
             <ButtonBackground />
             <ButtonText>{text}</ButtonText>
         </ButtonContainer>

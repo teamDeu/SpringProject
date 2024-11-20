@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // useNavigate import
+import { useNavigate } from 'react-router-dom';
 import LoginButton from '../../../components/log/LoginButton';
 import InputField from '../../../components/log/InputField2';
 import SmallButton from '../../../components/log/SmallButton';
@@ -57,19 +57,18 @@ const InputWrapper = styled.div`
     flex: 1;
 `;
 
-const Index = () => {
+const Cmember2 = () => {
     const [formData, setFormData] = useState({
         id: '',
-        password: '',
+        pwd: '',
         confirmPassword: '',
-        name: '',
-        phone: '',
-        birthDate: '',
+        manager_name: '',
+        manager_phone: '',
         verificationCode: ''
     });
     const [isVerified, setIsVerified] = useState(false);
     const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
-    const navigate = useNavigate(); // useNavigate 인스턴스 생성
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         setFormData({
@@ -84,7 +83,7 @@ const Index = () => {
             return;
         }
 
-        axios.get(`http://localhost:8080/check-duplicate?id=${formData.id}`)
+        axios.get(`http://localhost:8080/cmember/check-duplicate?id=${formData.id}`)
             .then((response) => {
                 if (response.status === 200) {
                     alert('아이디 사용 가능');
@@ -102,12 +101,12 @@ const Index = () => {
     };
 
     const sendVerificationCode = () => {
-        if (!formData.phone) {
+        if (!formData.manager_phone) {
             alert('전화번호를 입력해주세요.');
             return;
         }
 
-        axios.post('http://localhost:8080/api/request', { phone: formData.phone })
+        axios.post('http://localhost:8080/api/request', { phone: formData.manager_phone })
             .then(() => {
                 alert('인증번호가 발송되었습니다.');
             })
@@ -117,13 +116,13 @@ const Index = () => {
     };
 
     const verifyCode = () => {
-        if (!formData.phone || !formData.verificationCode) {
+        if (!formData.manager_phone || !formData.verificationCode) {
             alert('전화번호와 인증번호를 입력해주세요.');
             return;
         }
 
         axios.post('http://localhost:8080/api/verify-code', {
-            phone: formData.phone,
+            phone: formData.manager_phone,
             code: formData.verificationCode
         })
         .then(() => {
@@ -149,17 +148,16 @@ const Index = () => {
             return;
         }
 
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.pwd !== formData.confirmPassword) {
             alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
             return;
         }
 
-        axios.post('http://localhost:8080/api/register', {
+        axios.post('http://localhost:8080/api/cmember/register', {
             id: formData.id,
-            password: formData.password,
-            name: formData.name,
-            phone: formData.phone,
-            birthDate: new Date(formData.birthDate).toISOString().split('T')[0]
+            pwd: formData.pwd,
+            manager_name: formData.manager_name,
+            manager_phone: formData.manager_phone
         })
         .then(() => {
             alert('회원가입 성공');
@@ -173,7 +171,7 @@ const Index = () => {
 
     return (
         <Container>
-            <Title>구인구직</Title>
+            <Title>기업 회원가입</Title>
             <FormContainer onSubmit={handleSubmit}>
                 <FormRow>
                     <InputWithButton>
@@ -191,10 +189,10 @@ const Index = () => {
 
                 <FormRow>
                     <InputField
-                        name="password"
+                        name="pwd"
                         placeholder="비밀번호"
                         type="password"
-                        value={formData.password}
+                        value={formData.pwd}
                         onChange={handleInputChange}
                     />
                 </FormRow>
@@ -211,9 +209,9 @@ const Index = () => {
 
                 <FormRow>
                     <InputField
-                        name="name"
+                        name="manager_name"
                         placeholder="담당자 이름"
-                        value={formData.name}
+                        value={formData.manager_name}
                         onChange={handleInputChange}
                     />
                 </FormRow>
@@ -222,9 +220,9 @@ const Index = () => {
                     <InputWithButton>
                         <InputWrapper>
                             <InputField
-                                name="phone"
+                                name="manager_phone"
                                 placeholder="담당자 전화번호"
-                                value={formData.phone}
+                                value={formData.manager_phone}
                                 onChange={handleInputChange}
                             />
                         </InputWrapper>
@@ -246,7 +244,6 @@ const Index = () => {
                     </InputWithButton>
                 </FormRow>
 
-
                 <FormRow>
                     <LoginButton type="submit">회원가입</LoginButton>
                 </FormRow>
@@ -255,4 +252,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default Cmember2;
