@@ -6,7 +6,7 @@ import DropdownSelect from "../../components/admin/Select";
 import SearchBar from "../../components/admin/SearchBar"; 
 import Pagination from "../../components/admin/Pagination"; // Pagination 컴포넌트 임포트
 import Table from '../../components/admin/Table'; // 테이블 컴포넌트 임포트
-import { GetAllJobPosts } from '../../api/api';
+import { GetAllJobPosts } from '../../api/api'; // 이미 구현된 API 함수 사용
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -63,36 +63,37 @@ const DeleteButton = styled.button`
 `;
 
 const Job = () => {
-  const [jobData, setJobData] = useState([
-    { id: 1, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
-    { id: 2, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-    { id: 3, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
-    { id: 4, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-    { id: 5, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
-    { id: 6, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-    { id: 7, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
-    { id: 8, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-    { id: 9, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-    { id: 10, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
-    { id: 11, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
-  ]);
-
-  const [filteredData, setFilteredData] = useState(jobData);
+  const [jobData, setJobData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('전체');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // 페이지 당 항목 수
 
+  // DB에서 데이터 가져오기
   useEffect(() => {
-    const fecthData = async() =>{
+    const fetchData = async () => {
       try {
         const data = await GetAllJobPosts();
+        const formattedData = (data || []).map(job => ({
+          id: job.id || '',
+          name: job.companyName || '', // 기업명
+          title: job.title || '', // 공고 제목
+          country: job.location || '', // 지역
+          registerDate: job.postDate || '', // 등록일
+          deadline: job.endDate || '', // 마감일
+        }));
+        setJobData(formattedData);
+        setFilteredData(formattedData);
       } catch (error) {
-        
+        console.error("Error fetching job posts:", error);
       }
-  }
-  fecthData();
-  },[])
+    };
+    fetchData();
+  }, []);
+  
+
+  // 선택 필터가 "전체"인 경우 모든 데이터 표시
   useEffect(() => {
     if (selectedFilter === "전체") {
       setFilteredData(jobData);
@@ -154,7 +155,6 @@ const Job = () => {
     { header: '등록일', accessor: 'registerDate' },
     { header: '마감일', accessor: 'deadline' },
   ];
-  
 
   return (
     <RootContainer>
@@ -163,14 +163,13 @@ const Job = () => {
       <ContentContainer>
         <PageHeader title="채용정보 관리" />
         <JobHeader>
-        <DropdownSelect
-          initialOptions={["전체", "회원 ID", "기업명", "공고 제목", "지역", "등록일", "마감일"]}
-          defaultOption="전체"
-          onChange={(selectedOption) => setSelectedFilter(selectedOption)}
-          showPlusButton={false}
-          showDeleteButton={false}
-        />
-
+          <DropdownSelect
+            initialOptions={["전체", "회원 ID", "기업명", "공고 제목", "지역", "등록일", "마감일"]}
+            defaultOption="전체"
+            onChange={(selectedOption) => setSelectedFilter(selectedOption)}
+            showPlusButton={false}
+            showDeleteButton={false}
+          />
           <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

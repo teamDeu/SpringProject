@@ -89,6 +89,9 @@ export const PostJobPost = async(jobPost) => {
 
 export const GetAllJobPosts = () => {
     return axios.get('http://localhost:8080/api/jobpost')
-            .then(response => response.data)
-            .catch(error => console.error('Error fetching data:', error)); 
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
 };

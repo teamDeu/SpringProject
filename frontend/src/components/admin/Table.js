@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-
-const StyledTable = styled.table`
+const StyledTable = styled.table.attrs((props) => ({
+  style: {
+    // props로 받아온 값을 스타일로만 적용
+    '--id-column-width': props.idColumnWidth,
+    '--title-column-width': props.titleColumnWidth,
+    '--deadline-column-width': props.deadlineColumnWidth,
+    '--manage-column-width': props.manageColumnWidth,
+  },
+}))`
   width: 1500px;
   border-collapse: collapse;
   table-layout: fixed;
@@ -13,7 +20,7 @@ const StyledTable = styled.table`
 
   th, td {
     border: 1px solid #959595;
-    padding: ${(props) => props.cellPadding || '20px'}; /* 여기서 패딩을 props로 받음 */
+    padding: ${(props) => props.cellPadding || '20px'};
     word-wrap: break-word;
     vertical-align: middle;
     line-height: 20px;
@@ -23,31 +30,28 @@ const StyledTable = styled.table`
     background-color: #d1d1d1;
     font-weight: bold;
   }
-  
-  td{
-    font-size:15px;
-
+  td {
+    font-size:14px;
   }
 
-  /* 특정 열에 대한 스타일링 적용 */
+  /* 스타일 변수 적용 */
   th:nth-child(1), td:nth-child(1) {
-    width: ${(props) => props.idColumnWidth || 'auto'};
+    width: var(--id-column-width, auto);
   }
   th:nth-child(3), td:nth-child(3) {
-    width: ${(props) => props.titleColumnWidth || 'auto'};
+    width: var(--title-column-width, auto);
   }
-
   th:nth-child(5), td:nth-child(5) {
-    width: ${(props) => props.deadlineColumnWidth || 'auto'};
+    width: var(--deadline-column-width, auto);
   }
   th:nth-child(6), td:nth-child(6) {
-    width: ${(props) => props.deadlineColumnWidth || 'auto'};
+    width: var(--deadline-column-width, auto);
   }
-
   th:nth-child(7), td:nth-child(7) {
-    width: ${(props) => props.manageColumnWidth || 'auto'};
+    width: var(--manage-column-width, auto);
   }
 `;
+
 
 const Table = ({ columns, data, renderRowActions, className, cellPadding, ...props }) => {
     return (
