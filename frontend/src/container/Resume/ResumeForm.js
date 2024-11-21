@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import axios from "axios";
 import emailIcon from './img/emailIcon.png';
 import workIcon from './img/workIcon.png';
 import pnumberIcon from './img/pnumberIcon.png';
@@ -27,14 +28,14 @@ const ResumeForm = () => {
     const [birthDate, setBirthDate] = useState('');
     const [experience, setExperience] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-
     const [desiredLocations, setDesiredLocations] = useState([]);
-
     const [jobRoles, setJobRoles] = useState([]);
     const [currentJobRole, setCurrentJobRole] = useState("");
-    
     const [skills, setSkills] = useState([]);
-    const [currentSkill, setCurrentSkill] = useState("")
+    const [currentSkill, setCurrentSkill] = useState("");
+    const [resumeTitle, setResumeTitle] = useState("");
+    const [resumeDescription, setResumeDescription] = useState("");
+
 
 
     const cities = {
@@ -130,6 +131,34 @@ const ResumeForm = () => {
         setter(event.target.value);
     };
 
+    const handleSave = async () => {
+        const requestBody = {
+            userId: "sampleUser", //실제 아이디로 바꿔야해 세영아;; 까묵지 마렴
+            title: resumeTitle,
+            description: resumeDescription,
+            location: desiredLocations.join(", "),
+            experienceYears: parseInt(experience) || 0,
+            summary: `Skills: ${skills.join(", ")}, Job Roles: ${jobRoles.join(", ")}`,
+            pdfUrl: fileNames.length ? fileNames[0] : "", 
+        };
+
+        console.log("Request Body:", requestBody);
+        
+        try {
+            const response = await axios.post('http://localhost:8080/api/resumes', requestBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.status === 200 || response.status === 201) {
+                alert("이력서가 저장되었습니다!");
+            }
+        } catch (error) {
+            console.error("이력서 저장 중 오류 발생:", error);
+            alert("이력서 저장에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
+
 
     return (
         <>
@@ -138,8 +167,18 @@ const ResumeForm = () => {
                 <Title>이력서 작성</Title>
                 <Form>
                     <InputGroup>
-                        <Input type="text" placeholder="이력서 제목을 입력해주세요." />
-                        <Input type="text" placeholder="이력서에 대한 간단한 설명을 입력해주세요." />
+                        <Input 
+                            type="text" 
+                            placeholder="이력서 제목을 입력해주세요."
+                            value={resumeTitle}
+                            onChange={(e) => setResumeTitle(e.target.value)} 
+                        />
+                        <Input 
+                            type="text" 
+                            placeholder="이력서에 대한 간단한 설명을 입력해주세요."
+                            value={resumeDescription}
+                            onChange={(e) => setResumeDescription(e.target.value)} 
+                        />
                     </InputGroup>
 
                     <Divider />
@@ -239,7 +278,12 @@ const ResumeForm = () => {
 
                     <InputContainer>
                         <Label>간단 소개</Label>
-                        <InputContainerInput type="text" placeholder="간략하게 요약해서 3~5줄의 읽기 쉬운 내용으로 작성해주세요." />
+                        <InputContainerInput 
+                            type="text" 
+                            placeholder="간단한 소개를 작성해주세요."
+                            value={resumeDescription}
+                            onChange={(e) => setResumeDescription(e.target.value)}
+                        />
                     </InputContainer>
 
                     <InputContainer>
@@ -301,7 +345,7 @@ const ResumeForm = () => {
                     </InputContainer>
                 </Form>
                 <ButtonContainer>
-                    <SaveButton>저장하기</SaveButton>
+                    <SaveButton onClick={handleSave}>저장하기</SaveButton>
                 </ButtonContainer>
             </FormContainer>
         </>

@@ -1,52 +1,43 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Table(name = "e_resumes")
 @Data
-@Table(name ="e_resumes")
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Resume {
-
     @Id
-    @Column(name ="id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Euser user;
 
-    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
-    private String description; // 이력서 설명
+    @Lob
+    private String description;
 
-    @Column(name = "summary")
-    private String summary; // 이력서 간단 소개
-
-    @Column(name = "location")
     private String location;
 
-    @Column(name = "experience_years")
     private Integer experienceYears;
 
-    @Column(name = "pdf_url")
+    @Lob
+    private String summary;
+
     private String pdfUrl;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 
     @PrePersist
     protected void onCreate() {
@@ -58,7 +49,4 @@ public class Resume {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
-
 }

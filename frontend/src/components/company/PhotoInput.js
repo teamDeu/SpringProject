@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 const addIcon = process.env.PUBLIC_URL + '/icons/add.png';
-const PhotoInput = ({updateImage , imageLength}) => {
+const PhotoInput = ({updateImage , imageLength , justifyContent}) => {
   const [images, setImages] = useState([]);
   const [imageFile,setImageFile] = useState([]);
   const handleImageUpload = (event) => {
@@ -25,7 +25,7 @@ const PhotoInput = ({updateImage , imageLength}) => {
     updateImage(imageFile);
   },[images])
   return (
-    <Container>
+    <Container justifyContent = {justifyContent}>
       <FileInputWrapper>
         <FileInput 
           id="file-upload" 
@@ -43,11 +43,10 @@ const PhotoInput = ({updateImage , imageLength}) => {
           </ImageWrapper>
         ))}
       </ImageContainer>
-        <LabelContainer>
-
+        <LabelContainer disabled={images.length >= imageLength}>
             <FileLabel htmlFor="file-upload" disabled={images.length >= imageLength}>
             <Icon src = {addIcon}/>
-            {images.length >= imageLength ? "업로드 제한 (4개)" : "파일 선택"}
+            {images.length >= imageLength ? `업로드 제한 (${imageLength}개)` : "파일 선택"}
             </FileLabel>
         </LabelContainer>
       </FileInputWrapper>
@@ -61,6 +60,7 @@ export default PhotoInput;
 const Container = styled.div`
     display:flex;
     width : 100%;
+    justify-content : ${(props) => (props.justifyContent ? props.justifyContent : "")};
     gap : 20px;
 `;
 
@@ -76,14 +76,14 @@ const Icon = styled.img`
     width : 32px;
 `
 const FileInputWrapper = styled.div`
-    display:flex;
-    gap:20px;
+  display:flex;
   text-align: center;
   margin-bottom: 20px;
 `;
 
 const FileInput = styled.input`
   display: none; /* 숨김 */
+  width:250px;
 `;
 
 const FileLabel = styled.label`

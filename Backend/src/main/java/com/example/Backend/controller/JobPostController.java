@@ -1,5 +1,6 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.Util.Util;
 import com.example.Backend.model.Company;
 import com.example.Backend.model.JobPost;
 import com.example.Backend.model.JobPostImage;
@@ -49,7 +50,7 @@ public class JobPostController {
 
                 // 원래 파일 이름 가져오기
                 String originalFilename = file.getOriginalFilename();
-                String uniqueFilename = generateUniqueFilename(uploadDir, originalFilename);
+                String uniqueFilename = Util.generateUniqueFilename(uploadDir, originalFilename);
                 // 저장 경로 설정
                 String filePath = uploadDir + "/" + uniqueFilename;
 
@@ -72,16 +73,5 @@ public class JobPostController {
         }
     }
 
-    private String generateUniqueFilename(String directory, String originalFilename) {
-        String baseName = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
-        String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-        String uniqueFilename = originalFilename;
 
-        int counter = 0;
-        while (new java.io.File(directory + "/" + uniqueFilename).exists()) {
-            counter++;
-            uniqueFilename = baseName + "_" + counter + extension;
-        }
-        return uniqueFilename;
-    }
 }

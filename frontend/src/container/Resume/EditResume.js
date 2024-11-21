@@ -518,7 +518,7 @@ const PreviewContainer = styled.div`
 const PreviewImage = styled.img`
     width: 340px;
     height: 255px;
-    object-fit: cover;
+    object-fit: contain;
 `;
 
 const SelectContainer = styled.div`
