@@ -1,5 +1,6 @@
 package com.example.Backend.controller;
 
+import com.example.Backend.Util.Util;
 import com.example.Backend.model.Company;
 import com.example.Backend.model.User;
 import com.example.Backend.repository.CompanyRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,24 @@ public class CompanyController {
         Company savedCompany = companyService.saveCompany(company);
         return ResponseEntity.ok(savedCompany);
     }
+
+    @PostMapping("/api/companylogo/{companyId}")
+    public ResponseEntity<Company> saveCompanyLogo(
+            @PathVariable String companyId,
+            @RequestParam("image") MultipartFile file){
+
+        Company company = companyService.getCompanyById(companyId).get();
+        String uploadDir = System.getProperty("user.dir") + "/uploads";
+
+        String originalFilename = file.getOriginalFilename();
+        String uniqueFilename = Util.generateUniqueFilename(uploadDir,originalFilename);
+        String filepath = uploadDir + "/" + uniqueFilename;
+        company.setLogoUrl(filepath);
+        companyService.saveCompany(company);
+
+    return ResponseEntity.ok(company);
+    }
+
 
     // 아이디 중복 확인
     @GetMapping("/check-duplicate_company")

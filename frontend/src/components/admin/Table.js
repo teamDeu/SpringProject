@@ -1,5 +1,3 @@
-// components/Table.js
-
 import React from 'react';
 import styled from 'styled-components';
 
@@ -25,8 +23,16 @@ const StyledTable = styled.table`
     background-color: #d1d1d1;
     font-weight: bold;
   }
+  
+  td{
+    font-size:15px;
+
+  }
 
   /* 특정 열에 대한 스타일링 적용 */
+  th:nth-child(1), td:nth-child(1) {
+    width: ${(props) => props.idColumnWidth || 'auto'};
+  }
   th:nth-child(3), td:nth-child(3) {
     width: ${(props) => props.titleColumnWidth || 'auto'};
   }
@@ -34,8 +40,11 @@ const StyledTable = styled.table`
   th:nth-child(5), td:nth-child(5) {
     width: ${(props) => props.deadlineColumnWidth || 'auto'};
   }
-
   th:nth-child(6), td:nth-child(6) {
+    width: ${(props) => props.deadlineColumnWidth || 'auto'};
+  }
+
+  th:nth-child(7), td:nth-child(7) {
     width: ${(props) => props.manageColumnWidth || 'auto'};
   }
 `;

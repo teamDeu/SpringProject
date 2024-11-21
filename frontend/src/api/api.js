@@ -2,12 +2,26 @@ import axios from "axios";
 import React, { useState } from "react";
 
 
-export const PostCompany = (company) => {
+export const PostCompany = async(company) => {
     // POST 요청으로 새로운 데이터를 서버에 저장합니다.
     console.log("Sending company:", company); // 요청 본문 확인
-    return axios.post('http://localhost:8080/api/company', company)
+    const logo = company.logoUrl;
+    company = {...company,logoUrl : ""}
+    const savedCompany = await axios.post('http://localhost:8080/api/company', company)
         .then(response => response.data)
         .catch(error => console.error('Error posting data:', error));
+    
+    console.log(savedCompany);
+    const companyId = savedCompany.id;
+    const formData = new FormData();
+    formData.append("image",logo[0]);
+    return axios.post(`http://localhost:8080/api/companylogo/${companyId}`,formData,{
+        headers:{
+            "Content-Type": "multipart/form-data",
+        }
+    }).then(console.log("success"))
+    .catch(console.log("error"))
+
 
 };
 
