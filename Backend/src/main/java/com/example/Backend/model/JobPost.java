@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -77,4 +78,7 @@ public class JobPost {
 
     @Column(name = "views")
     private Long views;
+
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobPostImage> images;
 }
