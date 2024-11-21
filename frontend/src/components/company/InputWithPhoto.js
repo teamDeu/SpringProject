@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import InputArrayTitle from './InputArrayTitle'
 import PhotoInput from './PhotoInput'
@@ -16,11 +16,17 @@ const InputWithPhoto = ({title,updateValue}) => {
     const handleChange = (e) =>{
         setAboutCompany((prev) => ({...prev,description : e.target.value}))
     }
+    const updateImage = (image) => {
+        setAboutCompany((prev) => ({...prev, images : image}))
+    }
+    useEffect(() => {
+        updateValue(aboutCompany);
+    },[aboutCompany])
   return (
     <Container>
         <InputArrayTitle>{title}</InputArrayTitle>
         <MainSection>
-        <PhotoInput/>
+        <PhotoInput imageLength = {4} updateImage = {(value) =>updateImage(value)}/>
         <TextSection>
         <TextInput onInput = {(e) => {
             e.target.style.height = "auto"; // 높이를 초기화

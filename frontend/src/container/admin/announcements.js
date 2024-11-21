@@ -72,8 +72,8 @@ const Announcements = () => {
     setCurrentPage(page);
   };
 
-   // `AForm`에서 totalPages 값을 계산 후 전달
-   const updateTotalPages = (totalItems) => {
+  // `AForm`에서 totalPages 값을 계산 후 전달
+  const updateTotalPages = (totalItems) => {
     const calculatedPages = Math.ceil(totalItems / itemsPerPage);
     setTotalPages(calculatedPages);
   };
@@ -91,11 +91,14 @@ const Announcements = () => {
           <FormBox>
             <AForm
               selectedType={selectedType}
+              selectedCategory="전체" // 기본값으로 전체 카테고리를 설정
+              searchTerm="" // 검색어 기본값 설정
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               onTotalItemsChange={updateTotalPages} // totalPages 업데이트 콜백
               resetSelections={resetSelections} // 초기화 상태 전달
               setResetSelections={setResetSelections} // 초기화 상태 관리 콜백 전달
+              hideActions={false} // 액션 버튼 보이기
             />
             <PaginationBox>
               <Pagination

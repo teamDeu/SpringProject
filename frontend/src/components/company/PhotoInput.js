@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 const addIcon = process.env.PUBLIC_URL + '/icons/add.png';
-const ImageUploader = () => {
+const PhotoInput = ({updateImage , imageLength}) => {
   const [images, setImages] = useState([]);
-
+  const [imageFile,setImageFile] = useState([]);
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
 
-    if (images.length + files.length > 4) {
+    if (images.length + files.length > imageLength) {
       alert("최대 4개의 이미지만 업로드할 수 있습니다.");
       return;
     }
 
     const newImages = files.map((file) => URL.createObjectURL(file));
+    setImageFile((prev) => [...prev,...files])
     setImages((prev) => [...prev, ...newImages]);
   };
 
   const handleRemoveImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev.filter((_, i) => i !== index));
   };
-
+  useEffect(() => {
+    updateImage(imageFile);
+  },[images])
   return (
     <Container>
       <FileInputWrapper>
@@ -29,7 +33,7 @@ const ImageUploader = () => {
           accept="image/*" 
           onChange={handleImageUpload} 
           multiple
-          disabled={images.length >= 4}
+          disabled={images.length >= imageLength}
         />
         <ImageContainer>
         {images.map((image, index) => (
@@ -41,9 +45,9 @@ const ImageUploader = () => {
       </ImageContainer>
         <LabelContainer>
 
-            <FileLabel htmlFor="file-upload" disabled={images.length >= 4}>
+            <FileLabel htmlFor="file-upload" disabled={images.length >= imageLength}>
             <Icon src = {addIcon}/>
-            {images.length >= 4 ? "업로드 제한 (4개)" : "파일 선택"}
+            {images.length >= imageLength ? "업로드 제한 (4개)" : "파일 선택"}
             </FileLabel>
         </LabelContainer>
       </FileInputWrapper>
@@ -52,7 +56,7 @@ const ImageUploader = () => {
   );
 };
 
-export default ImageUploader;
+export default PhotoInput;
 
 const Container = styled.div`
     display:flex;
@@ -61,7 +65,7 @@ const Container = styled.div`
 `;
 
 const LabelContainer = styled.div`
-    display:flex;
+    display: ${(props) => (props.disabled ? "none" : "flex")};
     background-color : #F6F6F6;
     width:250px;
     height:250px;
@@ -83,7 +87,7 @@ const FileInput = styled.input`
 `;
 
 const FileLabel = styled.label`
-  display: flex;
+  display: ${(props) => (props.disabled ? "none" : "flex")};
   align-items:center;
   justify-content:center;
   flex-direction : column;

@@ -95,6 +95,7 @@ const HiddenBox = ({
     interviewQuestions, // 면접 질문 배열
     tips, // TIP 및 특이사항
 }) => {
+    
     return (
         <Container isVisible={isVisible}>
             <IconContainer>

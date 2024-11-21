@@ -17,6 +17,27 @@ export const GetAllCompanies = () => {
             .catch(error => console.error('Error fetching data:', error)); 
 };
 
+// 모든 인터뷰 리뷰 데이터를 가져오는 API
+export const GetAllInterviewReviews = () => {
+    return axios.get('http://localhost:8080/api/interview-reviews')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching interview reviews:', error);
+            throw error;
+        });
+};
+
+// 새로운 인터뷰 리뷰를 저장하는 API
+export const PostInterviewReview = (review) => {
+    console.log("Sending interview review:", review); // 요청 데이터 확인용 로그
+    return axios.post('http://localhost:8080/api/interview-review', review)
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error posting interview review:', error);
+            throw error;
+        });
+};
+
 export const GetAllSkills = () => {
     return axios.get('http://localhost:8080/api/skills')
             .then(response => response.data)
@@ -24,18 +45,50 @@ export const GetAllSkills = () => {
 };
 
 
-export const PostJobPost = (jobPost) => {
+export const PostJobPost = async(jobPost) => {
 
     console.log("Sending company:", jobPost); // 요청 본문 확인
-    
+    console.log("images" , jobPost.aboutCompany.images)
+
+
+    const images = jobPost.aboutCompany.images;
     const keys = Object.keys(jobPost);
+
+    jobPost = {...jobPost,aboutCompany : jobPost.aboutCompany.description}
+
     keys.forEach((key) => {
         if(typeof jobPost[key] === "object"){
             jobPost[key] = JSON.stringify(jobPost[key])
         }
-        console.log(jobPost[key]);
     });
-    return axios.post('http://localhost:8080/api/jobpost', jobPost)
+    const savedJobPost = await axios.post("http://localhost:8080/api/jobpost", jobPost)
         .then(response => response.data)
-        .catch(error => console.error('Error posting data:', error));
+        .catch(error => {
+            console.error("Error posting job post:", error);
+            throw error;
+        });
+
+    const jobPostId = savedJobPost.id;
+    
+    const formData = new FormData();
+    for (let i = 0; i < images.length; i++) {
+        formData.append("files", images[i]);
+    }
+    try {
+        const response = await axios.post(`http://localhost:8080/api/jobpostimage/${jobPostId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        return "success";
+      } catch (error) {
+        return "error";
+      }
+    
 }
+
+export const GetAllJobPosts = () => {
+    return axios.get('http://localhost:8080/api/jobpost')
+            .then(response => response.data)
+            .catch(error => console.error('Error fetching data:', error)); 
+};

@@ -1,5 +1,3 @@
-// job.js
-
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Menu from '../../components/admin/Menu';
@@ -8,6 +6,7 @@ import DropdownSelect from "../../components/admin/Select";
 import SearchBar from "../../components/admin/SearchBar"; 
 import Pagination from "../../components/admin/Pagination"; // Pagination 컴포넌트 임포트
 import Table from '../../components/admin/Table'; // 테이블 컴포넌트 임포트
+import { GetAllJobPosts } from '../../api/api';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -65,19 +64,17 @@ const DeleteButton = styled.button`
 
 const Job = () => {
   const [jobData, setJobData] = useState([
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
-    { name: "(주)퓨전정보기술", type: "자동차 설계", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", deadline: "~11.23(토)" },
+    { id: 1, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
+    { id: 2, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
+    { id: 3, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
+    { id: 4, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
+    { id: 5, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
+    { id: 6, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
+    { id: 7, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
+    { id: 8, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
+    { id: 9, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
+    { id: 10, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "서울 서초구 방배로27길 8 3층", registerDate: "2024-04-01", deadline: "2024-04.23" },
+    { id: 11, name: "(주)퓨전정보기술", title: "전기전자 H/W, F/W 설계, 개발 신입/경력 채용", country: "경기 전체", registerDate: "2024-04-02", deadline: "2024-04.24" },
   ]);
 
   const [filteredData, setFilteredData] = useState(jobData);
@@ -86,6 +83,16 @@ const Job = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // 페이지 당 항목 수
 
+  useEffect(() => {
+    const fecthData = async() =>{
+      try {
+        const data = await GetAllJobPosts();
+      } catch (error) {
+        
+      }
+  }
+  fecthData();
+  },[])
   useEffect(() => {
     if (selectedFilter === "전체") {
       setFilteredData(jobData);
@@ -100,16 +107,18 @@ const Job = () => {
     }
 
     const filtered = jobData.filter((job) => {
-      const targetField = selectedFilter === "기업명"
+      const targetField = selectedFilter === "회원 ID"
+        ? job.id.toString()
+        : selectedFilter === "기업명"
         ? job.name
-        : selectedFilter === "업종"
-        ? job.type
         : selectedFilter === "공고 제목"
         ? job.title
         : selectedFilter === "지역"
         ? job.country
+        : selectedFilter === "등록일"
+        ? job.registerDate
         : job.deadline;
-
+  
       return targetField.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
@@ -138,12 +147,14 @@ const Job = () => {
 
   // 테이블 열 정의
   const columns = [
+    { header: '회원 ID', accessor: 'id' },
     { header: '기업명', accessor: 'name' },
-    { header: '업종', accessor: 'type' },
     { header: '공고 제목', accessor: 'title' },
     { header: '지역', accessor: 'country' },
+    { header: '등록일', accessor: 'registerDate' },
     { header: '마감일', accessor: 'deadline' },
   ];
+  
 
   return (
     <RootContainer>
@@ -152,13 +163,14 @@ const Job = () => {
       <ContentContainer>
         <PageHeader title="채용정보 관리" />
         <JobHeader>
-          <DropdownSelect
-            initialOptions={["전체", "기업명", "업종", "공고 제목", "지역", "마감일"]}
-            defaultOption="전체"
-            onChange={(selectedOption) => setSelectedFilter(selectedOption)}
-            showPlusButton={false}
-            showDeleteButton={false}
-          />
+        <DropdownSelect
+          initialOptions={["전체", "회원 ID", "기업명", "공고 제목", "지역", "등록일", "마감일"]}
+          defaultOption="전체"
+          onChange={(selectedOption) => setSelectedFilter(selectedOption)}
+          showPlusButton={false}
+          showDeleteButton={false}
+        />
+
           <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -174,8 +186,9 @@ const Job = () => {
                 삭제
               </DeleteButton>
             )}
-            titleColumnWidth="30%"
-            deadlineColumnWidth="10%"
+            idColumnWidth="7%"
+            titleColumnWidth="25%"
+            deadlineColumnWidth="7%"
             manageColumnWidth="5%"
           />
         </TableContainer>

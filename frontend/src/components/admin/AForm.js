@@ -99,7 +99,17 @@ const Date = styled.div`
   color: gray;
 `;
 
-const AForm = ({ selectedType, currentPage, itemsPerPage, onTotalItemsChange, resetSelections , setResetSelections }) => {
+const AForm = ({ 
+  selectedType,
+  selectedCategory = "전체",
+  searchTerm = "",
+  currentPage,
+  itemsPerPage,
+  onTotalItemsChange,
+  resetSelections,
+  setResetSelections,
+  hideActions,
+}) => {
   const [announcements, setAnnouncements] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -177,10 +187,13 @@ const AForm = ({ selectedType, currentPage, itemsPerPage, onTotalItemsChange, re
     );
   };
 
-  const filteredAnnouncements =
-    selectedType === "all"
-      ? announcements
-      : announcements.filter((item) => item.type === selectedType);
+ // 필터링 로직: 선택된 타입, 카테고리, 검색어를 기반으로 필터링
+ const filteredAnnouncements = announcements.filter((item) => {
+  const matchesType = selectedType === "all" || item.type === selectedType;
+  const matchesCategory = selectedCategory === "전체" || item.category === selectedCategory;
+  const matchesSearch = item.title.toLowerCase().includes((searchTerm || "").toLowerCase()); // searchTerm 기본값 설정
+  return matchesType && matchesCategory && matchesSearch;
+});
 
   useEffect(() => {
     onTotalItemsChange(filteredAnnouncements.length);
@@ -194,28 +207,32 @@ const AForm = ({ selectedType, currentPage, itemsPerPage, onTotalItemsChange, re
 
   return (
     <AFormContainer>
-      <ActionContainer>
-        <Checkbox
-          type="checkbox"
-          checked={paginatedAnnouncements.every((item) => selectedItems.includes(item.id))} // 현재 페이지 체크박스 상태
-          onChange={handleSelectAll}
-        />
-        <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
-        <AddButtonWrapper>
-          <AddButton to="/awrite" iconSrc="/icons/plusbtn.png" altText="Add Button">
-            <AddLabel>추가</AddLabel>
-          </AddButton>
-        </AddButtonWrapper>
-      </ActionContainer>
+      {!hideActions && (
+        <ActionContainer>
+          <Checkbox
+            type="checkbox"
+            checked={paginatedAnnouncements.every((item) => selectedItems.includes(item.id))}
+            onChange={handleSelectAll}
+          />
+          <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
+          <AddButtonWrapper>
+            <AddButton to="/awrite" iconSrc="/icons/plusbtn.png" altText="Add Button">
+              <AddLabel>추가</AddLabel>
+            </AddButton>
+          </AddButtonWrapper>
+        </ActionContainer>
+      )}
 
       <AnnouncementList>
         {paginatedAnnouncements.map((item) => (
           <AnnouncementItem key={item.id}>
-            <ItemCheckbox
-              type="checkbox"
-              checked={selectedItems.includes(item.id)}
-              onChange={() => handleItemCheckbox(item.id)}
-            />
+            {!hideActions && (
+              <ItemCheckbox
+                type="checkbox"
+                checked={selectedItems.includes(item.id)}
+                onChange={() => handleItemCheckbox(item.id)}
+              />
+            )}
             <ContentContainer>
               <Category>{`[${item.category}]`}</Category>
               <Title>{item.title}</Title>
