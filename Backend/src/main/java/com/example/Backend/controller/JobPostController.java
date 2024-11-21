@@ -31,6 +31,7 @@ public class JobPostController {
 
     @GetMapping("/api/jobpost")
     public ResponseEntity<List<JobPost>> getAllJobPosts(){
+        System.out.println(jobPostService.getAllJobPost());
         return ResponseEntity.ok(jobPostService.getAllJobPost());
     }
 

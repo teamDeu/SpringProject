@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import MainContent from '../../../components/common/MainContent'
 import ContentTitle from '../../../components/common/ContentTitle'
 import styled from 'styled-components'
@@ -6,6 +6,7 @@ import JobTopBar from '../../../components/JobTopBar'
 import Tab from '../../../components/company/Tab'
 import PostComponents from '../../../components/company/PostComponents'
 import FilledButton from '../../../components/FilledButton'
+import { GetAllJobPosts } from '../../../api/api'
 
 const tabOptions = [
   {
@@ -72,7 +73,19 @@ const postComponents = [
     },
   }
 ]
-const index = () => {
+
+
+const Index = () => {
+  const [jobPostData, setJobPostData] = useState();
+  useEffect(() => {
+    const fecthData = async() => {
+      const data = await GetAllJobPosts();
+      setJobPostData(data);
+      console.log(data);
+    }
+
+    fecthData();
+  },[])
   return (
     <Container>
         <JobTopBar/>
@@ -96,7 +109,7 @@ const index = () => {
   )
 }
 
-export default index
+export default Index
 
 const Container = styled.div`
 

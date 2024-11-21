@@ -1,10 +1,12 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CurrentTimestamp;
 
 import java.util.Date;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @Data
 @Table(name = "c_job_posts")
 public class JobPost {
@@ -71,6 +72,7 @@ public class JobPost {
     private String aboutCompany;
 
     @Column(name = "post_date")
+    @CurrentTimestamp
     private Date postDate;
 
     @Column(name = "is_featured")
@@ -80,5 +82,6 @@ public class JobPost {
     private Long views;
 
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<JobPostImage> images;
 }
