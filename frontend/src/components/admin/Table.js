@@ -31,7 +31,7 @@ const StyledTable = styled.table.attrs((props) => ({
     font-weight: bold;
   }
   td {
-    font-size:14px;
+    font-size:15px;
   }
 
   /* 스타일 변수 적용 */

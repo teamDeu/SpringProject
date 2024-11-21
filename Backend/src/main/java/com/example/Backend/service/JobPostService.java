@@ -32,4 +32,14 @@ public class JobPostService {
     public void saveJobPostImage(JobPostImage jobPostImage) {
         jobPostImageRepository.save(jobPostImage);
     }
+
+    public boolean deleteJobPost(Long id) {
+        Optional<JobPost> jobPostOpt = jobPostRepository.findById(id);
+        if (jobPostOpt.isPresent()) {
+            jobPostRepository.delete(jobPostOpt.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

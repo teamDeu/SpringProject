@@ -1,3 +1,4 @@
+// Job.js
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Menu from '../../components/admin/Menu';
@@ -6,7 +7,7 @@ import DropdownSelect from "../../components/admin/Select";
 import SearchBar from "../../components/admin/SearchBar"; 
 import Pagination from "../../components/admin/Pagination"; // Pagination 컴포넌트 임포트
 import Table from '../../components/admin/Table'; // 테이블 컴포넌트 임포트
-import { GetAllJobPosts } from '../../api/api'; // 이미 구현된 API 함수 사용
+import { GetAllJobPosts, DeleteJobPost } from '../../api/api'; // 삭제 함수 임포트
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -76,12 +77,13 @@ const Job = () => {
       try {
         const data = await GetAllJobPosts();
         const formattedData = (data || []).map(job => ({
-          id: job.id || '',
-          name: job.companyName || '', // 기업명
-          title: job.title || '', // 공고 제목
-          country: job.location || '', // 지역
-          registerDate: job.postDate || '', // 등록일
-          deadline: job.endDate || '', // 마감일
+          id: job.id, // 고유 ID 포함
+          company_id: job.company ?? '-', // 회원 ID로 company_id 사용, null일 경우 '-'
+          name: job.companyName ?? '-', // 기업명, null일 경우 '-'
+          title: job.title ?? '-', // 공고 제목, null일 경우 '-'
+          country: job.location ?? '-', // 지역, null일 경우 '-'
+          registerDate: job.postDate ? new Date(job.postDate).toLocaleDateString() : '-', // 등록일, null일 경우 '-'
+          deadline: job.endDate ? new Date(job.endDate).toLocaleDateString() : '-', // 마감일, null일 경우 '-'
         }));
         setJobData(formattedData);
         setFilteredData(formattedData);
@@ -91,7 +93,6 @@ const Job = () => {
     };
     fetchData();
   }, []);
-  
 
   // 선택 필터가 "전체"인 경우 모든 데이터 표시
   useEffect(() => {
@@ -109,7 +110,7 @@ const Job = () => {
 
     const filtered = jobData.filter((job) => {
       const targetField = selectedFilter === "회원 ID"
-        ? job.id.toString()
+        ? job.company_id.toString()
         : selectedFilter === "기업명"
         ? job.name
         : selectedFilter === "공고 제목"
@@ -127,12 +128,21 @@ const Job = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = (index) => {
+  // 삭제 함수: 백엔드 API 호출 후 상태 업데이트
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("해당 공고를 삭제하시겠습니까?");
     if (confirmDelete) {
-      const updatedData = jobData.filter((_, i) => i !== index);
-      setJobData(updatedData);
-      setFilteredData(updatedData);
+      try {
+        await DeleteJobPost(id); // 삭제 API 호출
+        // 삭제가 성공하면 상태 업데이트
+        const updatedData = jobData.filter((job) => job.id !== id);
+        setJobData(updatedData);
+        setFilteredData(updatedData);
+        alert("공고가 성공적으로 삭제되었습니다.");
+      } catch (error) {
+        console.error("Error deleting job post:", error);
+        alert("공고 삭제에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -148,7 +158,7 @@ const Job = () => {
 
   // 테이블 열 정의
   const columns = [
-    { header: '회원 ID', accessor: 'id' },
+    { header: '회원 ID', accessor: 'company_id' }, // company_id가 회원 ID로 표시됨
     { header: '기업명', accessor: 'name' },
     { header: '공고 제목', accessor: 'title' },
     { header: '지역', accessor: 'country' },
@@ -180,8 +190,8 @@ const Job = () => {
           <Table
             columns={columns}
             data={currentData}
-            renderRowActions={(row, index) => (
-              <DeleteButton onClick={() => handleDelete(index)}>
+            renderRowActions={(row) => (
+              <DeleteButton onClick={() => handleDelete(row.id)}>
                 삭제
               </DeleteButton>
             )}

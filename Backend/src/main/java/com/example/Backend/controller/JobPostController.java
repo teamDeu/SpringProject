@@ -73,6 +73,23 @@ public class JobPostController {
             return ResponseEntity.status(500).build();
         }
     }
-
+    @DeleteMapping("/api/jobpost/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteJobPost(@PathVariable Long id) {
+        System.out.println("Received DELETE request for JobPost with id: " + id);
+        try {
+            boolean isDeleted = jobPostService.deleteJobPost(id);
+            if (isDeleted) {
+                System.out.println("JobPost with id " + id + " deleted successfully.");
+                return ResponseEntity.ok().build();
+            } else {
+                System.out.println("JobPost with id " + id + " not found.");
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
 }
