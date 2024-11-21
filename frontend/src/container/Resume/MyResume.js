@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Png from './img/png.png';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddPhotoIcon from './img/addPhotoIcon.png';
 import Del from './img/Del.png';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import JobTopBar from '../../components/JobTopBar';
+
 
 const MyResume = ({ onAddResumeClick }) => {
     const [showMenu, setShowMenu] = useState(null); 
@@ -14,6 +16,10 @@ const MyResume = ({ onAddResumeClick }) => {
         { id: 1, title: "김세영_이력서1", description: "첫번째 이력서 수정중입니다!", date: "2024.11.04 등록" },
     ]); 
     const navigate = useNavigate();
+
+    const handleResumeEdit = (id) => {
+        navigate(`/editresume/${id}`);
+    };
 
     const handleMenuToggle = (id) => {
         setShowMenu(showMenu === id ? null : id); 
@@ -53,72 +59,78 @@ const MyResume = ({ onAddResumeClick }) => {
     };
 
     return (
-        <Container>
-            <Title>My 이력서</Title>
-            <Section>
-                <Header>
-                    <Subtitle>이력서 관리</Subtitle>
-                    <ButtonContainer>
-                        <AddResumeButton onClick={handleAddResumeClick}>이력서 작성하기</AddResumeButton>
-                    </ButtonContainer>
-                </Header>
-                <ResumeBox>
-                    {resumes.map((resume) => (
-                        <ResumeItem key={resume.id} id={`resume-${resume.id}`}>
-                            <TitleContainer>
-                                <ResumeTitle>{resume.title}</ResumeTitle>
-                                <MenuButton onClick={() => handleMenuToggle(resume.id)}>
-                                    <MenuIcon src={Png} alt="메뉴 아이콘" />
-                                    {showMenu === resume.id && (
-                                        <DropdownMenu>
-                                            <MenuItem onClick={() => handleDownloadPDF(resume)}>PDF 다운로드</MenuItem>
-                                            <MenuItem delete onClick={() => handleResumeDelete(resume.id)}>
-                                                이력서 삭제
-                                            </MenuItem>
-                                        </DropdownMenu>
-                                    )}
-                                </MenuButton>
-                            </TitleContainer>
-                            <ResumeDescription>{resume.description}</ResumeDescription>
-                            <Actions>
-                                <Date>{resume.date}</Date>
-                            </Actions>
-                        </ResumeItem>
-                    ))}
-                </ResumeBox>
-            </Section>
-            <Section>
-                <Subtitle>첨부파일</Subtitle>
-                <Description>경험을 보여줄 수 있는 포트폴리오 / 경력기술서 등을 첨부해보세요. (PDF를 권장합니다.)</Description>
-                <AttachmentBox>
-                    {uploadedFiles.length > 0 ? (
-                        uploadedFiles.map((file, index) => (
-                            <FileItem key={index}>
-                                {file.name}
-                                <DeleteButton onClick={() => handleFileDelete(file.name)}>
-                                    <img src={Del} alt="삭제 아이콘" />
-                                </DeleteButton>
-                            </FileItem>
-                        ))
-                    ) : (
-                        <Placeholder>첨부파일이 비어있습니다.</Placeholder>
-                    )}
-                    <FileUploadButton>
-                        <input
-                            type="file"
-                            multiple
-                            onChange={handleFileUpload}
-                            style={{ display: 'none' }}
-                            id="file-upload"
-                        />
-                    </FileUploadButton>
-                </AttachmentBox>
-                <Label htmlFor="file-upload">
-                    <img src={AddPhotoIcon} alt="사진 추가 아이콘" style={{ width: '19px', height: '19px' }} />
-                    첨부파일 추가
-                </Label>
-            </Section>
-        </Container>
+        <>
+            <JobTopBar />
+        
+            <Container>
+                <Title>My 이력서</Title>
+                <Section>
+                    <Header>
+                        <Subtitle>이력서 관리</Subtitle>
+                        <ButtonContainer>
+                            <Link to="/resumeform">
+                                <AddResumeButton>이력서 작성하기</AddResumeButton>
+                            </Link>    
+                        </ButtonContainer>
+                    </Header>
+                    <ResumeBox>
+                        {resumes.map((resume) => (
+                            <ResumeItem key={resume.id} id={`resume-${resume.id}`}>
+                                <TitleContainer>
+                                    <ResumeTitle onClick={() => handleResumeEdit(resume.id)}>{resume.title}</ResumeTitle>
+                                    <MenuButton onClick={() => handleMenuToggle(resume.id)}>
+                                        <MenuIcon src={Png} alt="메뉴 아이콘" />
+                                        {showMenu === resume.id && (
+                                            <DropdownMenu>
+                                                <MenuItem onClick={() => handleDownloadPDF(resume)}>PDF 다운로드</MenuItem>
+                                                <MenuItem delete onClick={() => handleResumeDelete(resume.id)}>
+                                                    이력서 삭제
+                                                </MenuItem>
+                                            </DropdownMenu>
+                                        )}
+                                    </MenuButton>
+                                </TitleContainer>
+                                <ResumeDescription>{resume.description}</ResumeDescription>
+                                <Actions>
+                                    <Date>{resume.date}</Date>
+                                </Actions>
+                            </ResumeItem>
+                        ))}
+                    </ResumeBox>
+                </Section>
+                <Section>
+                    <Subtitle>첨부파일</Subtitle>
+                    <Description>경험을 보여줄 수 있는 포트폴리오 / 경력기술서 등을 첨부해보세요. (PDF를 권장합니다.)</Description>
+                    <AttachmentBox>
+                        {uploadedFiles.length > 0 ? (
+                            uploadedFiles.map((file, index) => (
+                                <FileItem key={index}>
+                                    {file.name}
+                                    <DeleteButton onClick={() => handleFileDelete(file.name)}>
+                                        <img src={Del} alt="삭제 아이콘" />
+                                    </DeleteButton>
+                                </FileItem>
+                            ))
+                        ) : (
+                            <Placeholder>첨부파일이 비어있습니다.</Placeholder>
+                        )}
+                        <FileUploadButton>
+                            <input
+                                type="file"
+                                multiple
+                                onChange={handleFileUpload}
+                                style={{ display: 'none' }}
+                                id="file-upload"
+                            />
+                        </FileUploadButton>
+                    </AttachmentBox>
+                    <Label htmlFor="file-upload">
+                        <img src={AddPhotoIcon} alt="사진 추가 아이콘" style={{ width: '19px', height: '19px' }} />
+                        첨부파일 추가
+                    </Label>
+                </Section>
+            </Container>
+        </>
     );
 };
 

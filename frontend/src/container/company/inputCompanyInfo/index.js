@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import styled from 'styled-components';
 import JobTopBar from '../../../components/JobTopBar';
 import InputWithTitle from '../../../components/company/InputWithTitle';
@@ -6,8 +6,8 @@ import ContentTitle from '../../../components/common/ContentTitle';
 import InputTitle from '../../../components/company/InputTitle';
 import FilledButton from '../../../components/FilledButton';
 import MainContent from '../../../components/common/MainContent';
-import { PostComapany } from '../../../api/api';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { PostCompany } from '../../../api/api';
 
 const InputArray = [
     { 
@@ -56,8 +56,11 @@ const InputArray = [
 
 const Index = () => {
     const navigate = useNavigate();
-    const [companyInfo,setCompanyInfo] = useState({
-        id : "als981209",
+    const location = useLocation();
+    const { id } = location.state || {};
+    console.log(id);
+    const [companyInfo,setCompanyInfo] = useState({ 
+        id : id || "als981209",
         pwd : "",
         companyName: "Test", // String
         industry: "", // String
@@ -83,7 +86,7 @@ const Index = () => {
             }
         }
 
-        PostComapany(companyInfo).then( () =>
+        PostCompany(companyInfo).then( () =>
             {
                 console.log("입력성공"); 
                 alert("기업정보가 입력되었습니다.")
@@ -129,9 +132,9 @@ const Index = () => {
 
 export default Index;
 
-const Container = styled.div`
+const Container = styled.div``
 
-`
+
 const TitleSection = styled.section`
     width : 100%;
 `
@@ -149,4 +152,4 @@ const FileSection = styled.section`
 const ButtonSection = styled.section`
     display:flex;
     justify-content : center;
-`
+    `
