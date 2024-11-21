@@ -26,7 +26,7 @@ const InputWithPhoto = ({title,updateValue}) => {
     <Container>
         <InputArrayTitle>{title}</InputArrayTitle>
         <MainSection>
-        <PhotoInput imageLength = {4} updateImage = {(value) =>updateImage(value)}/>
+        <PhotoInput imageLength = {5} updateImage = {(value) =>updateImage(value)}/>
         <TextSection>
         <TextInput onInput = {(e) => {
             e.target.style.height = "auto"; // 높이를 초기화

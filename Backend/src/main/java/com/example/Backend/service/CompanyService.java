@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -21,6 +22,9 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
+    public Optional<Company> getCompanyById(String id){
+        return companyRepository.findById(id);
+    }
     // 다른 비즈니스 로직 추가 가능
 
     // 아이디 중복 확인

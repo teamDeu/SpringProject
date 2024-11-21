@@ -8,6 +8,7 @@ import FilledButton from '../../../components/FilledButton';
 import MainContent from '../../../components/common/MainContent';
 import { useLocation, useNavigate } from 'react-router';
 import { PostCompany } from '../../../api/api';
+import PhotoInput from '../../../components/company/PhotoInput';
 
 const InputArray = [
     { 
@@ -58,6 +59,9 @@ const Index = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = location.state || {};
+    const updateImage = (value) => {
+        setCompanyInfo((prev) => ({...prev,logoUrl : value}))
+    }
     console.log(id);
     const [companyInfo,setCompanyInfo] = useState({ 
         id : id || "als981209",
@@ -70,6 +74,7 @@ const Index = () => {
         employees: 0, // Long (nullable number)
         managerName: "", // String
         managerPhone: "", // String
+        logoUrl :"",
     })
     function regCompanyInfoButton(){
 
@@ -121,6 +126,10 @@ const Index = () => {
                 </InputSection>
                 <FileSection>
                     <InputTitle>기업 로고 등록</InputTitle>
+                    <PhotoInputSection>
+                    <PhotoInput imageLength={1} updateImage = {(value)=>{updateImage(value)}} justifyContent={"center"}/>
+                    </PhotoInputSection>
+                    
                 </FileSection>
                 <ButtonSection>
                     <FilledButton onClick={regCompanyInfoButton}>기업정보 등록</FilledButton>
@@ -153,3 +162,12 @@ const ButtonSection = styled.section`
     display:flex;
     justify-content : center;
     `
+
+const PhotoInputSection = styled.section`
+    width : 100%;
+    border : 1px solid #B5B5B5;
+    border-radius : 10px;
+    box-sizing : border-box;
+    padding : 20px;
+    margin-bottom : 20px;
+`
