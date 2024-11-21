@@ -16,3 +16,24 @@ export const GetAllCompanies = () => {
             .then(response => response.data)
             .catch(error => console.error('Error fetching data:', error)); 
 };
+
+// 모든 인터뷰 리뷰 데이터를 가져오는 API
+export const GetAllInterviewReviews = () => {
+    return axios.get('http://localhost:8080/api/interview-reviews')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching interview reviews:', error);
+            throw error;
+        });
+};
+
+// 새로운 인터뷰 리뷰를 저장하는 API
+export const PostInterviewReview = (review) => {
+    console.log("Sending interview review:", review); // 요청 데이터 확인용 로그
+    return axios.post('http://localhost:8080/api/interview-review', review)
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error posting interview review:', error);
+            throw error;
+        });
+};

@@ -40,6 +40,7 @@ import Test_Review_Write from './container/yangji/test_review_write'
 import Test_Review_Home from './container/yangji/test_review_home'
 import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
+import A from './components/yangji/hiddenbox'
 
 import InputCompanyInfo from './container/company/InputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
@@ -87,6 +88,7 @@ function App() {
             <Route path="test_review_home1" element={<Test_Review_Home />} />
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
             <Route path="test_review_home3" element={<Test_Review_Write />} />
+            <Route path="a" element={<A />} />
             <Route path="myreview" element={<Myreview />} />
             <Route path="usersearch" element ={<UserSearch/>}/>
             <Route path="CompanyManagePost" element ={<CompanyManagePost/>}/>

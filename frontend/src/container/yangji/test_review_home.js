@@ -6,9 +6,10 @@ import HorizontalLine from '../../components/yangji/Line';
 import TestBox from '../../components/yangji/test_box';
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { GetAllInterviewReviews } from '../../api/api'; // API 분리
 
+// 스타일링
 const Container = styled.div`
     position: relative;
     width: 69%;
@@ -19,18 +20,12 @@ const Container = styled.div`
 `;
 
 const Title = styled.h2`
-    position: absolute;
+    position: relative;
     top: 20px;
-    color: #000000;
-    text-align: left;
     font-size: 30px;
     font-weight: 400;
-    position: relative;
-    height: 126px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    -webkit-text-stroke: 0.699999988079071px #000000;
+    color: #000000;
+    text-align: left;
 `;
 
 const InputContainer = styled.div`
@@ -47,7 +42,7 @@ const SelectboxContainer = styled.div`
 
 const SecondSelectboxContainer = styled.div`
     position: absolute;
-    top: 150px; /* 첫 번째 Selectbox 아래로 배치 */
+    top: 150px;
     left: 150px;
     width: 320px;
 `;
@@ -61,7 +56,7 @@ const ButtonContainer = styled.div`
 const LineContainer = styled.div`
     position: absolute;
     top: 200px;
-    width: 100%; /* 선의 너비 조정 */
+    width: 100%;
 `;
 
 const TestBoxContainer = styled.div`
@@ -70,12 +65,13 @@ const TestBoxContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 100%; /* 부모 컨테이너에 맞게 늘림 */
+    width: 100%;
 `;
 
 const Review2 = () => {
     const dropdownOptions1 = ["전체", "합격", "대기중", "불합격"];
     const dropdownOptions2 = [
+        "전체", // "전체" 옵션 추가
         "서버/백엔드 개발자",
         "프론트엔드 개발자",
         "웹 풀스택 개발자",
@@ -90,20 +86,27 @@ const Review2 = () => {
     ];
 
     const [selectedStatus, setSelectedStatus] = useState("전체");
-    const [data, setData] = useState([]); // 서버에서 가져온 데이터
+    const [selectedJob, setSelectedJob] = useState("전체");
+    const [data, setData] = useState([]);
 
-    // 데이터베이스에서 데이터를 가져옵니다.
+    // 데이터 로드
     useEffect(() => {
-        axios.get('http://localhost:8080/api/interview-reviews')
-            .then((response) => setData(response.data))
-            .catch((error) => console.error('Error fetching data:', error));
+        GetAllInterviewReviews()
+            .then((fetchedData) => {
+                console.log("Fetched data:", fetchedData); // 디버깅용
+                setData(fetchedData);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
-    // 선택된 상태에 따라 데이터를 필터링합니다.
-    const filteredData =
-        selectedStatus === "전체"
-            ? data
-            : data.filter((item) => item.interviewPassFail === selectedStatus);
+    // 필터링 로직
+    const filteredData = data.filter((item) => {
+        const statusMatch =
+            selectedStatus === "전체" || item.interviewPassFail === selectedStatus;
+        const jobMatch =
+            selectedJob === "전체" || item.jobCategoryId === selectedJob;
+        return statusMatch && jobMatch;
+    });
 
     return (
         <>
@@ -118,13 +121,16 @@ const Review2 = () => {
                     />
                 </SelectboxContainer>
                 <SecondSelectboxContainer>
-                    <Selectbox options={dropdownOptions2} defaultOption="직무 · 직업" />
+                    <Selectbox
+                        options={dropdownOptions2}
+                        defaultOption="직무 · 직업"
+                        onChange={(value) => setSelectedJob(value)}
+                    />
                 </SecondSelectboxContainer>
                 <InputContainer>
                     <Input />
                 </InputContainer>
                 <ButtonContainer>
-
                     <Link to="/test_review_home3">
                         <ReviewButton text="면접 후기 등록하기" />
                     </Link>
