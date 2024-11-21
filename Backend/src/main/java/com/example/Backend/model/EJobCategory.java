@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "e_resume_skills")
+@Table(name = "e_resume_job_categories")
 @Data
-public class Eskill {
+public class EJobCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,6 +16,6 @@ public class Eskill {
     private Resume resume;
 
     @ManyToOne
-    @JoinColumn(name = "skill_id")
-    private Skills skill;
+    @JoinColumn(name = "job_category_id")
+    private EJobCategory jobCategory;
 }

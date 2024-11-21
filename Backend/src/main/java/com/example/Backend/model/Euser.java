@@ -32,6 +32,4 @@ public class Euser {
     @Column(name = "profile_img")
     private String profileImg;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Resume> resumes;
 }
