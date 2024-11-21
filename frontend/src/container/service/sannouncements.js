@@ -67,7 +67,7 @@ const SearchBarWrapper = styled.div`
 
 const FormBox = styled.div`
   width: 1340px;
-  height: 640px;
+  height: 550px;
   border: none;
   margin-top: 0px;
   margin-left: -20px;
