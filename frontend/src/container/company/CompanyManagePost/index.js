@@ -8,84 +8,66 @@ import PostComponents from '../../../components/company/PostComponents'
 import FilledButton from '../../../components/FilledButton'
 import { GetAllJobPosts } from '../../../api/api'
 
-const tabOptions = [
-  {
-    title : "진행중",
-    onClick : () => {console.log("진행중클릭")}
-  },
-  {
-    title : "마감",
-    onClick : () => {}
-  },
-  {
-    title : "전체",
-    onClick : () => {}
-  }
-];
 
-const postComponents = [
-  {
-    postTitle : "[플레이오]Python 백엔드 개발",
-    postStartDate : "2024-11-01",
-    postEndDate : "2024-11-13",
-    postUpdateDate : "11-02",
-    postResumeInfo :{
-        postCandidate : 10,
-        postRead : 10,
-        postUnread : 0,
-        postPass : 0
-    },
-  },
-  {
-    postTitle : "[일주지앤에스]Java 백엔드 개발",
-    postStartDate : "2024-11-01",
-    postEndDate : "2024-11-13",
-    postUpdateDate : "11-02",
-    postResumeInfo :{
-        postCandidate : 10,
-        postRead : 10,
-        postUnread : 0,
-        postPass : 0
-    },
-  },
-  {
-    postTitle : "[바이트사이즈]AI 개발",
-    postStartDate : "2024-11-01",
-    postEndDate : "2024-11-13",
-    postUpdateDate : "11-02",
-    postResumeInfo :{
-        postCandidate : 10,
-        postRead : 10,
-        postUnread : 0,
-        postPass : 0
-    },
-  },
-  {
-    postTitle : "[플레이오]Python 백엔드 개발",
-    postStartDate : "2024-11-01",
-    postEndDate : "2024-11-13",
-    postUpdateDate : "11-02",
+
+
+const Index = () => {
+  const [postComponent,setPostComponent] = useState([]);
+  const [filteredComponent,setFilteredComponent] = useState([]);
+  useEffect(() => {
+    const fecthData = async() => {
+      const postData = await GetAllJobPosts();
+      const formattedData = (postData || []).map(data => ({
+        postTitle : data.title,
+        postStartDate : data.postDate.split("T")[0],
+        postEndDate : data.endDate.split("T")[0],
+        postUpdateDate : data.postDate.split("T")[0],
     postResumeInfo :{
         postCandidate : 100,
         postRead : 77,
         postUnread : 23,
         postPass : 0
-    },
-  }
-]
-
-
-const Index = () => {
-  const [jobPostData, setJobPostData] = useState();
-  useEffect(() => {
-    const fecthData = async() => {
-      const data = await GetAllJobPosts();
-      setJobPostData(data);
-      console.log(data);
+    }}));
+      setPostComponent(formattedData);
+      setFilteredComponent(formattedData);
     }
 
     fecthData();
   },[])
+
+  const tabOptions = [
+    {
+      title : "전체",
+      onClick : () => {
+        setFilteredComponent(postComponent)
+      }
+    },
+    {
+      title : "진행중",
+      onClick : () => {
+        const date = new Date();
+        setFilteredComponent(postComponent.filter((data) => {
+          const endDate = new Date(data.postEndDate);
+          console.log("date : ",date,"endDate: ", endDate);
+          return date.getTime() <= endDate.getTime();
+        }))
+      }
+    },
+    {
+      title : "마감",
+      onClick : () => {
+        const date = new Date();
+        setFilteredComponent(postComponent.filter((data) => {
+          const endDate = new Date(data.postEndDate);
+          return date.getTime() > endDate.getTime();
+        }))
+      }
+    }
+  ];
+
+  useEffect(() => {
+    console.log(postComponent)
+  },[postComponent])
   return (
     <Container>
         <JobTopBar/>
@@ -102,7 +84,7 @@ const Index = () => {
               </ButtonArticle>
             </TabSection>
             <ComponetsSection>
-              {postComponents.map((postComponent) => <PostComponents data ={postComponent}/>)}
+              {filteredComponent && filteredComponent.map((data) => <PostComponents data ={data}/>)}
             </ComponetsSection>
         </MainContent>
     </Container>
