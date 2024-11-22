@@ -65,7 +65,7 @@ const DropdownSelect = ({ options, defaultOption, onChange }) => {
         setIsOpen(false);
         if (onChange) onChange(option); // 상위 컴포넌트에 선택값 전달
     };
-
+    console.log(options);
     return (
         <DropdownContainer>
             <SelectBox onClick={toggleOpen}>

@@ -10,12 +10,25 @@ import InputWithPhoto from '../../../components/company/InputWithPhoto'
 import FilledButton from '../../../components/FilledButton'
 import { GetAllSkills, PostJobPost } from '../../../api/api'
 import InputArrayTitle from '../../../components/company/InputArrayTitle'
+import { waitForSessionId } from '../../../context/SessionProvider'
 const searchIcon = process.env.PUBLIC_URL + '/icons/search.png';
 
 const Index = () => {
+  const [sessionId, setSessionId] = useState(null);
+  useEffect(() => {
+    const fetchSession = async () => {
+        try {
+            const sessionId = await waitForSessionId();
+            setSessionId(sessionId);
+        } catch (error) {
+            console.error("Failed to fetch session:", error);
+        }
+    };
+    fetchSession();
+}, []);
   const [skillData , setSkillData] = useState([]);
   const [postInfo , setPostInfo] = useState({
-    company : "als981209",
+    company : sessionId,
     title : "",
     companyName : "",
     location : "",
@@ -78,7 +91,7 @@ const Index = () => {
             <Divider/>
             <InputWithPhoto updateValue = {(value) => {updatePostInfo("aboutCompany",value)}} title="기업/서비스 소개"/>
             <ButtonSection>
-            <FilledButton onClick = {() => {PostJobPost(postInfo)}} height = "40px">수정하기</FilledButton>
+            <FilledButton onClick = {() => {PostJobPost(postInfo)}} height = "40px">등록하기</FilledButton>
             </ButtonSection>
             
         </MainContent>

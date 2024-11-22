@@ -8,9 +8,7 @@ const skillsIcon = process.env.PUBLIC_URL + '/icons/skillsIcon.png';
 
 function timeDifference(targetString) {
     // 문자열을 Date 객체로 변환
-    console.log("targetString : "  + targetString)
     const targetDate = new Date(targetString); // ISO 형식으로 변환
-    console.log("targetDate : " + targetDate);
     const targetTimestamp = targetDate.getTime(); // 밀리초로 변환
     
     const now = Date.now(); // 현재 시간

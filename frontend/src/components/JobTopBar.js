@@ -178,7 +178,7 @@ const JobTopBar = () => {
         else 
             return (
             <NavbarRight>
-                <CustomLink href ="/register">
+                <CustomLink href ="/member">
                     <AuthLink>회원가입</AuthLink>
                 </CustomLink>
                 <CustomLink href ="/login">
