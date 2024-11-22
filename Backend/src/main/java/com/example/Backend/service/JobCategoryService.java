@@ -33,4 +33,6 @@ public class JobCategoryService {
     public void deleteJobCategory(Integer id) {
         jobCategoryRepository.deleteById(id);
     }
+
+
 }
