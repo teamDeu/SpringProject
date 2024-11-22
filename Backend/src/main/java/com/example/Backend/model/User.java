@@ -14,8 +14,8 @@ public class User {
     @Column(name = "email", unique = true, nullable = true, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255)
-    private String password;
+    @Column(name = "password", nullable = false)
+    private String password = "TEMP_PASSWORD";
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;
@@ -25,7 +25,7 @@ public class User {
 
     @Column(name = "birth_date", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date birthDate;
+    private Date birthDate = new Date(); // 현재 날짜 기본값
 
     @Column(name = "gender", columnDefinition = "ENUM('남', '여')")
     private String gender;
