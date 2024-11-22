@@ -10,6 +10,21 @@ import axios from 'axios';
 const BasicPage = () => {
     const navigate = useNavigate();
 
+    ///////////////// 로그인된 아이디 불러오는 코드
+    const [sessionId, setSessionId] = useState(null);
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
+    ////////////////////////////////////////////////////
+
     const [formData, setFormData] = useState({
         email: '',
         gender: '',

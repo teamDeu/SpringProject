@@ -120,11 +120,27 @@ export const DeleteJobPost = async (id) => {
 };
 
 export const GetSessionId = async () => {
-    const sessionId = await axios.get('http://localhost:8080/api/getsession',{ withCredentials: true })
+    const sessionId = await axios.get('http://localhost:8080/api/session',{ withCredentials: true })
     .then(response => response.data)
     .catch(error => {
         console.error('Error fetching data:', error);
         throw error;
     });
     return sessionId
+}
+
+export const GetInfoBySession = async (session) => {
+    console.log(session);
+    const object = await axios.get(`http://localhost:8080/api/InfoBySession`,{ 
+        withCredentials: true,
+        params :{
+            id : session,
+        }
+    })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+    return object
 }

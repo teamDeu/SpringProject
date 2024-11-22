@@ -1,8 +1,10 @@
 package com.example.Backend.controller;
 
 import com.example.Backend.model.Admin;
+import com.example.Backend.model.Company;
 import com.example.Backend.model.User;
 import com.example.Backend.repository.AdminRepository;
+import com.example.Backend.repository.CompanyRepository;
 import com.example.Backend.repository.UserRepository;
 import com.example.Backend.service.KakaoService;
 import com.example.Backend.service.NaverService;
@@ -41,6 +43,8 @@ public class UserController {
     @Autowired
     private KakaoService kakaoService;
 
+    @Autowired
+    private CompanyRepository companyRepository;
 
     // DTO 클래스
     public static class PhoneRequest {
@@ -73,6 +77,34 @@ public class UserController {
 
         public void setCode(String code) {
             this.code = code;
+        }
+    }
+
+    public class ApiResponse {
+        private String type;
+        private Object data;
+
+        // 생성자
+        public ApiResponse(String type, Object data) {
+            this.type = type;
+            this.data = data;
+        }
+
+        // getter, setter
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public Object getData() {
+            return data;
+        }
+
+        public void setData(Object data) {
+            this.data = data;
         }
     }
 
@@ -369,7 +401,8 @@ public class UserController {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully");
     }
-    @GetMapping("/api/getsession")
+
+    @GetMapping("/api/session")
     public ResponseEntity<?> home(HttpSession session) {
         String user = (String) session.getAttribute("user");
         if (user == null) {
@@ -378,4 +411,25 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/api/InfoBySession")
+    public ResponseEntity<?> getBySession(@RequestParam String id) {
+        // company 테이블에서 id를 찾음
+        Optional<Company> companyOptional = companyRepository.findById(id);
+
+        // company가 존재하면 company 객체와 함께 "company" 문자열 반환
+        if (companyOptional.isPresent()) {
+            return ResponseEntity.ok(new ApiResponse("company", companyOptional.get()));
+        }
+
+        // user 테이블에서 id를 찾음
+        Optional<User> userOptional = userRepository.findById(id);
+
+        // user가 존재하면 user 객체와 함께 "user" 문자열 반환
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(new ApiResponse("user", userOptional.get()));
+        }
+
+        // 둘 다 존재하지 않으면 404 Not Found 반환
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matching data found");
+    }
 }
