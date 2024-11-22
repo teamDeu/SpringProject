@@ -7,13 +7,14 @@ import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
 import axios from 'axios';
 import { waitForSessionId } from '../../../context/SessionProvider';
+import { GetSessionId } from '../../../api/api';
 
-const BasicPage = () => {
+const Index = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        name:'',
-        phone:'',
+        name: '',
+        phone: '',
         email: '',
         gender: '',
         experienceLevel: '',
@@ -21,6 +22,31 @@ const BasicPage = () => {
         educationStatus: '',
     });
 
+    const [sessionId, setSessionId] = useState(null);
+
+    // 세션 ID 가져오기
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const response = await GetSessionId();
+                console.log('세션 확인 응답:', response);
+                setSessionId(response); // 세션 ID 설정
+            } catch (error) {
+                console.error('세션 확인 실패:', error);
+                const userIdFromLocalStorage = localStorage.getItem('userId');
+                if (userIdFromLocalStorage) {
+                    setSessionId(userIdFromLocalStorage);
+                } else {
+                    alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+                    navigate('/login'); // 로그인 페이지로 이동
+                }
+            }
+        };
+
+        fetchSession();
+    }, [navigate]);
+
+    // 입력값 핸들러
     const handleInputChange = (key, value) => {
         setFormData((prev) => ({
             ...prev,
@@ -28,27 +54,16 @@ const BasicPage = () => {
         }));
     };
 
-    const [sessionId, setSessionId] = useState(null);
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const sessionId = await waitForSessionId();
-                setSessionId(sessionId);
-            } catch (error) {
-                console.error("Failed to fetch session:", error);
-            }
-        };
-        fetchSession();
-    }, []);
-    
+    // 폼 제출 처리
     const handleSubmit = async () => {
         try {
-            const userId = sessionId // 로그인 후 저장된 userId 가져오기
+            const userId = sessionId; // 세션 ID 또는 로컬 스토리지에서 가져온 사용자 ID
             if (!userId) {
                 alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
                 return;
             }
-    
+            console.log('저장할 사용자 ID:', userId);
+
             const response = await axios.post('http://localhost:8080/api/update-or-create-user', {
                 id: userId,
                 name: formData.name,
@@ -59,19 +74,16 @@ const BasicPage = () => {
                 educationLevel: formData.educationLevel,
                 educationStatus: formData.educationStatus,
             });
-    
+
             if (response.status === 200) {
-                alert(response.data); // 성공 메시지 출력
-                navigate('/dashboard'); // 다음 페이지로 이동
+                alert('사용자 정보가 성공적으로 저장되었습니다.');
+                navigate('/dashboard'); // 대시보드 페이지로 이동
             }
         } catch (error) {
             console.error('사용자 정보 저장 실패:', error);
             alert('정보 저장 중 문제가 발생했습니다.');
         }
     };
-    
-    
-
 
     return (
         <Container>
@@ -89,13 +101,13 @@ const BasicPage = () => {
                             label="이름"
                             placeholder="예) 홍길동"
                             value={formData.name}
-                            onChange={(e) => handleInputChange('name',e.target.value)}
+                            onChange={(e) => handleInputChange('name', e.target.value)}
                         />
                         <EmailAndCareerInput
                             label="전화번호"
                             placeholder="예) 01012341234"
                             value={formData.phone}
-                            onChange={(e) => handleInputChange('phone',e.target.value)}
+                            onChange={(e) => handleInputChange('phone', e.target.value)}
                         />
                         <EmailAndCareerInput
                             label="이메일"
@@ -106,7 +118,7 @@ const BasicPage = () => {
                         <GenderSelect
                             label="성별"
                             value={formData.gender}
-                            onChange={(key, value) => handleInputChange(key, value)} // key와 value를 handleInputChange로 전달
+                            onChange={(key, value) => handleInputChange(key, value)}
                         />
                         <EmailAndCareerInput
                             label="경력"
@@ -132,7 +144,9 @@ const BasicPage = () => {
     );
 };
 
-export default BasicPage;
+export default Index;
+
+
 
 const Container = styled.div`
     width: 100%;
