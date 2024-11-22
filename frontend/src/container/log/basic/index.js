@@ -23,11 +23,10 @@ const BasicPage = () => {
                 console.error("Failed to fetch session:", error);
             }
         };
-
         fetchSession();
     }, []);
     ////////////////////////////////////////////////////
-    
+
     const [formData, setFormData] = useState({
         email: '',
         gender: '',
