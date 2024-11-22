@@ -83,7 +83,7 @@ const Index = () => {
                 const response = await axios.post('http://localhost:8080/api/admin-login', {
                     admin_id: form.id,
                     admin_pwd: form.password,
-                });
+                },{ withCredentials: true });
                 if (response.status === 200) {
                     alert('관리자 로그인 성공');
                     localStorage.setItem('adminId', form.id); // adminId 저장

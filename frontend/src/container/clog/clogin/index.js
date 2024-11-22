@@ -79,7 +79,7 @@ const Index = () => {
             const response = await axios.post('http://localhost:8080/api/login_company', {
                 id: form.id,
                 pwd: form.password,
-            });
+            },{ withCredentials: true });
 
             if (response.status === 200) {
                 alert('로그인 성공');

@@ -231,13 +231,15 @@ public class UserController {
     }
 
     @PostMapping("/api/admin-login")
-    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData , HttpSession session) {
         String adminId = loginData.get("admin_id");
         String adminPwd = loginData.get("admin_pwd");
 
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (adminOptional.isPresent() && adminOptional.get().getPassword().equals(adminPwd)) {
+            session.setAttribute("user",adminId);
             return ResponseEntity.ok("관리자 로그인 성공");
+
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
         }
