@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../components/common/Header/Header';
@@ -27,27 +27,32 @@ const BasicPage = () => {
         }));
     };
 
+    const [sessionId, setSessionId] = useState(null);
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
+    
     const handleSubmit = async () => {
-        console.log('Form Data:', formData); // 디버깅용 로그
-    
-        if (
-            !formData.email.trim() ||
-            !formData.gender ||
-            !formData.experienceLevel ||
-            !formData.educationLevel ||
-            !formData.educationStatus
-        ) {
-            alert('모든 정보를 입력해주세요.');
-            return;
-        }
-    
         try {
-            const userId = localStorage.getItem('userId');
-            const response = await axios.post('http://localhost:8080/api/update-user-info2', {
+            const userId = sessionId // 로그인 후 저장된 userId 가져오기
+            if (!userId) {
+                alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+                return;
+            }
+    
+            const response = await axios.post('http://localhost:8080/api/update-or-create-user', {
                 id: userId,
-                email: formData.email,
                 name: formData.name,
-                phone:formData.phone,
+                phone: formData.phone,
+                email: formData.email,
                 gender: formData.gender,
                 experienceLevel: formData.experienceLevel,
                 educationLevel: formData.educationLevel,
@@ -55,14 +60,15 @@ const BasicPage = () => {
             });
     
             if (response.status === 200) {
-                alert('사용자 정보가 성공적으로 저장되었습니다.');
-                navigate('/dashboard');
+                alert(response.data); // 성공 메시지 출력
+                navigate('/dashboard'); // 다음 페이지로 이동
             }
         } catch (error) {
             console.error('사용자 정보 저장 실패:', error);
             alert('정보 저장 중 문제가 발생했습니다.');
         }
     };
+    
     
 
 
