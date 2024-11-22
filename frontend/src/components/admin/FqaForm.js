@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import AddButton from "../../components/admin/AddButton";
+import { GetFAQsByTarget } from "../../api/api"; // API 호출 함수
+import AddButton from "../../components/admin/AddButton"; // 추가 버튼 컴포넌트
 
 const FAQContainer = styled.div`
   width: 101%;
@@ -12,12 +13,19 @@ const FAQSection = styled.div`
   margin-bottom: 40px;
 `;
 
+const SectionTitle = styled.h2`
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  margin-top: 30px;
+`;
+
 const FAQItem = styled.div`
   border-bottom: 1px solid #ccc;
   padding: 15px 0;
   width: 100%;
   margin: 0 auto;
-  margin-left: ${(props) => (props.customMarginLeft ? props.customMarginLeft : '0')}; /* margin-left 조건부 적용 */
 `;
 
 const QuestionContainer = styled.div`
@@ -49,15 +57,6 @@ const Answer = styled.div`
   line-height: 1.7;
   white-space: pre;
   word-wrap: break-word;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-  margin-left: -25px;
-  margin-top: 40px; 
 `;
 
 const Checkbox = styled.input`
@@ -107,119 +106,39 @@ const AddButtonWrapper = styled.div`
   margin-right: -15px;
 `;
 
-const FAQForm = ({ selectedType, hideControls = false, customStyles = {}, searchTerm = "", resetToggleState = false }) => {
+const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
   const [faqData, setFaqData] = useState([]);
   const [expandedIndexes, setExpandedIndexes] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
-  // Update FAQ data based on the selectedType prop
+  // Fetch FAQ data based on selectedType
   useEffect(() => {
-    if (resetToggleState) {
-      setExpandedIndexes([]); // 검색 시 토글 상태 초기화
-    }
-    if (selectedType === "individual") {
-      setFaqData([
-        {
-          title: "이력서 등록/관리 자주 묻는 질문",
-          questions: [
-            {
-              id: 1,
-              question: "[가이드] 이력서 등록 방법 part1",
-              answer: `이력서를 작성할 때 반드시 필요한 정보를 입력해야 합니다.`,
-            },
-            {
-              id: 2,
-              question: "[가이드] 이력서 등록 방법 part2",
-              answer: "이력서 작성 후 저장 방법에 대해 설명합니다.",
-            },
-          ],
-        },
-        {
-          title: "회원정보/아이디/비밀번호 자주 묻는 질문",
-          questions: [
-            {
-              id: 3,
-              question: "[가이드] 면접 준비 팁",
-              answer: `면접 준비를 위한 간단한 팁을 제공합니다. \n- 정장 준비\n- 예상 질문 준비\n- 회사 정보 파악`,
-            },
-            {
-              id: 4,
-              question: "이력서 수정 가능 여부",
-              answer: "등록한 이력서는 언제든지 수정할 수 있습니다.",
-            },
-          ],
-        },
-        {
-          title: "면접 준비 팁",
-          questions: [
-            {
-              id: 5,
-              question: "[가이드] 면접 준비 팁",
-              answer: `면접 준비를 위한 간단한 팁을 제공합니다. \n- 정장 준비\n- 예상 질문 준비\n- 회사 정보 파악`,
-            },
-            {
-              id: 6,
-              question: "이력서 수정 가능 여부",
-              answer: "등록한 이력서는 언제든지 수정할 수 있습니다.",
-            },
-          ],
-        },
-      ]);
-    } else {
-      setFaqData([
-        {
-          title: "기업회원 가입 및 계정 관리",
-          questions: [
-            {
-              id: 1,
-              question: "기업회원 등록 절차",
-              answer: "기업회원 가입 절차에 대해 설명합니다.",
-            },
-            {
-              id: 2,
-              question: "기업회원 계정 관리",
-              answer: "계정 관리 방법과 주의사항입니다.",
-            },
-          ],
-        },
-        {
-          title: "채용 공고 및 지원자 관리",
-          questions: [
-            {
-              id: 3,
-              question: "채용 공고 등록 방법",
-              answer: `채용 공고는 아래 단계를 따라 등록할 수 있습니다.\n1. 로그인 후 대시보드 이동\n2. '공고 등록' 버튼 클릭\n3. 필수 정보 입력 후 저장`,
-            },
-            {
-              id: 4,
-              question: "지원자 관리 기능",
-              answer: "기업회원은 지원자 관리 기능을 통해 면접 일정 및 결과를 효율적으로 관리할 수 있습니다.",
-            },
-          ],
-        },
-        {
-          title: "기업 FAQ",
-          questions: [
-            {
-              id: 5,
-              question: "채용 공고 등록 방법",
-              answer: `채용 공고는 아래 단계를 따라 등록할 수 있습니다.\n1. 로그인 후 대시보드 이동\n2. '공고 등록' 버튼 클릭\n3. 필수 정보 입력 후 저장`,
-            },
-            {
-              id: 6,
-              question: "지원자 관리 기능",
-              answer: "기업회원은 지원자 관리 기능을 통해 면접 일정 및 결과를 효율적으로 관리할 수 있습니다.",
-            },
-          ],
-        },
-      ]);
-    }
-    setExpandedIndexes([]); // Reset expanded items on type change
-    setSelectedItems([]); // Reset selected items on type change
-    setSelectAll(false); // Reset select all on type change
-  }, [selectedType, resetToggleState]);
-  
+    const fetchFAQData = async () => {
+      try {
+        const target = selectedType === "individual" ? "개인_FAQ" : "기업_FAQ";
+        const data = await GetFAQsByTarget(target); // API 호출
+        const groupedData = groupByTitle(data); // 데이터 그룹화
+        setFaqData(groupedData);
+      } catch (error) {
+        console.error("Error fetching FAQ data:", error);
+      }
+    };
+
+    fetchFAQData();
+  }, [selectedType]);
+
+  // Group FAQs by title
+  const groupByTitle = (data) => {
+    const grouped = {};
+    data.forEach((item) => {
+      if (!grouped[item.title]) {
+        grouped[item.title] = [];
+      }
+      grouped[item.title].push(item);
+    });
+    return Object.entries(grouped).map(([title, questions]) => ({ title, questions }));
+  };
 
   const handleToggle = (index) => {
     setExpandedIndexes((prevIndexes) =>
@@ -232,11 +151,10 @@ const FAQForm = ({ selectedType, hideControls = false, customStyles = {}, search
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
       prevSelected.includes(id)
-        ? prevSelected.filter((item) => item !== id) // 선택 해제
-        : [...prevSelected, id] // 선택 추가
+        ? prevSelected.filter((item) => item !== id)
+        : [...prevSelected, id]
     );
   };
-  
 
   const handleDelete = () => {
     if (selectedItems.length === 0) {
@@ -249,46 +167,44 @@ const FAQForm = ({ selectedType, hideControls = false, customStyles = {}, search
         ...group,
         questions: group.questions.filter((item) => !selectedItems.includes(item.id)),
       }));
-      setFaqData(updatedData);
+      setFaqData(updatedData.filter((group) => group.questions.length > 0)); // 질문 없는 그룹 제거
       setSelectedItems([]);
       setSelectAll(false);
     }
   };
-  
+
   const handleSelectAll = () => {
     if (selectAll) {
-      // 선택 해제
-      setSelectedItems([]); // 모든 선택 해제
+      setSelectedItems([]);
     } else {
-      // 모든 항목 선택
       const allIds = faqData.flatMap((group) => group.questions.map((item) => item.id));
-      setSelectedItems(allIds); // 모든 질문의 ID 추가
+      setSelectedItems(allIds);
     }
-    setSelectAll(!selectAll); // 선택 상태 토글
+    setSelectAll(!selectAll);
   };
 
-  // 검색된 데이터 필터링
-  const filteredFaqData = faqData
-    .map((group) => ({
-      ...group,
-      questions: group.questions.filter(
-        (item) =>
-          group.title.toLowerCase().includes(searchTerm.toLowerCase()) || // Title 검색
-          item.question.toLowerCase().includes(searchTerm.toLowerCase()) || // Question 검색
-          item.answer.toLowerCase().includes(searchTerm.toLowerCase()) // Answer 검색
-      ),
-    }))
-    .filter((group) => group.questions.length > 0); // 질문이 있는 그룹만 유지
+  // Filter FAQ data by search term
+  const filterBySearchTerm = (data) => {
+    if (!searchTerm) return data; // 검색어가 없으면 원본 데이터 반환
+    return data
+      .map((group) => ({
+        ...group,
+        questions: group.questions.filter(
+          (item) =>
+            item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.answer.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
+      }))
+      .filter((group) => group.questions.length > 0); // 질문 없는 그룹 제거
+  };
+
+  const filteredData = filterBySearchTerm(faqData);
 
   return (
     <FAQContainer>
       {!hideControls && (
         <ActionContainer>
-          <Checkbox
-            type="checkbox"
-            checked={selectAll}
-            onChange={handleSelectAll}
-          />
+          <Checkbox type="checkbox" checked={selectAll} onChange={handleSelectAll} />
           <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
           <AddButtonWrapper>
             <AddButton to="/faqwrite" iconSrc="/icons/plusbtn.png" altText="Plus Button">
@@ -298,13 +214,13 @@ const FAQForm = ({ selectedType, hideControls = false, customStyles = {}, search
         </ActionContainer>
       )}
       <FAQSection>
-        {filteredFaqData.map((group, groupIndex) => (
+        {filteredData.map((group, groupIndex) => (
           <div key={groupIndex}>
             <SectionTitle>{group.title}</SectionTitle>
             {group.questions.map((item) => (
-              <FAQItem key={item.id} customMarginLeft={customStyles.marginLeft}>
+              <FAQItem key={item.id}>
                 <QuestionContainer>
-                {!hideControls && ( // 체크박스 렌더링 제어
+                  {!hideControls && (
                     <Checkbox
                       type="checkbox"
                       checked={selectedItems.includes(item.id)}
@@ -328,7 +244,6 @@ const FAQForm = ({ selectedType, hideControls = false, customStyles = {}, search
       </FAQSection>
     </FAQContainer>
   );
-  
 };
 
 export default FAQForm;
