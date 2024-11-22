@@ -393,7 +393,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("userId", userInfo.get("id"));
         return ResponseEntity.ok(response);
-    }   
+    }
 
 
     @GetMapping("/api/logout")
