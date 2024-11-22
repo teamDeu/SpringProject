@@ -122,6 +122,45 @@ export const DeleteJobPost = async (id) => {
     }
 };
 
+export const GetSessionId = async () => {
+    const sessionId = await axios.get('http://localhost:8080/api/session',{ withCredentials: true })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+    return sessionId
+}
+
+export const GetInfoBySession = async (session) => {
+    console.log(session);
+    const object = await axios.get(`http://localhost:8080/api/InfoBySession`,{ 
+        withCredentials: true,
+        params :{
+            id : session,
+        }
+    })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+    return object
+}
+
+export const LogoutSession = async () => {
+    const object = await axios.get(`http://localhost:8080/api/logout`,{ 
+        withCredentials: true,
+    })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+}
+
+
+
 //회원 데이터를 가져오는 API
 export const GetAllMembers = async () => {
     try {

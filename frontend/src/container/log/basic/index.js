@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../components/common/Header/Header';
@@ -6,9 +6,25 @@ import EmailAndCareerInput from '../../../components/log/EmailAndCareerInput';
 import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
 import axios from 'axios';
+import { waitForSessionId } from '../../../context/SessionProvider';
 
 const BasicPage = () => {
     const navigate = useNavigate();
+
+    ///////////////// 로그인된 아이디 불러오는 코드
+    const [sessionId, setSessionId] = useState(null);
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
+    ////////////////////////////////////////////////////
 
     const [formData, setFormData] = useState({
         email: '',
