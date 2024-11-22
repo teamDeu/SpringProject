@@ -4,6 +4,8 @@ import com.example.Backend.model.Admin;
 import com.example.Backend.model.User;
 import com.example.Backend.repository.AdminRepository;
 import com.example.Backend.repository.UserRepository;
+import com.example.Backend.service.KakaoService;
+import com.example.Backend.service.NaverService;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,6 +31,14 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private AdminRepository adminRepository;
+
+
+    @Autowired
+    private NaverService naverService;
+
+    @Autowired
+    private KakaoService kakaoService;
+
 
     // DTO 클래스
     public static class PhoneRequest {
@@ -64,6 +75,8 @@ public class UserController {
     }
 
     public static class UserInfoRequest {
+        private String name;
+        private String phone;
         private String id;
         private String email;
         private String gender;
@@ -71,6 +84,19 @@ public class UserController {
         private String educationLevel;
         private String educationStatus;
 
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+        public String getPhone() {
+            return phone;
+        }
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
         public String getId() {
             return id;
         }
@@ -182,7 +208,7 @@ public class UserController {
     }
 
     // 사용자 정보 업데이트
-// UserController.java
+    // UserController.java
     @PostMapping("/api/update-user-info")
     public ResponseEntity<String> updateUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
         try {
@@ -210,7 +236,37 @@ public class UserController {
                     .body("사용자 정보 업데이트 실패: " + e.getMessage());
         }
     }
+    // 사용자 정보 업데이트
+    // UserController.java
+    @PostMapping("/api/update-user-info2")
+    public ResponseEntity<String> updateUserInfo2(@RequestBody UserInfoRequest userInfoRequest) {
+        try {
+            // 요청 받은 ID로 사용자 검색
+            User user = userRepository.findById(userInfoRequest.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 ID입니다."));
 
+            // 사용자 정보 업데이트
+            user.setName(userInfoRequest.getName());
+            user.setPhone(userInfoRequest.getPhone());
+            user.setEmail(userInfoRequest.getEmail());
+            user.setGender(userInfoRequest.getGender());
+            user.setExperienceLevel(userInfoRequest.getExperienceLevel());
+            user.setEducationLevel(userInfoRequest.getEducationLevel());
+            user.setEducationStatus(userInfoRequest.getEducationStatus());
+
+            // 저장
+            userRepository.save(user);
+            return ResponseEntity.ok("사용자 정보 업데이트 성공");
+        } catch (IllegalArgumentException e) {
+            System.err.println("사용자 ID 오류: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 정보 업데이트 실패: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("예외 발생: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("사용자 정보 업데이트 실패: " + e.getMessage());
+        }
+    }
 
 
     @GetMapping("/api/check-user-basic")
@@ -240,6 +296,31 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
         }
     }
+    @PostMapping("/api/naver-login")
+    public ResponseEntity<Map<String, Object>> naverLogin(@RequestBody Map<String, String> request) {
+        String code = request.get("code");
+        String state = request.get("state");
+        Map<String, Object> userInfo = naverService.getUserInfo(code, state);
 
+        // 사용자 정보 처리
+        System.out.println("네이버 사용자 정보: " + userInfo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userInfo.get("id"));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/api/kakao-login")
+    public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestBody Map<String, String> request) {
+        String code = request.get("code");
+        Map<String, Object> userInfo = kakaoService.getUserInfo(code);
+
+        // 사용자 정보 처리
+        System.out.println("카카오 사용자 정보: " + userInfo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userInfo.get("id"));
+        return ResponseEntity.ok(response);
+    }
 
 }

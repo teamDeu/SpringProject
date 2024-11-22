@@ -26,10 +26,13 @@ import Cfindpwd from './container/clog/cfindpwd';
 import Rpwd from './container/log/rpwd';
 import Crpwd from './container/clog/crpwd';
 import Basic from './container/log/basic';
+import Basic2 from './container/log/basic2';
 import Admin from './container/admin';
 import Amember from './container/admin/amember';
 import Job from './container/admin/job';
 import Faq from './container/admin/faq';
+import KakaoCallback from "./components/log/KakaoCallback"
+import NaverCallback from "./components/log/NaverCallback"
 
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
@@ -97,6 +100,8 @@ function App() {
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
+            <Route path="kakaoCallback" element={<KakaoCallback/>}/>
+            <Route path="naverCallback" element={<NaverCallback/>}/>
 
             <Route path="/editresume/:id" element={<EditResume />} />
             <Route path="findpwd" element={<Findpwd/>}/>
@@ -104,6 +109,7 @@ function App() {
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="crpwd" element={<Crpwd/>}/>
             <Route path="basic" element={<Basic/>}/>
+            <Route path="basic2" element={<Basic2/>}/>
             <Route path="mp1" element={<Mp1/>}/>
             <Route path="mp2" element={<Mp2/>}/>
             <Route path="mp3" element={<Mp3/>}/>
