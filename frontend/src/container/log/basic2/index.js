@@ -10,22 +10,9 @@ import axios from 'axios';
 const BasicPage = () => {
     const navigate = useNavigate();
 
-    ///////////////// 로그인된 아이디 불러오는 코드
-    const [sessionId, setSessionId] = useState(null);
-    useEffect(() => {
-        const fetchSession = async () => {
-            try {
-                const sessionId = await waitForSessionId();
-                setSessionId(sessionId);
-            } catch (error) {
-                console.error("Failed to fetch session:", error);
-            }
-        };
-        fetchSession();
-    }, []);
-    ////////////////////////////////////////////////////
-
     const [formData, setFormData] = useState({
+        name:'',
+        phone:'',
         email: '',
         gender: '',
         experienceLevel: '',
@@ -56,9 +43,11 @@ const BasicPage = () => {
     
         try {
             const userId = localStorage.getItem('userId');
-            const response = await axios.post('http://localhost:8080/api/update-user-info', {
+            const response = await axios.post('http://localhost:8080/api/update-user-info2', {
                 id: userId,
                 email: formData.email,
+                name: formData.name,
+                phone:formData.phone,
                 gender: formData.gender,
                 experienceLevel: formData.experienceLevel,
                 educationLevel: formData.educationLevel,
@@ -89,6 +78,18 @@ const BasicPage = () => {
                 <Content>
                     <FormContainer>
                         <Title>기본 정보</Title>
+                        <EmailAndCareerInput
+                            label="이름"
+                            placeholder="예) 홍길동"
+                            value={formData.name}
+                            onChange={(e) => handleInputChange('name',e.target.value)}
+                        />
+                        <EmailAndCareerInput
+                            label="전화번호"
+                            placeholder="예) 01012341234"
+                            value={formData.phone}
+                            onChange={(e) => handleInputChange('phone',e.target.value)}
+                        />
                         <EmailAndCareerInput
                             label="이메일"
                             placeholder="예) 1234@naver.com"
