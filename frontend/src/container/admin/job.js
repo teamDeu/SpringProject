@@ -76,23 +76,15 @@ const Job = () => {
     const fetchData = async () => {
       try {
         const data = await GetAllJobPosts();
-        const formattedData = (data || []).map(job => ({
-          id: job.id, // 고유 ID 포함
-          company_id: job.company ?? '-', // 회원 ID로 company_id 사용, null일 경우 '-'
-          name: job.companyName ?? '-', // 기업명, null일 경우 '-'
-          title: job.title ?? '-', // 공고 제목, null일 경우 '-'
-          country: job.location ?? '-', // 지역, null일 경우 '-'
-          registerDate: job.postDate ? new Date(job.postDate).toLocaleDateString() : '-', // 등록일, null일 경우 '-'
-          deadline: job.endDate ? new Date(job.endDate).toLocaleDateString() : '-', // 마감일, null일 경우 '-'
-        }));
-        setJobData(formattedData);
-        setFilteredData(formattedData);
+        setJobData(data); 
+        setFilteredData(data);
       } catch (error) {
         console.error("Error fetching job posts:", error);
       }
     };
     fetchData();
   }, []);
+  
 
   // 선택 필터가 "전체"인 경우 모든 데이터 표시
   useEffect(() => {
@@ -109,20 +101,25 @@ const Job = () => {
     }
 
     const filtered = jobData.filter((job) => {
-      const targetField = selectedFilter === "회원 ID"
-        ? job.company_id.toString()
-        : selectedFilter === "기업명"
-        ? job.name
-        : selectedFilter === "공고 제목"
-        ? job.title
-        : selectedFilter === "지역"
-        ? job.country
-        : selectedFilter === "등록일"
-        ? job.registerDate
-        : job.deadline;
-  
-      return targetField.toLowerCase().includes(searchQuery.toLowerCase());
+      const targetField =
+        selectedFilter === "회원 ID"
+          ? job.company?.toString() // Optional chaining 추가
+          : selectedFilter === "기업명"
+          ? job.name
+          : selectedFilter === "공고 제목"
+          ? job.title
+          : selectedFilter === "지역"
+          ? job.country
+          : selectedFilter === "등록일"
+          ? job.registerDate
+          : job.deadline;
+    
+      // targetField가 undefined일 경우 빈 문자열로 처리
+      return (
+        (targetField || "").toLowerCase().includes(searchQuery.toLowerCase())
+      );
     });
+    
 
     setFilteredData(filtered);
     setCurrentPage(1);
@@ -158,14 +155,22 @@ const Job = () => {
 
   // 테이블 열 정의
   const columns = [
-    { header: '회원 ID', accessor: 'company_id' }, // company_id가 회원 ID로 표시됨
-    { header: '기업명', accessor: 'name' },
-    { header: '공고 제목', accessor: 'title' },
-    { header: '지역', accessor: 'country' },
-    { header: '등록일', accessor: 'registerDate' },
-    { header: '마감일', accessor: 'deadline' },
-  ];
-
+  { header: '회원 ID', accessor: 'company' },
+  { header: '기업명', accessor: 'companyName' },
+  { header: '공고 제목', accessor: 'title' },
+  { header: '지역', accessor: 'location' },
+  {
+    header: '등록일',
+    accessor: 'postDate',
+    Cell: (row) => row.postDate && new Date(row.postDate).toLocaleDateString()
+  },
+  {
+    header: '마감일',
+    accessor: 'endDate',
+    Cell: (row) => row.endDate && new Date(row.endDate).toLocaleDateString()
+  },
+  
+];
   return (
     <RootContainer>
       <GlobalStyle />

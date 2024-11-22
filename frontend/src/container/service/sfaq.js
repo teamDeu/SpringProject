@@ -72,7 +72,7 @@ const FormBox = styled.div`
   padding: 30px;
   padding-top: 0px;
   padding-bottom: 0px;
-  margin-left:-25px;
+  margin-left:-45px;
   margin-top:-20px; 
 `;
 const SFAQ = () => {

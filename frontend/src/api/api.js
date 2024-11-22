@@ -101,6 +101,7 @@ export const PostJobPost = async(jobPost) => {
     
 }
 
+//채용정보 데이터를 가져오는 API
 export const GetAllJobPosts = () => {
     return axios.get('http://localhost:8080/api/jobpost')
         .then(response => response.data)
@@ -109,6 +110,8 @@ export const GetAllJobPosts = () => {
             throw error;
         });
 };
+
+//채용정보 데이터를 삭제하는 API
 export const DeleteJobPost = async (id) => {
     try {
         const response = await axios.delete(`http://localhost:8080/api/jobpost/${id}`);
@@ -156,3 +159,71 @@ export const LogoutSession = async () => {
     });
 }
 
+
+
+//회원 데이터를 가져오는 API
+export const GetAllMembers = async () => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/members');
+        console.log("API Response:", response.data); // 서버 응답 데이터 확인
+        const { individuals, companies } = response.data;
+
+        const allMembers = [
+            ...individuals.map(user => ({
+                id: user.id,
+                type: "개인",
+                password: user.password,
+                name: user.name,
+                dob: user.dob || "-", // null일 경우 '-'
+                phone: user.phone,
+            })),
+            ...companies.map(company => ({
+                id: company.id,
+                type: "기업",
+                password: company.password,
+                name: company.name,
+                dob: "-", // 기업에는 생년월일 없음
+                phone: company.phone,
+            }))
+        ];
+        return allMembers;
+    } catch (error) {
+        console.error("Error fetching members:", error);
+        throw error;
+    }
+};
+
+// FAQ Title 데이터를 가져오는 API
+export const GetFAQTitle = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/faqtitle');
+    // 데이터는 배열로 반환되므로, 첫 번째 객체만 사용
+    return response.data[0];
+  } catch (error) {
+    console.error("Error fetching FAQ title:", error);
+    throw error;
+  }
+};
+
+// FAQ Title 데이터를 업데이트 하는 API
+export const UpdateFAQTitle = async (id, updatedData) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/api/faqtitle/${id}`, updatedData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating FAQ title:", error);
+      throw error;
+    }
+  };
+
+// 특정 target의 FAQ 데이터를 가져오는 API
+export const GetFAQsByTarget = async (target) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/faqs/target/${target}`);
+      return response.data; // target에 해당하는 FAQ 데이터 반환
+    } catch (error) {
+      console.error(`Error fetching FAQs for target: ${target}`, error);
+      throw error;
+    }
+  };
+  
