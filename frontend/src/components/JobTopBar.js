@@ -1,12 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
+import { waitForSessionId } from '../context/SessionProvider';
+import { GetInfoBySession } from '../api/api';
 
 const JobTopBar = () => {
     const location = useLocation();
+    const [sessionId, setSessionId] = useState(null);
+    const [object,setObject] = useState();
+    const [objectType,setObjectType] = useState();
+    const [objectData,setObjectData] = useState();
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
 
+    useEffect(() => {
+        const fetchObject = async () => {
+            try {
+                if(sessionId){
+                    const getObject = await GetInfoBySession(sessionId);
+                    setObject(getObject);
+                }
+            } catch (error) {
+                console.error("Failed to fecth object: " , error)
+            }
+        }
+        fetchObject();
+        
+    },[sessionId])
+
+    useEffect(() => {
+        console.log(object);
+        if(object){
+            setObjectData(object.data);
+            setObjectType(object.type);
+            console.log(objectType);
+            console.log(objectData);
+        }
+    },[object])
     return (
         <Container>
             <Navbar>

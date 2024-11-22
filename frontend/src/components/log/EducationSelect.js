@@ -29,7 +29,7 @@ const EducationSelect = ({ label, value, onChange }) => {
                 <option value="">학력</option>
                 <option value="졸업">졸업</option>
                 <option value="중퇴">중퇴</option>
-                <option value="재학중">재학중</option>
+                <option value="재학">재학</option>
             </Select>
         </Container>
     );

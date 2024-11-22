@@ -6,6 +6,7 @@ import com.example.Backend.model.User;
 import com.example.Backend.repository.CompanyRepository;
 import com.example.Backend.service.CompanyService;
 import com.example.Backend.service.SmsService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -144,13 +145,15 @@ public class CompanyController {
 
     // 기업 회원 로그인 (경로: login_company)
     @PostMapping("/api/login_company")
-    public ResponseEntity<String> loginCompany(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<String> loginCompany(@RequestBody Map<String, String> loginData , HttpSession session) {
         String id = loginData.get("id");
         String pwd = loginData.get("pwd");
 
         try {
             boolean isAuthenticated = companyService.authenticate(id, pwd); // 인증 로직 호출
             if (isAuthenticated) {
+
+                session.setAttribute("user",id);
                 return ResponseEntity.ok("로그인 성공");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");

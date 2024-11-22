@@ -22,11 +22,28 @@ const SocialButton = styled.button`
     color: white;
 `;
 
-const SocialButtons = () => (
-    <SocialContainer>
-        <SocialButton bgColor="#03C75A">N</SocialButton>
-        <SocialButton bgColor="#FEE500">K</SocialButton>
-    </SocialContainer>
-);
+const SocialButtons = () => {
+    const handleKakaoLogin = () => {
+        const clientId = 'ac8b78b524d0506d1a5aa3720f4ceff8';
+        const redirectUri = encodeURIComponent('http://localhost:3000/basic2');
+        const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+        window.location.href = kakaoLoginUrl;
+    };
+    
+    const handleNaverLogin = () => {
+        const clientId = 'h9QsqcHJaS5lXynuuh5t';
+        const redirectUri = encodeURIComponent('http://localhost:3000/basic2');
+        const state = Math.random().toString(36).substr(2, 12); // CSRF 방지용
+        const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+        window.location.href = naverLoginUrl;
+    };
+
+    return (
+        <SocialContainer>
+            <SocialButton bgColor="#03C75A" onClick={handleNaverLogin}>N</SocialButton>
+            <SocialButton bgColor="#FEE500" onClick={handleKakaoLogin}>K</SocialButton>
+        </SocialContainer>
+    );
+};
 
 export default SocialButtons;
