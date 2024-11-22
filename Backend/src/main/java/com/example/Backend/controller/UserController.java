@@ -8,6 +8,7 @@ import com.example.Backend.service.KakaoService;
 import com.example.Backend.service.NaverService;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -196,12 +197,13 @@ public class UserController {
 
     // 로그인
     @PostMapping("/api/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> loginData, HttpSession session) {
         String id = loginData.get("id");
         String password = loginData.get("password");
 
         User user = userRepository.findById(id).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
+            session.setAttribute("user",id);
             return ResponseEntity.ok("로그인 성공");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
@@ -285,13 +287,15 @@ public class UserController {
     }
 
     @PostMapping("/api/admin-login")
-    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData , HttpSession session) {
         String adminId = loginData.get("admin_id");
         String adminPwd = loginData.get("admin_pwd");
 
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (adminOptional.isPresent() && adminOptional.get().getPassword().equals(adminPwd)) {
+            session.setAttribute("user",adminId);
             return ResponseEntity.ok("관리자 로그인 성공");
+
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
         }
@@ -302,6 +306,7 @@ public class UserController {
         String state = request.get("state");
         Map<String, Object> userInfo = naverService.getUserInfo(code, state);
 
+<<<<<<< HEAD
         // 사용자 정보 처리
         System.out.println("네이버 사용자 정보: " + userInfo);
 
@@ -323,4 +328,20 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+=======
+    @GetMapping("/api/logout")
+    public ResponseEntity<?> logout(HttpSession session){
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+-
+    @GetMapping("/api/getsession")
+    public ResponseEntity<?> home(HttpSession session) {
+        String user = (String) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        return ResponseEntity.ok(user);
+    }
+>>>>>>> 57eb4f151e4f25225bb941f7e03122e3e6f33148
 }

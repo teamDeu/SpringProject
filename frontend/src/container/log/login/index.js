@@ -8,6 +8,7 @@ import SocialButtons from '../../../components/log/SocialButtons';
 import Links from '../../../components/log/Links';
 import axios from 'axios';
 import styled from 'styled-components';
+import { GetSessionId } from '../../../api/api';
 
 const Container = styled.div`
     display: flex;
@@ -82,7 +83,7 @@ const Index = () => {
                 const response = await axios.post('http://localhost:8080/api/admin-login', {
                     admin_id: form.id,
                     admin_pwd: form.password,
-                });
+                },{ withCredentials: true });
                 if (response.status === 200) {
                     alert('관리자 로그인 성공');
                     localStorage.setItem('adminId', form.id); // adminId 저장
@@ -95,7 +96,7 @@ const Index = () => {
             const response = await axios.post('http://localhost:8080/api/login', {
                 id: form.id,
                 password: form.password,
-            });
+            },{ withCredentials: true });
 
             if (response.status === 200) {
                 alert('로그인 성공');

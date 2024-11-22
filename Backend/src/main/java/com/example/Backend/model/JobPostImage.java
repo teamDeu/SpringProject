@@ -28,7 +28,7 @@ public class JobPostImage {
     private String imgName;
 
     @Column(name ="img_path")
-    private String imgPath; 
+    private String imgPath;
 
 
 }
