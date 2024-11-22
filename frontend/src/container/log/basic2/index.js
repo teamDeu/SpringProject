@@ -6,6 +6,7 @@ import EmailAndCareerInput from '../../../components/log/EmailAndCareerInput';
 import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
 import axios from 'axios';
+import { waitForSessionId } from '../../../context/SessionProvider';
 
 const BasicPage = () => {
     const navigate = useNavigate();

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 import { waitForSessionId } from '../context/SessionProvider';
-import { GetInfoBySession } from '../api/api';
+import { GetInfoBySession, LogoutSession } from '../api/api';
 import { FaUserCircle } from 'react-icons/fa';
 const JobTopBar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [sessionId, setSessionId] = useState(null);
     const [object,setObject] = useState();
     const [objectType,setObjectType] = useState();
@@ -21,7 +22,11 @@ const JobTopBar = () => {
     const handleDropdownClose = () => {
         setShowDropdown(false);
     };
-
+    const handleLogout =() => {
+        LogoutSession();
+        alert("로그아웃 되었습니다.")
+        navigate("/login");
+    }
     const TopNavLinks = () => {
 
         if(objectType =="user") 
@@ -147,7 +152,7 @@ const JobTopBar = () => {
                         {showDropdown && (
                             <DropdownMenu>
                                 <DropdownLink to="/mp1" onClick={handleDropdownClose}>개인정보 관리</DropdownLink>
-                                <DropdownOption onClick={handleDropdownClose}>로그아웃</DropdownOption>
+                                <DropdownOption onClick={handleLogout}>로그아웃</DropdownOption>
                             </DropdownMenu>
                         )}
                     </UserMenu>
@@ -156,14 +161,29 @@ const JobTopBar = () => {
         else if(objectType === "company")
             return (
                 <NavbarRight>
-                    <div>{objectData.companyName}</div>
+                    <UserMenu>
+                        <UserIcon onClick={handleDropdownToggle}>
+                            <FaUserCircle />
+                            <UserName>{objectData.companyName}</UserName>
+                        </UserIcon>
+                        {showDropdown && (
+                            <DropdownMenu>
+                                <DropdownLink to="/ManageCompanyInfo" onClick={handleDropdownClose}>회사정보 관리</DropdownLink>
+                                <DropdownOption onClick={handleLogout}>로그아웃</DropdownOption>
+                            </DropdownMenu>
+                        )}
+                    </UserMenu>
                 </NavbarRight>
             )
         else 
             return (
             <NavbarRight>
-                <AuthLink>회원가입</AuthLink>
-                <AuthLink>로그인</AuthLink>
+                <Link to ="/register">
+                    <AuthLink>회원가입</AuthLink>
+                </Link>
+                <Link to ="/login">
+                    <AuthLink to ="/login">로그인</AuthLink>
+                </Link>
             </NavbarRight>
         )
     }
@@ -373,6 +393,7 @@ const AuthLink = styled.button`
     display: flex;
     align-items: center;
     margin-bottom: 40px;
+    text-decoration : none;
 `;
 
 const UserMenu = styled.div`
