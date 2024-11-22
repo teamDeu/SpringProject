@@ -1,12 +1,13 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Set;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import java.util.Set;
 public class Euser {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private String id;
 
     @Column(name = "name", nullable = false)
@@ -25,11 +26,13 @@ public class Euser {
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    
+    @Column(name = "birth")
+    private Date birth;
 
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "profile_img")
     private String profileImg;
-
 }
