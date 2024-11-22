@@ -1,17 +1,192 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import searchIcon from '../assets/Img/searchIcon.png'; 
 import { waitForSessionId } from '../context/SessionProvider';
-import { GetInfoBySession } from '../api/api';
-
+import { GetInfoBySession, LogoutSession } from '../api/api';
+import { FaUserCircle } from 'react-icons/fa';
 const JobTopBar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [sessionId, setSessionId] = useState(null);
     const [object,setObject] = useState();
     const [objectType,setObjectType] = useState();
     const [objectData,setObjectData] = useState();
+    const [showDropdown, setShowDropdown] = useState(false); // 드롭다운 표시 상태
+
+    const handleDropdownToggle = () => {
+        setShowDropdown((prev) => !prev);
+    };
+
+    const handleDropdownClose = () => {
+        setShowDropdown(false);
+    };
+    const handleLogout =() => {
+        LogoutSession();
+        alert("로그아웃 되었습니다.")
+        navigate("/login");
+    }
+    const TopNavLinks = () => {
+
+        if(objectType =="user") 
+            return (
+            <NavLinks>
+                            <NavItem>
+                                <NavButton>채용 정보</NavButton>
+                                <DropdownContent>
+                                    <Link to="/jobsearch">
+                                        <DropdownButton>지역/산업별 채용 정보</DropdownButton>
+                                    </Link>
+                                </DropdownContent>
+                            </NavItem>
+                            <NavItem>
+                                <NavButton $isActive={location.pathname === '/resume'}>이력서</NavButton>
+                                <DropdownContent>
+                                    <Link to="/resumeform">
+                                        <DropdownButton>이력서 작성</DropdownButton>
+                                    </Link>
+                                    <Link to="/myresume">
+                                        <DropdownButton>My 이력서</DropdownButton>
+                                    </Link>
+                                </DropdownContent>
+                            </NavItem>
+                            <NavItem>
+                                <NavButton>합격 후기</NavButton>
+                                <DropdownContent>
+                                    <Link to="/test_review_home1">
+                                    <DropdownButton>면접 후기</DropdownButton>
+                                    </Link>
+                                    <Link to="/test_review_home2">
+                                    <DropdownButton>기업 리뷰</DropdownButton>
+                                    </Link>
+                                    <Link to="/myreview">
+                                        <DropdownButton>My 리뷰</DropdownButton>
+                                    </Link>
+                                </DropdownContent>
+                            </NavItem>
+                            <NavItem>
+                                <NavButton>고객센터</NavButton>
+                                <DropdownContent>
+                                    <Link to="/sannouncements">
+                                        <DropdownButton>공지사항</DropdownButton>
+                                    </Link>
+                                    <Link to="/sfaq">
+                                        <DropdownButton>FAQ</DropdownButton>
+                                    </Link>
+                                </DropdownContent>
+                            </NavItem>
+                            <NavItem>
+                                <NavButton>마이페이지</NavButton>
+                                <DropdownContent>
+                                    <Link to="mp5">
+                                    <DropdownButton>스크랩/관심기업</DropdownButton>
+                                    </Link>
+                                    <Link to="mp6">
+                                    <DropdownButton>지원내역</DropdownButton>
+                                    </Link>
+                                </DropdownContent>
+                            </NavItem>
+                        </NavLinks>
+        );
+        else if(objectType === "company")
+            return (
+                <NavLinks>
+                                <NavItem>
+                                    <NavButton>채용 공고 작성</NavButton>
+                                    <DropdownContent>
+                                        <Link to="/companyregpost">
+                                            <DropdownButton>채용 공고 작성</DropdownButton>
+                                        </Link>
+                                    </DropdownContent>
+                                </NavItem>
+                                <NavItem>
+                                    <NavButton>공고 ·지원자 관리</NavButton>
+                                    <DropdownContent>
+                                        <Link to="/companymanagepost">
+                                            <DropdownButton>공고 관리</DropdownButton>
+                                        </Link>
+                                        <Link to="/usersearch">
+                                            <DropdownButton>지원자 관리</DropdownButton>
+                                        </Link>
+                                    </DropdownContent>
+                                </NavItem>
+                                <NavItem>
+                                    <NavButton>합격 후기</NavButton>
+                                    <DropdownContent>
+                                        <Link to="/test_review_home1">
+                                        <DropdownButton>면접 후기</DropdownButton>
+                                        </Link>
+                                        <Link to="/test_review_home2">
+                                        <DropdownButton>기업 리뷰</DropdownButton>
+                                        </Link>
+                                        <Link to="/myreview">
+                                            <DropdownButton>My 리뷰</DropdownButton>
+                                        </Link>
+                                    </DropdownContent>
+                                </NavItem>
+                                <NavItem>
+                                    <NavButton>고객센터</NavButton>
+                                    <DropdownContent>
+                                        <Link to="/sannouncements">
+                                            <DropdownButton>공지사항</DropdownButton>
+                                        </Link>
+                                        <Link to="/sfaq">
+                                            <DropdownButton>FAQ</DropdownButton>
+                                        </Link>
+                                    </DropdownContent>
+                                </NavItem>
+                            </NavLinks>
+            );
+        else return (<></>)
+    }
+    const NavRight = () => {
+        if( objectType === "user")
+            return (
+                <NavbarRight>
+                    <UserMenu>
+                        <UserIcon onClick={handleDropdownToggle}>
+                            <FaUserCircle />
+                            <UserName>{objectData.name}</UserName>
+                        </UserIcon>
+                        {showDropdown && (
+                            <DropdownMenu>
+                                <DropdownLink to="/mp1" onClick={handleDropdownClose}>개인정보 관리</DropdownLink>
+                                <DropdownOption onClick={handleLogout}>로그아웃</DropdownOption>
+                            </DropdownMenu>
+                        )}
+                    </UserMenu>
+                </NavbarRight>
+                )
+        else if(objectType === "company")
+            return (
+                <NavbarRight>
+                    <UserMenu>
+                        <UserIcon onClick={handleDropdownToggle}>
+                            <FaUserCircle />
+                            <UserName>{objectData.companyName}</UserName>
+                        </UserIcon>
+                        {showDropdown && (
+                            <DropdownMenu>
+                                <DropdownLink to="/ManageCompanyInfo" onClick={handleDropdownClose}>회사정보 관리</DropdownLink>
+                                <DropdownOption onClick={handleLogout}>로그아웃</DropdownOption>
+                            </DropdownMenu>
+                        )}
+                    </UserMenu>
+                </NavbarRight>
+            )
+        else 
+            return (
+            <NavbarRight>
+                <Link to ="/register">
+                    <AuthLink>회원가입</AuthLink>
+                </Link>
+                <Link to ="/login">
+                    <AuthLink to ="/login">로그인</AuthLink>
+                </Link>
+            </NavbarRight>
+        )
+    }
     useEffect(() => {
         const fetchSession = async () => {
             try {
@@ -61,64 +236,9 @@ const JobTopBar = () => {
                             <SearchIcon src={searchIcon} alt="검색 아이콘" />
                         </SearchContainer>
                     </LogoSearch>
-                    <NavLinks>
-                        <NavItem>
-                            <NavButton>채용 정보</NavButton>
-                            <DropdownContent>
-                                <Link to="/jobsearch">
-                                    <DropdownButton>지역/산업별 채용 정보</DropdownButton>
-                                </Link>
-                            </DropdownContent>
-                        </NavItem>
-                        <NavItem>
-                            <NavButton $isActive={location.pathname === '/resume'}>이력서</NavButton>
-                            <DropdownContent>
-                                <Link to="/resumeform">
-                                    <DropdownButton>이력서 작성</DropdownButton>
-                                </Link>
-                                <Link to="/myresume">
-                                    <DropdownButton>My 이력서</DropdownButton>
-                                </Link>
-                            </DropdownContent>
-                        </NavItem>
-                        <NavItem>
-                            <NavButton>합격 후기</NavButton>
-                            <DropdownContent>
-                                <Link to="/test_review_home1">
-                                <DropdownButton>면접 후기</DropdownButton>
-                                </Link>
-                                <Link to="/test_review_home2">
-                                <DropdownButton>기업 리뷰</DropdownButton>
-                                </Link>
-                                <Link to="/myreview">
-                                    <DropdownButton>My 리뷰</DropdownButton>
-                                </Link>
-                            </DropdownContent>
-                        </NavItem>
-                        <NavItem>
-                            <NavButton>고객센터</NavButton>
-                            <DropdownContent>
-                                <Link to="/sannouncements">
-                                    <DropdownButton>공지사항</DropdownButton>
-                                </Link>
-                                <Link to="/sfaq">
-                                    <DropdownButton>FAQ</DropdownButton>
-                                </Link>
-                            </DropdownContent>
-                        </NavItem>
-                        <NavItem>
-                            <NavButton>마이페이지</NavButton>
-                            <DropdownContent>
-                                <DropdownButton>스크랩/관심기업</DropdownButton>
-                                <DropdownButton>지원내역</DropdownButton>
-                            </DropdownContent>
-                        </NavItem>
-                    </NavLinks>
+                    <TopNavLinks/>
                 </NavbarLeft>
-                <NavbarRight>
-                    <AuthLink>회원가입</AuthLink>
-                    <AuthLink>로그인</AuthLink>
-                </NavbarRight>
+                <NavRight/>
             </Navbar>
         </Container>
     );
@@ -273,4 +393,66 @@ const AuthLink = styled.button`
     display: flex;
     align-items: center;
     margin-bottom: 40px;
+    text-decoration : none;
+`;
+
+const UserMenu = styled.div`
+    position: relative;
+`;
+
+const UserIcon = styled.div`
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 8px;
+    font-size: 18px;
+    color: #000000;
+
+    &:hover {
+        color: #00257A;
+    }
+`;
+
+const UserName = styled.span`
+    font-size: 18px;
+    font-weight: bold;
+`;
+
+const DropdownMenu = styled.div`
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    margin-top: 8px;
+    z-index: 10;
+    width: 150px;
+`;
+
+const DropdownLink = styled(Link)`
+    padding: 10px 15px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #000;
+    display: block;
+
+    &:hover {
+        background-color: #f0f4ff;
+        color: #00257A;
+        font-weight: 700;
+    }
+`;
+
+const DropdownOption = styled.div`
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Nanum Square Neo', sans-serif;
+
+    &:hover {
+        background-color: #f0f4ff;
+        color: #00257A;
+    }
 `;

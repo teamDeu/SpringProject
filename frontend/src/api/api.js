@@ -144,3 +144,15 @@ export const GetInfoBySession = async (session) => {
     });
     return object
 }
+
+export const LogoutSession = async () => {
+    const object = await axios.get(`http://localhost:8080/api/logout`,{ 
+        withCredentials: true,
+    })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+}
+
