@@ -6,6 +6,7 @@ import com.example.Backend.repository.AdminRepository;
 import com.example.Backend.repository.UserRepository;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -170,12 +171,13 @@ public class UserController {
 
     // 로그인
     @PostMapping("/api/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> loginData, HttpSession session) {
         String id = loginData.get("id");
         String password = loginData.get("password");
 
         User user = userRepository.findById(id).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
+            session.setAttribute("user",id);
             return ResponseEntity.ok("로그인 성공");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
@@ -241,5 +243,18 @@ public class UserController {
         }
     }
 
-
+    @GetMapping("/api/logout")
+    public ResponseEntity<?> logout(HttpSession session){
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+-
+    @GetMapping("/api/getsession")
+    public ResponseEntity<?> home(HttpSession session) {
+        String user = (String) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        return ResponseEntity.ok(user);
+    }
 }

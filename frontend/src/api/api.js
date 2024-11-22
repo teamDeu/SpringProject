@@ -118,3 +118,13 @@ export const DeleteJobPost = async (id) => {
         throw error;
     }
 };
+
+export const GetSessionId = async () => {
+    const sessionId = await axios.get('http://localhost:8080/api/getsession',{ withCredentials: true })
+    .then(response => response.data)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        throw error;
+    });
+    return sessionId
+}

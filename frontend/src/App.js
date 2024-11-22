@@ -110,7 +110,7 @@ function App() {
             <Route path="mp4" element={<Mp4/>}/>
             <Route path="mp5" element={<Mp5/>}/>
             <Route path="mp6" element={<Mp6/>}/>
-            <Route path="inputCompanyInfo" element ={<InputCompanyInfo/>}/>
+            <Route path="inputcompanyinfo" element ={<InputCompanyInfo/>}/>
             <Route path="test_review_home1" element={<Test_Review_Home />} />
             <Route path="test_review_home2" element={<Ceo_Review_Home />} />
             <Route path="test_review_home3" element={<Test_Review_Write />} />
