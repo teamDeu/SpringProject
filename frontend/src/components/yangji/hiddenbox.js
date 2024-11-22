@@ -43,6 +43,7 @@ const Label = styled.div`
     width: 150px;
     margin-left: 50px;
     margin-top: 24px;
+    text-align: left;
 `;
 
 const Value = styled.div`
@@ -91,27 +92,45 @@ const Paragraph = styled.div`
 const HiddenBox = ({
     isVisible, // 표시 여부
     interviewType, // 면접 유형
-    interviewPeople, // 면접 인원
-    interviewQuestions, // 면접 질문 배열
-    tips, // TIP 및 특이사항
+    interviewNumtype, // 면접 인원
+    interviewQuestion, // 면접 질문 (긴 문장)
+    interviewDetail, // TIP 및 특이사항
+    interviewEvaluation,
+    interviewPassed,
+    interviewDifficulty
 }) => {
-    
+    // 면접 질문을 '.' 기준으로 분리하여 배열 생성
+    const splitQuestions = interviewQuestion
+        ? interviewQuestion.split('.').filter((sentence) => sentence.trim() !== '') // 빈 문자열 제거
+        : [];
+
+    const evaluationIconSrc = () => {
+        if (interviewEvaluation === "긍정적") {
+            return "/img/positive.png"; // 긍정적 이미지
+        } else if (interviewEvaluation === "부정적") {
+            return "/img/negative.png"; // 부정적 이미지
+        } else if (interviewEvaluation === "보통") {
+            return "/img/neutral.png"; // 보통 이미지
+        }
+        return "/img/default.png"; // 기본 이미지
+    };
+
     return (
         <Container isVisible={isVisible}>
             <IconContainer>
                 <HiddenIcon 
                     label="전반적 평가" 
-                    value="긍정적" 
-                    iconSrc="/img/smile.png" 
+                    value={interviewEvaluation}
+                    iconSrc={evaluationIconSrc()}
                 />
                 <HiddenIcon 
                     label="난이도" 
-                    value="보통" 
+                    value={interviewDifficulty}
                     iconSrc="/img/hard.png" 
                 />
                 <HiddenIcon 
                     label="결과" 
-                    value="합격" 
+                    value={interviewPassed}
                     iconSrc="/img/result.png" 
                 />
             </IconContainer>
@@ -124,24 +143,24 @@ const HiddenBox = ({
             </Section>
             <Section>
                 <Label>면접 인원</Label>
-                <Value>{interviewPeople}</Value>
+                <Value>{interviewNumtype}</Value>
             </Section>
             <Section>
                 <Label>면접 질문</Label>
                 <QMark>
-                    {interviewQuestions.map((_, idx) => (
-                        <div key={idx}>Q</div>
+                    {splitQuestions.map((_, idx) => (
+                        <div key={idx}>Q{idx + 1}</div> // Q1, Q2, Q3 형태로 출력
                     ))}
                 </QMark>
                 <Paragraph>
-                    {interviewQuestions.map((question, idx) => (
-                        <div key={idx}>{question}</div>
+                    {splitQuestions.map((question, idx) => (
+                        <div key={idx}>{question.trim()}</div> // 공백 제거 후 출력
                     ))}
                 </Paragraph>
             </Section>
             <Section>
                 <Label>TIP 및 특이사항</Label>
-                <Paragraph>{tips}</Paragraph>
+                <Paragraph>{interviewDetail}</Paragraph>
             </Section>
         </Container>
     );

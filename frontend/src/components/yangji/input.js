@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const CompanyNameBox = styled.div`
-    width: 330px; /* 버튼 크기 포함하여 확장 */
+    width: 250px; /* 버튼 크기 포함하여 확장 */
     height: 40px;
     position: relative;
     box-sizing: border-box;
@@ -24,7 +24,7 @@ const CompanyNameInput = styled.input`
     color: #000000;
     font-size: 20px;
     font-weight: 300;
-    width: 230px;
+    width: 160px;
     height: 40px; /* BoxBackground와 동일한 높이 */
     border: none;
     padding-left: 24px;
@@ -51,7 +51,7 @@ const SearchButton = styled.button`
     justify-content: center;
 `;
 
-const CompanyName = () => {
+const CompanyName = ({ onSearch }) => {
     const [value, setValue] = useState('');
 
     const handleChange = (e) => {
@@ -59,7 +59,13 @@ const CompanyName = () => {
     };
 
     const handleSearch = () => {
-        alert(`검색: ${value}`);
+        onSearch(value); // 검색 값을 상위 컴포넌트로 전달
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(); // 엔터 키를 눌렀을 때 검색 실행
+        }
     };
 
     return (
@@ -70,9 +76,12 @@ const CompanyName = () => {
                     placeholder="기업명"
                     value={value}
                     onChange={handleChange}
+                    onKeyPress={handleKeyPress} // 엔터 키 이벤트 추가
                 />
             </BoxBackground>
-            <SearchButton onClick={handleSearch}>검색</SearchButton>
+            <SearchButton onClick={handleSearch} style={{ width: '100%', height: '100%' }}>
+                검색
+            </SearchButton>
         </CompanyNameBox>
     );
 };

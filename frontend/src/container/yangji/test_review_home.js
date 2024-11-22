@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo  } from 'react';
 import Selectbox from '../../components/yangji/selectbox';
 import Input from '../../components/yangji/input';
 import ReviewButton from '../../components/yangji/review_button';
@@ -7,7 +7,7 @@ import TestBox from '../../components/yangji/test_box';
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { GetAllInterviewReviews } from '../../api/api'; // API 분리
+import axios from 'axios';
 
 // 스타일링
 const Container = styled.div`
@@ -20,12 +20,18 @@ const Container = styled.div`
 `;
 
 const Title = styled.h2`
-    position: relative;
+    position: absolute;
     top: 20px;
-    font-size: 30px;
-    font-weight: 400;
     color: #000000;
-    text-align: left;
+  text-align: left;
+  font-size: 30px;
+  font-weight: 400;
+  position: relative;
+  height: 126px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  -webkit-text-stroke: 0.699999988079071px #000000;
 `;
 
 const InputContainer = styled.div`
@@ -88,25 +94,36 @@ const Review2 = () => {
     const [selectedStatus, setSelectedStatus] = useState("전체");
     const [selectedJob, setSelectedJob] = useState("전체");
     const [data, setData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState(""); // 검색값 상태 추가
 
     // 데이터 로드
     useEffect(() => {
-        GetAllInterviewReviews()
-            .then((fetchedData) => {
-                console.log("Fetched data:", fetchedData); // 디버깅용
-                setData(fetchedData);
+        axios.get('http://localhost:8080/api/interview-reviews/with-all-details')
+            .then((response) => {
+                const transformedData = response.data.map(([interviewReview, company, jobCategory]) => ({
+                    ...interviewReview,
+                    companyName: company.companyName,
+                    jobCategoryName: jobCategory.name,
+                }));
+                setData(transformedData); // 상태에 저장
             })
-            .catch((error) => console.error("Error fetching data:", error));
+            .catch((error) => console.error('Error fetching data:', error));
     }, []);
 
     // 필터링 로직
-    const filteredData = data.filter((item) => {
-        const statusMatch =
-            selectedStatus === "전체" || item.interviewPassFail === selectedStatus;
-        const jobMatch =
-            selectedJob === "전체" || item.jobCategoryId === selectedJob;
-        return statusMatch && jobMatch;
-    });
+    const filteredData = useMemo(() => {
+        return data.filter((item) => {
+            const statusMatch =
+                selectedStatus === "전체" || item.interviewPassed === selectedStatus;
+            const jobMatch =
+                selectedJob === "전체" || item.jobCategoryName === selectedJob;
+            const searchMatch =
+                searchQuery === "" || // 검색어가 비어있거나
+                item.companyName === searchQuery || // 정확히 일치하거나
+                item.companyName.includes(searchQuery); // 포함되는 경우
+            return statusMatch && jobMatch && searchMatch;
+        });
+    }, [data, selectedStatus, selectedJob, searchQuery]); // 검색값 포함
 
     return (
         <>
@@ -128,7 +145,7 @@ const Review2 = () => {
                     />
                 </SecondSelectboxContainer>
                 <InputContainer>
-                    <Input />
+                    <Input onSearch={(value) => setSearchQuery(value)} />
                 </InputContainer>
                 <ButtonContainer>
                     <Link to="/test_review_home3">
@@ -139,17 +156,8 @@ const Review2 = () => {
                     <HorizontalLine />
                 </LineContainer>
                 <TestBoxContainer>
-                    {filteredData.map((item) => (
-                        <TestBox
-                            key={item.id} // 고유 ID
-                            companyName={item.companyId} // 회사 이름
-                            manufacturing={item.jobCategoryId} // 직무
-                            period={item.interviewDate} // 면접 날짜
-                            type={item.experience} // 신입/경력
-                            status={item.interviewPassFail} // 합격/대기중/불합격
-                            date={item.interviewRegisterDate} // 등록 날짜
-                        />
-                    ))}
+                    {/* TestBox는 필터링된 데이터를 전달받아 자체적으로 렌더링 */}
+                    <TestBox data={filteredData} />
                 </TestBoxContainer>
             </Container>
         </>

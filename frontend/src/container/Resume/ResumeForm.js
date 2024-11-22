@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from "axios";
+import styled from 'styled-components';
 import emailIcon from './img/emailIcon.png';
 import workIcon from './img/workIcon.png';
 import pnumberIcon from './img/pnumberIcon.png';
@@ -24,18 +24,14 @@ const ResumeForm = () => {
 
     const [photoPreview, setPhotoPreview] = useState(null);
     
-    const [email, setEmail] = useState('');
-    const [birthDate, setBirthDate] = useState('');
-    const [experience, setExperience] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+
     const [desiredLocations, setDesiredLocations] = useState([]);
+
     const [jobRoles, setJobRoles] = useState([]);
     const [currentJobRole, setCurrentJobRole] = useState("");
+    
     const [skills, setSkills] = useState([]);
-    const [currentSkill, setCurrentSkill] = useState("");
-    const [resumeTitle, setResumeTitle] = useState("");
-    const [resumeDescription, setResumeDescription] = useState("");
-
+    const [currentSkill, setCurrentSkill] = useState("")
 
 
     const cities = {
@@ -58,6 +54,115 @@ const ResumeForm = () => {
         경남: ["전체", "거제시", "거창군", "고성군", "김해시", "남해군", "밀양시", "사천시", "산청군", "양산시", "의령군", "진주시", "창녕군", "창원시 마산합포구", "창원시 마산회원구", "창원시 성산구", "창원시 의창구", "창원시 진해구", "통영시", "하동군", "함안군", "함양군", "합천군"],
         제주: ["전체", "서귀포시", "제주시"]
     };
+
+    const [userInfo, setUserInfo] = useState({
+        id: "1234", 
+        email: "",
+        birth: "",
+        phone: "",
+        name: "",
+    });
+
+
+    const [resumeData, setResumeData] = useState({
+        title: "",
+        description: "",
+        experienceYears: "",
+        locations: [],
+        jobRoles: [],
+        skills: [],
+        fileName: "",
+        summary: "",
+    });
+
+    
+    // 초기 사용자 정보 로드
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/users/123"); // 사용자 ID
+                
+                
+                if (response.status === 200) {
+                    const userData = response.data;
+                    console.log("API에서 불러온 사용자 데이터:", userData);
+                    if (userData.birth) {
+                        userData.birth = new Date(userData.birth).toISOString().split("T")[0]; // yyyy-MM-dd 형식으로 변환
+                    }
+                    setUserInfo(userData);
+                }
+            } catch (error) {
+                console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+            }
+        };
+        fetchUserInfo();
+    }, []);
+
+    // 이력서 저장 핸들러
+    const handleSave = async () => {
+        try {
+            // e_users 테이블에 사용자 정보 저장
+            await axios.post("http://localhost:8080/api/users", userInfo, {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            // e_resumes 테이블에 이력서 정보 저장
+            const resumeResponse = await axios.post("http://localhost:8080/api/resumes", {
+                userId: userInfo.id,
+                title: resumeData.title,
+                description: resumeData.description,
+                experienceYears: parseInt(resumeData.experienceYears) || 0,
+                fileName: resumeData.fileName,
+                summary: `Skills: ${resumeData.skills.join(", ")}, Job Roles: ${resumeData.jobRoles.join(", ")}`,
+            }, {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const resumeId = resumeResponse.data.id; // 저장된 resume의 ID
+
+            // e_resume_skills 테이블에 기술 스택 저장
+            await Promise.all(
+                resumeData.skills.map(skill =>
+                    axios.post("http://localhost:8080/api/resume-skills", {
+                        resumeId,
+                        skill,
+                    })
+                )
+            );
+
+            // e_resume_locations 테이블에 희망 근무 지역 저장
+            await Promise.all(
+                resumeData.locations.map(location =>
+                    axios.post("http://localhost:8080/api/locations", {
+                        resumeId,
+                        location,
+                    })
+                )
+            );
+
+            // e_resume_job_categories 테이블에 직무 저장
+            await Promise.all(
+                resumeData.jobRoles.map(jobRole =>
+                    axios.post("http://localhost:8080/api/job-categories", {
+                        resumeId,
+                        jobRole,
+                    })
+                )
+            );
+
+            alert("이력서가 성공적으로 저장되었습니다!");
+        } catch (error) {
+            console.error("이력서 저장 중 오류 발생:", error);
+            alert("이력서 저장에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
+
+
+    const handleBirthChange = (event) => {
+        const value = event.target.value;
+        setUserInfo({ ...userInfo, birth: value });
+    };
+
     
     const handleFileChange = (event) => {
         const file = event.target.files[0]; 
@@ -131,34 +236,6 @@ const ResumeForm = () => {
         setter(event.target.value);
     };
 
-    const handleSave = async () => {
-        const requestBody = {
-            userId: "sampleUser", //실제 아이디로 바꿔야해 세영아;; 까묵지 마렴
-            title: resumeTitle,
-            description: resumeDescription,
-            location: desiredLocations.join(", "),
-            experienceYears: parseInt(experience) || 0,
-            summary: `Skills: ${skills.join(", ")}, Job Roles: ${jobRoles.join(", ")}`,
-            pdfUrl: fileNames.length ? fileNames[0] : "", 
-        };
-
-        console.log("Request Body:", requestBody);
-        
-        try {
-            const response = await axios.post('http://localhost:8080/api/resumes', requestBody, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (response.status === 200 || response.status === 201) {
-                alert("이력서가 저장되었습니다!");
-            }
-        } catch (error) {
-            console.error("이력서 저장 중 오류 발생:", error);
-            alert("이력서 저장에 실패했습니다. 다시 시도해주세요.");
-        }
-    };
-
 
     return (
         <>
@@ -167,65 +244,70 @@ const ResumeForm = () => {
                 <Title>이력서 작성</Title>
                 <Form>
                     <InputGroup>
-                        <Input 
-                            type="text" 
+                    
+                        <Input
+                            type="text"
                             placeholder="이력서 제목을 입력해주세요."
-                            value={resumeTitle}
-                            onChange={(e) => setResumeTitle(e.target.value)} 
+                            value={resumeData.title}
+                            onChange={(e) => setResumeData({ ...resumeData, title: e.target.value })}
                         />
-                        <Input 
-                            type="text" 
+                        <Input
+                            type="text"
                             placeholder="이력서에 대한 간단한 설명을 입력해주세요."
-                            value={resumeDescription}
-                            onChange={(e) => setResumeDescription(e.target.value)} 
+                            value={resumeData.description}
+                            onChange={(e) => setResumeData({ ...resumeData, description: e.target.value })}
                         />
+
+
                     </InputGroup>
 
                     <Divider />
 
                     <ContactRow>
                         <ContactInfo>
-                            <UserNameDisplay>김세영</UserNameDisplay>
+                            <UserNameDisplay>{userInfo.name || "사용자 이름"}</UserNameDisplay>
+
 
                             <InfoField>
-                                <Icon src={email ? BemailIcon : emailIcon} alt="이메일 아이콘" />
+                                <Icon src={userInfo.email ? BemailIcon : emailIcon} alt="이메일 아이콘" />
                                 <InfoFieldInput 
                                     type="text" 
                                     placeholder="이메일을 입력해주세요."
-                                    value={email}
-                                    onChange={handleInputChange(setEmail)}
+                                    value={userInfo.email}
+                                    onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                                 />
                             </InfoField>
 
                             <InfoField>
-                                <Icon src={birthDate ? BbirthIcon : birthIcon} alt="생년월일 아이콘" />
+                                <Icon src={userInfo.birth ? BbirthIcon : birthIcon} alt="생년월일 아이콘" />
                                 <InfoFieldInput 
-                                    type="text" 
+                                    type="date"
                                     placeholder="생년월일을 입력해주세요."
-                                    value={birthDate}
-                                    onChange={handleInputChange(setBirthDate)}
+                                    value={userInfo.birth}
+                                    onChange={handleBirthChange}
                                 />
                             </InfoField>
 
                             <InfoField>
-                                <Icon src={experience ? BworkIcon : workIcon} alt="경력 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
+                                <Icon src={resumeData.experienceYears ? BworkIcon : workIcon} alt="경력 아이콘" />
+                                <InfoFieldInput
+                                    type="number"
                                     placeholder="총 경력을 입력해주세요."
-                                    value={experience}
-                                    onChange={handleInputChange(setExperience)}
+                                    value={resumeData.experienceYears}
+                                    onChange={(e) => setResumeData({ ...resumeData, experienceYears: e.target.value })}
+                                />
+                            </InfoField>
+    
+                            <InfoField>
+                                <Icon src={userInfo.phone ? BpnumberIcon : pnumberIcon} alt="전화번호 아이콘" />
+                                <InfoFieldInput
+                                    type="text"
+                                    placeholder="전화번호를 입력해주세요."
+                                    value={userInfo.phone}
+                                    onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                                 />
                             </InfoField>
 
-                            <InfoField>
-                                <Icon src={phoneNumber ? BpnumberIcon : pnumberIcon} alt="전화번호 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
-                                    placeholder="전화번호를 입력해주세요."
-                                    value={phoneNumber}
-                                    onChange={handleInputChange(setPhoneNumber)}
-                                />
-                            </InfoField>
                         </ContactInfo>
                         
                         {photoPreview ? (
@@ -246,6 +328,7 @@ const ResumeForm = () => {
                             </PhotoUpload>
                         )}
                     </ContactRow>
+                    
 
                     <SelectContainer>
                         <Label>희망 근무 지역</Label>
@@ -265,25 +348,27 @@ const ResumeForm = () => {
                             <AddButton onClick={handleAddLocation}>등록</AddButton>
                         </SelectRow>
                         <LocationTags>
-                            {desiredLocations.map((location, index) => (
+                            {resumeData.locations.map((location, index) => (
                                 <LocationTag key={index}>
                                     {location}
                                     <DeleteButton onClick={() => handleRemoveLocation(location)}>
-                                    <img src={Delw} alt="삭제 아이콘" />
+                                        <img src={Delw} alt="삭제 아이콘" />
                                     </DeleteButton>
                                 </LocationTag>
                             ))}
                         </LocationTags>
+
                     </SelectContainer>
 
                     <InputContainer>
                         <Label>간단 소개</Label>
-                        <InputContainerInput 
-                            type="text" 
-                            placeholder="간단한 소개를 작성해주세요."
-                            value={resumeDescription}
-                            onChange={(e) => setResumeDescription(e.target.value)}
+                        <InputContainerInput
+                            type="text"
+                            placeholder="간략하게 요약해서 3~5줄의 읽기 쉬운 내용으로 작성해주세요."
+                            value={resumeData.summary}
+                            onChange={(e) => setResumeData({ ...resumeData, summary: e.target.value })}
                         />
+
                     </InputContainer>
 
                     <InputContainer>
@@ -298,7 +383,7 @@ const ResumeForm = () => {
                             <AddButton2 onClick={handleAddJobRole}>등록</AddButton2>
                         </InputRow>
                         <LocationTags>
-                            {jobRoles.map((role, index) => (
+                            {resumeData.jobRoles.map((role, index) => (
                                 <LocationTag key={index}>
                                     {role}
                                     <DeleteButton onClick={() => handleRemoveJobRole(role)}>
@@ -307,6 +392,7 @@ const ResumeForm = () => {
                                 </LocationTag>
                             ))}
                         </LocationTags>
+
                     </InputContainer>
 
                     <InputContainer>
@@ -321,7 +407,7 @@ const ResumeForm = () => {
                             <AddButton2 onClick={handleAddSkill}>등록</AddButton2>
                         </InputRow>
                         <LocationTags>
-                            {skills.map((skill, index) => (
+                            {resumeData.skills.map((skill, index) => (
                                 <LocationTag key={index}>
                                     {skill}
                                     <DeleteButton onClick={() => handleRemoveSkill(skill)}>
@@ -330,12 +416,13 @@ const ResumeForm = () => {
                                 </LocationTag>
                             ))}
                         </LocationTags>
+
                     </InputContainer>
 
                     <InputContainer>
                         <Label>이력서 / 자기소개서 등록</Label>
                         <FileUploadContainer>
-                            <FileUploadInput ref={fileUploadInputRef} type="text" placeholder="이력서 및 자기소개서 파일을 등록해주세요." readOnly />
+                            <FileUploadInput ref={fileUploadInputRef} type="text" placeholder="이력서 및 자기소개서 파일을 등록해주세요." value={resumeData.fileName} readOnly />
                             <FileInputLabel>
                                 <img src={addPhotoIcon} alt="파일 추가 아이콘" />
                                 파일 등록

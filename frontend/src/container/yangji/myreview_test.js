@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Selectbox from '../../components/yangji/selectbox';
 import Input from '../../components/yangji/input';
 import HorizontalLine from '../../components/yangji/Line';
 import TestBox from '../../components/yangji/myreview/test_box';
 import styled from 'styled-components';
-
+import axios from 'axios';
 
 const Container = styled.div`
     position: relative;
     width: 100%;
     height: 100vh;
     background: #ffffff;
-    margin: 0 auto; /* 가로 중앙 정렬 */
+    margin: 0 auto;
     font-family: 'Nanum Square Neo', sans-serif;
 `;
 
@@ -30,7 +30,7 @@ const SelectboxContainer = styled.div`
 
 const SecondSelectboxContainer = styled.div`
     position: absolute;
-    top: 30px; /* 첫 번째 Selectbox 아래로 배치 */
+    top: 30px;
     left: 802px;
     width: 320px;
 `;
@@ -38,7 +38,7 @@ const SecondSelectboxContainer = styled.div`
 const LineContainer = styled.div`
     position: absolute;
     top: 80px;
-    width: 100%; /* 선의 너비 조정 */
+    width: 100%;
 `;
 
 const TestBoxContainer = styled.div`
@@ -47,51 +47,61 @@ const TestBoxContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 100%; /* 부모 컨테이너에 맞게 늘림 */
+    width: 100%;
 `;
 
 const Review2 = () => {
-    const dropdownOptions1 = ["전체", "합격", "대기중", "불합격"];
+    const dropdownOptions1 = ['전체', '합격', '대기중', '불합격'];
     const dropdownOptions2 = [
-        "서버/백엔드 개발자",
-        "프론트엔드 개발자",
-        "웹 풀스택 개발자",
-        "게임 클라이언트 개발자",
-        "DBA",
-        "개발 PM",
-        "안드로이드 개발자",
-        "iOS 개발자",
-        "크로스플랫폼 앱개발자",
-        "빅데이터 엔지니어",
-        "인공지능/머신러닝",
+        '서버/백엔드 개발자',
+        '프론트엔드 개발자',
+        '웹 풀스택 개발자',
+        '게임 클라이언트 개발자',
+        'DBA',
+        '개발 PM',
+        '안드로이드 개발자',
+        'iOS 개발자',
+        '크로스플랫폼 앱개발자',
+        '빅데이터 엔지니어',
+        '인공지능/머신러닝',
     ];
 
-    const [selectedStatus, setSelectedStatus] = useState("전체");
-    const statusOptions = ['등록대기중', '등록완료', '등록취소'];
-    const [dummyData, setDummyData] = useState(
-        Array.from({ length: 8 }, (_, index) => ({
-            id: index + 1, // 고유 ID 추가
-            companyName: `회사 이름 ${index + 1}`,
-            manufacturing: `제조 ${index + 1}`,
-            period: "2024년 하반기",
-            type: "신입",
-            status: index % 3 === 0 ? "합격" : index % 3 === 1 ? "대기중" : "불합격",
-            date: `2024.10.${27 - index}`,
-            hiddenContent: `숨겨진 내용 ${index + 1}`,
-            registrationStatus:statusOptions[Math.floor(Math.random() * statusOptions.length)]
-        }))
-    );
+    const [selectedStatus, setSelectedStatus] = useState('전체');
+    const [selectedJob, setSelectedJob] = useState('전체');
+    const [data, setData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleDelete = (id) => {
-        if (window.confirm("정말 삭제하시겠습니까?")) {
-            setDummyData((prevData) => prevData.filter((item) => item.id !== id));
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+            setData((prevData) => prevData.filter((item) => item.id !== id));
         }
     };
 
-    const filteredData =
-        selectedStatus === "전체"
-            ? dummyData
-            : dummyData.filter((data) => data.status === selectedStatus);
+    useEffect(() => {
+        axios
+            .get('http://localhost:8080/api/interview-reviews/with-all-details')
+            .then((response) => {
+                const transformedData = response.data.map(([interviewReview, company, jobCategory]) => ({
+                    ...interviewReview,
+                    companyName: company.companyName,
+                    jobCategoryName: jobCategory.name,
+                }));
+                setData(transformedData);
+            })
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
+
+    const filteredData = useMemo(() => {
+        return data.filter((item) => {
+            const statusMatch = selectedStatus === '전체' || item.interviewPassed === selectedStatus;
+            const jobMatch = selectedJob === '전체' || item.jobCategoryName === selectedJob;
+            const searchMatch =
+                searchQuery === '' ||
+                item.companyName === searchQuery ||
+                item.companyName.includes(searchQuery);
+            return statusMatch && jobMatch && searchMatch;
+        });
+    }, [data, selectedStatus, selectedJob, searchQuery]);
 
     return (
         <Container>
@@ -103,28 +113,21 @@ const Review2 = () => {
                 />
             </SelectboxContainer>
             <SecondSelectboxContainer>
-                <Selectbox options={dropdownOptions2} defaultOption="직무 · 직업" />
+                <Selectbox
+                    options={dropdownOptions2}
+                    defaultOption="직무 · 직업"
+                    onChange={(value) => setSelectedJob(value)}
+                />
             </SecondSelectboxContainer>
             <InputContainer>
-                <Input />
+                <Input onSearch={(value) => setSearchQuery(value)} />
             </InputContainer>
             <LineContainer>
                 <HorizontalLine />
             </LineContainer>
             <TestBoxContainer>
-                {filteredData.map((data) => (
-                    <TestBox
-                        key={data.id}
-                        companyName={data.companyName}
-                        manufacturing={data.manufacturing}
-                        period={data.period}
-                        type={data.type}
-                        status={data.status}
-                        date={data.date}
-                        hiddenContent={data.hiddenContent}
-                        onDelete={() => handleDelete(data.id)} // 삭제 기능 연결
-                        registrationStatus={data.registrationStatus}
-                    />
+                {filteredData.map((item) => (
+                    <TestBox key={item.id} data={[item]} onDelete={handleDelete} />
                 ))}
             </TestBoxContainer>
         </Container>
