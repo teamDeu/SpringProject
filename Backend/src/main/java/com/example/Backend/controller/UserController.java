@@ -300,7 +300,7 @@ public class UserController {
         try {
             // 사용자 검색
             Optional<User> optionalUser = userRepository.findById(userInfoRequest.getId());
-
+            System.out.println(userInfoRequest.getId());
             if (optionalUser.isPresent()) {
                 // 기존 사용자 업데이트
                 User existingUser = optionalUser.get();
@@ -387,13 +387,17 @@ public class UserController {
         String code = request.get("code");
         Map<String, Object> userInfo = kakaoService.getUserInfo(code);
 
-        // 사용자 정보 처리
+        // 사용자 정보 처리 로그
         System.out.println("카카오 사용자 정보: " + userInfo);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userInfo.get("id"));
-        return ResponseEntity.ok(response);
+        if (userInfo == null || !userInfo.containsKey("id")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "사용자 ID를 가져오지 못했습니다."));
+        }
+
+        String userId = userInfo.get("id").toString(); // 카카오 사용자 ID
+        return ResponseEntity.ok(Map.of("userId", userId));
     }
+
 
 
     @GetMapping("/api/logout")
