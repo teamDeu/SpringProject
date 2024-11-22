@@ -18,10 +18,13 @@ const tempData = {
     
 }
 const PostComponents = ({data = tempData}) => {
+    const date = new Date();
+    const endDate = new Date(data.postEndDate);
+    const isIng = date.getTime() <= endDate.getTime();
   return (
     <Container>
         <StateSection>
-            <RoundedLabel color = "red">진행중</RoundedLabel>
+            {isIng ? <RoundedLabel color = "red">진행중</RoundedLabel> : <RoundedLabel color = "#B5B5B5">마감</RoundedLabel> }
         </StateSection>
         <InfoSection>
             <InfoTitle>{data.postTitle}</InfoTitle>

@@ -26,7 +26,11 @@ export const SelectBox = styled.div`
     cursor: default;
 `;
 
-export const OptionList = styled.div`
+export const OptionList = styled.div.attrs((props) => ({
+    style: {
+      display: props.isOpen ? 'block' : 'none',
+    },
+  }))`
     font-family: 'Nanum Square Neo', sans-serif;
     background: #ffffff;
     border: 1px solid #959595;
@@ -36,10 +40,10 @@ export const OptionList = styled.div`
     left: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1;
-    display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
     max-height: 300px;
     overflow-y: auto;
-`;
+  `;
+  
 
 export const ArrowIcon = styled.img`
     width: 20px;

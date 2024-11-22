@@ -56,5 +56,8 @@ public class InterviewReview {
 
     @Column(name = "verify_file")
     private String verifyFile;
+
+    @Column(name = "user_id")
+    private String userId;
 }
 

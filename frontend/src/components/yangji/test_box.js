@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import HiddenBox from './hiddenbox'; // HiddenBox 컴포넌트를 가져옵니다.
 import styled from 'styled-components';
-import axios from 'axios';
 
 const Container = styled.div`
     position: relative;
@@ -76,8 +75,7 @@ const ArrowIcon = styled.img`
     transform: ${({ $isRotated }) => ($isRotated ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 
-const TestBox = () => {
-    const [data, setData] = useState([]); // 서버에서 가져온 데이터
+const TestBox = ({ data }) => {
     const [visibleItems, setVisibleItems] = useState({}); // 각 아이템별로 HiddenBox 상태를 관리
 
     const toggleHiddenBox = (id) => {
@@ -87,26 +85,21 @@ const TestBox = () => {
         }));
     };
 
-    useEffect(() => {
-        // 서버에서 데이터를 가져오는 GET 요청
-        axios.get('http://localhost:8080/api/interview-reviews')
-            .then((response) => setData(response.data))
-            .catch((error) => console.error('Error fetching data:', error));
-    }, []);
+    
 
     return (
         <Container>
             {data.map((item) => (
                 <div key={item.id}>
                     <OuterBox $isHiddenBoxVisible={visibleItems[item.id]}>
-                        <CompanyName>{item.companyId}</CompanyName>
+                        <CompanyName>{item.companyName}</CompanyName>
                         <JobDetails>
-                            {item.jobCategoryId} | {item.interviewDate} | {item.experience}
+                            {item.jobCategoryName} | {item.interviewDate} | {item.experience}
                         </JobDetails>
                         <StatusBox>
-                            <StatusText status={item.interviewPassFail}>{item.interviewPassFail}</StatusText>
+                            <StatusText status={item.interviewPassed}>{item.interviewPassed}</StatusText>
                         </StatusBox>
-                        <DateText>{item.interviewRegisterDate}</DateText>
+                        <DateText>{item.interviewRegister}</DateText>
                         <ArrowIcon
                             src="/img/arrow_bot.png"
                             alt="Toggle Arrow"
@@ -118,9 +111,12 @@ const TestBox = () => {
                         <HiddenBox
                             isVisible={visibleItems[item.id]}
                             interviewType={item.interviewType}
-                            interviewPeople={item.interviewNum}
-                            interviewQuestions={item.interviewQuestion}
-                            tips={item.interviewDetail}
+                            interviewNumtype={item.interviewNumtype}
+                            interviewQuestion={item.interviewQuestion}
+                            interviewDetail={item.interviewDetail}
+                            interviewEvaluation={item.interviewEvaluation}
+                            interviewPassed={item.interviewPassed}
+                            interviewDifficulty={item.interviewDifficulty}
                         />
                     )}
                 </div>

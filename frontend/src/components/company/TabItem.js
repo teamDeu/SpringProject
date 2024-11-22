@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 const TabItem = ({children,tabActive = false,onClick}) => {
-    console.log(tabActive);
   return (
     <Container onClick ={onClick} tabActive = {tabActive}>{children}</Container>
   )

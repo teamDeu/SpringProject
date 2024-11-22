@@ -17,6 +17,12 @@ public class InterviewReviewService {
         return interviewReviewRepository.findAll();
     }
 
+    public List<Object[]> getInterviewReviewsWithDetails() {
+        return interviewReviewRepository.getInterviewReviewsWithDetails();
+    }
+
+
+
     public InterviewReview saveInterviewReview(InterviewReview interviewReview) {
         return interviewReviewRepository.save(interviewReview);
     }

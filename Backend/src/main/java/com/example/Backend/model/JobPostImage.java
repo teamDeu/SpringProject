@@ -1,5 +1,8 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +11,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "c_job_posts_img")
 public class JobPostImage {
 
@@ -19,13 +21,14 @@ public class JobPostImage {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false) // 외래키 설정
+    @JsonBackReference
     private JobPost jobPost;
 
     @Column(name="img_name")
     private String imgName;
 
     @Column(name ="img_path")
-    private String imgPath;
+    private String imgPath; 
 
 
 }

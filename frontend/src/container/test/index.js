@@ -28,7 +28,11 @@ const Index = () => {
 
         fetchData();
     }, []);
+    const date = new Date();
 
+
+    const dateFormat = date.getFullYear() + "-" + date.getMonth().toString().padStart(2,0) + "-" + date.getDay().toString().padStart(2,0);
+    console.log(dateFormat >= "2024-10-05");
     return (
         <div>
             <button onClick={handleOnClick}>테스트 데이터 입력</button>
