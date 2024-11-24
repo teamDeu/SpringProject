@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { GetFAQTitle, UpdateFAQTitle } from '../../api/api' // API 호출 함수 임포트
 
 const InfoBoxContainer = styled.div`
-  border: ${(props) => (props.hideBorder ? "none" : "1px solid #ccc")}; 
-  padding: ${(props) => (props.deletePadding ? "0px" : "20px")}; 
+  border: ${(props) => (props.hideBorder ? "none" : "1px solid #ccc")};
+  padding: ${(props) => (props.deletePadding ? "0px" : "20px")};
   border-radius: 8px;
   margin-top: 20px;
   font-size: 16px;
@@ -14,14 +15,14 @@ const InfoBoxContainer = styled.div`
 const InfoHeader = styled.p`
   font-size: 18px;
   font-weight: bold;
-  white-space: pre-wrap; /* 줄바꿈을 반영하기 위해 추가 */
+  white-space: pre-wrap; /* 줄바꿈을 반영 */
 `;
 
 const InfoDetail = styled.p`
   color: black;
   margin-top: 15px;
   line-height: 1.6;
-  white-space: pre-wrap;
+  white-space: pre-wrap; /* 줄바꿈을 반영 */
 `;
 
 const EmailText = styled.p`
@@ -110,33 +111,64 @@ const InputEmailField = styled.input`
 
 const InfoBox = ({ hideBorder = false, deletePadding = false, hideEditButton = false }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [infoHeader, setInfoHeader] = useState(
-    "추가 정보가 필요하시거나 문의할 내용이 있으면 아래의 이메일로 문의 부탁드립니다."
-  );
-  const [infoDetail, setInfoDetail] = useState(
-    "평일 09시 에서 17시 까지 문의하신 내용은 당일 답변해드립니다. \n 17시 이후에 문의하신 내용은 다음날에 답변, 주말에 문의하신 내용은 그 다음주 월요일에 답변해 드립니다."
-  );
-  const [email, setEmail] = useState("✉️ AAA@naver.com");
+  const [faqData, setFaqData] = useState({
+    header: "",
+    content: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    // FAQ 데이터를 가져오는 API 호출
+    const fetchFAQData = async () => {
+      try {
+        const data = await GetFAQTitle(); // API 호출로 데이터 가져오기
+        setFaqData(data); // 가져온 데이터를 상태에 저장
+      } catch (error) {
+        console.error("Error fetching FAQ data:", error);
+      }
+    };
+
+    fetchFAQData();
+  }, []);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
-    setIsEditing(false);
+
+  //저장 버튼 클릭시 DB 업데이트
+  const handleSaveClick = async () => {
+    try {
+      await UpdateFAQTitle(faqData.id, faqData); // DB 업데이트
+      alert("저장되었습니다.");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating FAQ data:", error);
+      alert("저장 중 오류가 발생했습니다.");
+    }
   };
 
   const handleCancelClick = () => {
     setIsEditing(false);
   };
 
+  
   return (
     <InfoBoxContainer hideBorder={hideBorder} deletePadding={deletePadding}>
       {isEditing ? (
         <>
-          <InputHeaderField value={infoHeader} onChange={(e) => setInfoHeader(e.target.value)} />
-          <InputDetailField value={infoDetail} onChange={(e) => setInfoDetail(e.target.value)} />
-          <InputEmailField value={email} onChange={(e) => setEmail(e.target.value)} />
+          <InputHeaderField
+            value={faqData.header}
+            onChange={(e) => setFaqData({ ...faqData, header: e.target.value })}
+          />
+          <InputDetailField
+            value={faqData.content}
+            onChange={(e) => setFaqData({ ...faqData, content: e.target.value })}
+          />
+          <InputEmailField
+            value={faqData.email}
+            onChange={(e) => setFaqData({ ...faqData, email: e.target.value })}
+          />
           <ButtonContainer>
             <SaveButton onClick={handleSaveClick}>저장</SaveButton>
             <CancelButton onClick={handleCancelClick}>취소</CancelButton>
@@ -144,11 +176,11 @@ const InfoBox = ({ hideBorder = false, deletePadding = false, hideEditButton = f
         </>
       ) : (
         <>
-          <InfoHeader>{infoHeader}</InfoHeader>
-          <InfoDetail>{infoDetail}</InfoDetail>
-          <EmailText>{email}</EmailText>
+          <InfoHeader>{faqData.header}</InfoHeader>
+          <InfoDetail>{faqData.content}</InfoDetail>
+          <EmailText>{faqData.email}</EmailText>
           <ButtonContainer>
-          {!hideEditButton && <EditButton onClick={handleEditClick}>수정</EditButton>}
+            {!hideEditButton && <EditButton onClick={handleEditClick}>수정</EditButton>}
           </ButtonContainer>
         </>
       )}

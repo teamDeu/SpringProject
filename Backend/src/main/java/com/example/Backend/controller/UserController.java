@@ -390,11 +390,17 @@ public class UserController {
         // 사용자 정보 처리
         System.out.println("카카오 사용자 정보: " + userInfo);
 
+        if (userInfo == null || !userInfo.containsKey("id")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "사용자 ID를 가져오지 못했습니다."));
+        }
         Map<String, Object> response = new HashMap<>();
         response.put("userId", userInfo.get("id"));
         return ResponseEntity.ok(response);
     }
 
+        String userId = userInfo.get("id").toString(); // 카카오 사용자 ID
+        return ResponseEntity.ok(Map.of("userId", userId));
+    }
 
     @GetMapping("/api/logout")
     public ResponseEntity<?> logout(HttpSession session){
