@@ -398,9 +398,8 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-        String userId = userInfo.get("id").toString(); // 카카오 사용자 ID
-        return ResponseEntity.ok(Map.of("userId", userId));
-    }
+
+
 
     @GetMapping("/api/logout")
     public ResponseEntity<?> logout(HttpSession session){

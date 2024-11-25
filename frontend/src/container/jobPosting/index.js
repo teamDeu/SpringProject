@@ -20,7 +20,7 @@ function JobPosting() {
 
     return (
         <div>
-            <JobTopBar />
+
             {showJobDetail ? (
                 <JobDetail jobId={selectedJobId} onBack={handleBackToSearch} />
             ) : (

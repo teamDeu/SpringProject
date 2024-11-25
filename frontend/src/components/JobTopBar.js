@@ -28,10 +28,11 @@ const JobTopBar = () => {
         navigate("/login");
     }
     const TopNavLinks = () => {
+        
 
         if(objectType =="user") 
             return (
-            <NavLinks>
+                <NavLinks>
                             <NavItem>
                                 <NavButton>채용 정보</NavButton>
                                 <DropdownContent>

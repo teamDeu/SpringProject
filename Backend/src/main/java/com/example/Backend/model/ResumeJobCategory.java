@@ -2,6 +2,7 @@ package com.example.Backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "e_resume_job_categories")
@@ -13,14 +14,14 @@ public class ResumeJobCategory {
 
     @ManyToOne
     @MapsId("resumeId")
-    @JoinColumn(name = "resume_id")
+    @JoinColumn(name = "resume_id", referencedColumnName = "id", nullable = false)
+    @ToString.Exclude
     private Resume resume;
 
     @ManyToOne
     @MapsId("jobCategoryId")
-    @JoinColumn(name = "job_category_id")
+    @JoinColumn(name = "job_category_id", referencedColumnName = "id", nullable = false)
+    @ToString.Exclude
     private JobCategory jobCategory;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId; // e_resume 테이블의 user_id
 }

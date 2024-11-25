@@ -19,7 +19,7 @@ function Resume() {
 
     return (
         <div>
-            <JobTopBar onResumeClick={handleResumeButtonClick} onMyResumeClick={handleMyResumeClick} />
+            
             {showMyResume && <MyResume onAddResumeClick={handleResumeButtonClick} />}
             {showResumeForm && <ResumeForm />} 
         </div>

@@ -40,7 +40,7 @@ const ResumeForm = () => {
         email: "",
         birth: "",
         phone: "",
-        profileImg: "http://localhost:8080/images/mock-profile.png",
+        profileImg: "",
     });
 
     const [resumeData, setResumeData] = useState({
@@ -116,25 +116,13 @@ const ResumeForm = () => {
     // 이력서 저장 핸들러
     const handleSave = async () => {
         try {
+            // 기본 사용자 정보 저장
             await axios.post("http://localhost:8080/api/eusers", userInfo, {
                 headers: { "Content-Type": "application/json" },
             });
 
-            let fileUrl = "";
-            if (resumeFile) {
-                const formData = new FormData();
-                formData.append("file", resumeFile);
-
-                const uploadResponse = await axios.post(
-                    "http://localhost:8080/api/file-upload", // 파일 업로드 API 경로
-                    formData,
-                    {
-                        headers: { "Content-Type": "multipart/form-data" },
-                    }
-                );
-                fileUrl = uploadResponse.data.url; // 파일의 URL을 응답에서 가져옴
-            }
-
+            // 이력서 데이터 저장
+            let fileUrl = resumeData.fileName || ""; 
             const resumeResponse = await axios.post("http://localhost:8080/api/resumes", {
                 userId: userInfo.id,
                 title: resumeData.title,
@@ -142,18 +130,38 @@ const ResumeForm = () => {
                 experienceYears: parseInt(resumeData.experienceYears) || 0,
                 pdfUrl: fileUrl,
                 summary: resumeData.summary,
+                createdAt: new Date().toISOString().split('T')[0],
             }, {
                 headers: { "Content-Type": "application/json" },
             });
 
             const resumeId = resumeResponse.data.id;
 
+            // 선택된 기술 스택을 e_resume_skills에 저장
             await Promise.all(
-                resumeData.skills.map(skill =>
-                    axios.post("http://localhost:8080/api/resume-skills", { resumeId, skill })
-                )
+                selectedSkills.map((skillName) => {
+                    const skill = skills.find((s) => s.name === skillName);
+                    if (!skill || !skill.id) {
+                        console.error(`Invalid skill selected: ${skillName}`);
+                        throw new Error(`Invalid skill selected: ${skillName}`);
+                    }
+            
+                    return axios.post("http://localhost:8080/api/resume-skills", {
+                        id: {
+                            resumeId: resumeId, // 이력서 ID
+                            skillId: skill.id, // 기술 스택 ID
+                        },
+                        resume: {
+                            id: resumeId,
+                        },
+                        skill: {
+                            id: skill.id,
+                        },
+                    });
+                })
             );
-
+            
+            
             await Promise.all(
                 resumeData.locations.map(location =>
                     axios.post("http://localhost:8080/api/resume-locations", { resumeId, location })
@@ -179,6 +187,16 @@ const ResumeForm = () => {
             setSelectedJobCategory("");
         }
     };
+
+    const handleAddSkill = () => {
+        if (selectedSkill && !selectedSkills.includes(selectedSkill)) {
+            setSelectedSkills([...selectedSkills, selectedSkill]);
+            setSelectedSkill("");
+        } else {
+            alert("이미 선택된 기술 스택입니다.");
+        }
+    };
+    
 
     const handleRemoveJobRole = (role) => {
         setJobRoles(jobRoles.filter((item) => item !== role));

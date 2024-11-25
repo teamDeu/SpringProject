@@ -22,7 +22,7 @@ public class ResumeSkillService {
         return resumeSkillRepository.save(resumeSkill);
     }
 
-    public void deleteById(Integer resumeId, Integer skillId) {
+    public void deleteById(Integer resumeId, Long  skillId) {
         resumeSkillRepository.deleteById(new ResumeSkillId(resumeId, skillId));
     }
 }

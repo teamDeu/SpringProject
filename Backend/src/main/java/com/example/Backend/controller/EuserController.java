@@ -21,7 +21,7 @@ public class EuserController {
     @Autowired
     private EuserService euserService;
 
-    @Value("${file.upload-dir}") // application.properties에서 설정된 파일 저장 경로
+    @Value("${file.upload-dir}")
     private String uploadDir;
 
     // 모든 사용자 가져오기
@@ -51,25 +51,26 @@ public class EuserController {
     // 프로필 이미지 업로드
     @PostMapping("/{id}/upload-profile-img")
     public ResponseEntity<String> uploadProfileImg(@PathVariable String id, @RequestParam("file") MultipartFile file) {
-        // 사용자 확인
         Euser euser = euserService.findById(id);
         if (euser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        // 파일 저장 처리
         try {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename(); // 고유 파일 이름 생성
-            File uploadFile = new File(uploadDir + fileName);
+            // 파일 저장 경로 생성
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String filePath = uploadDir + fileName; // uploadDir은 application.properties에서 설정된 경로
+            File uploadFile = new File(filePath);
             file.transferTo(uploadFile);
 
-            // 사용자 엔티티 업데이트
-            euser.setProfileImg("/uploads/" + fileName); // 파일 URL 설정
+            // 사용자 엔티티 업데이트 (상대 경로 저장)
+            euser.setProfileImg("src/container/Resume/ProImg/" + fileName);
             euserService.save(euser);
 
-            return ResponseEntity.ok("Profile image uploaded successfully.");
+            return ResponseEntity.ok(euser.getProfileImg());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }
     }
+
 }

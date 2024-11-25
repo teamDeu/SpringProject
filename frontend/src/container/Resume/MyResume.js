@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Png from './img/png.png';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,9 +17,21 @@ const MyResume = ({ onAddResumeClick }) => {
     ]); 
     const navigate = useNavigate();
 
+    
+
+    useEffect(() => {
+        fetch('http://localhost:8080/api/resumes') 
+            .then((response) => response.json())
+            .then((data) => {
+                setResumes(data);
+            })
+            .catch((error) => console.error('Error fetching resumes:', error));
+    }, []);
+
     const handleResumeEdit = (id) => {
         navigate(`/editresume/${id}`);
     };
+
 
     const handleMenuToggle = (id) => {
         setShowMenu(showMenu === id ? null : id); 
@@ -41,8 +53,17 @@ const MyResume = ({ onAddResumeClick }) => {
     };
 
     const handleResumeDelete = (id) => {
-        setResumes((prevResumes) => prevResumes.filter((resume) => resume.id !== id));
-        setShowMenu(null); 
+        fetch(`http://localhost:8080/api/resumes/${id}`, { 
+            method: 'DELETE' 
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete resume');
+                }
+                setResumes((prevResumes) => prevResumes.filter((resume) => resume.id !== id));
+                setShowMenu(null); // 메뉴 닫기
+            })
+            .catch((error) => console.error('Error deleting resume:', error));
     };
 
     const handleDownloadPDF = async (resume) => {
@@ -92,7 +113,10 @@ const MyResume = ({ onAddResumeClick }) => {
                                 </TitleContainer>
                                 <ResumeDescription>{resume.description}</ResumeDescription>
                                 <Actions>
-                                    <Date>{resume.date}</Date>
+                                    <Date>
+                                        {resume.createdAt ? new window.Date(resume.createdAt).toLocaleDateString() : 'N/A'}
+                                    </Date>
+
                                 </Actions>
                             </ResumeItem>
                         ))}
@@ -192,12 +216,14 @@ const AddResumeButton = styled.button`
 `;
 
 const ResumeBox = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    justify-items: center;
     flex-wrap: wrap;
-    gap: 20px;
-    margin-left: 30px;
+    gap: 10px;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 20px;
     
 `;
 

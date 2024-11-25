@@ -1,21 +1,19 @@
 package com.example.Backend.model;
 
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Data
 @Embeddable
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResumeSkillId implements Serializable {
-    private Integer resumeId; // e_resumes 테이블의 resume_id
-    private Integer skillId;  // e_skills 테이블의 skill_id
 
-    // 기본 생성자 필요
-    public ResumeSkillId() {}
-
-    public ResumeSkillId(Integer resumeId, Integer skillId) {
-        this.resumeId = resumeId;
-        this.skillId = skillId;
-    }
+    private Integer resumeId;
+    private Long skillId;
 }
+

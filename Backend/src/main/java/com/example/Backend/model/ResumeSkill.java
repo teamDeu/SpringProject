@@ -21,6 +21,4 @@ public class ResumeSkill {
     @JoinColumn(name = "skill_id")
     private Skills skill;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId; // e_resume 테이블의 user_id
 }
