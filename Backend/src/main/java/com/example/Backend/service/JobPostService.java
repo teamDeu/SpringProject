@@ -29,6 +29,10 @@ public class JobPostService {
         return jobPostRepository.findAll();
     }
 
+    public List<JobPost> getJobPostByCompany(String company){
+        return jobPostRepository.findByCompanyOrderByPostDateDesc(company);
+    }
+
     public void saveJobPostImage(JobPostImage jobPostImage) {
         jobPostImageRepository.save(jobPostImage);
     }

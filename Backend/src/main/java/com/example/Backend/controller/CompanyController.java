@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000") // 특정 출처 허용
@@ -82,7 +83,7 @@ public class CompanyController {
         String uploadDir = System.getProperty("user.dir") + "/uploads";
 
         String originalFilename = file.getOriginalFilename();
-        String uniqueFilename = Util.generateUniqueFilename(uploadDir,originalFilename);
+        String uniqueFilename = Util.generateUniqueFilename(uploadDir, Objects.requireNonNull(originalFilename));
         String filepath = uploadDir + "/" + uniqueFilename;
         company.setLogoUrl(filepath);
         companyService.saveCompany(company);

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class JobPostController {
@@ -33,6 +34,16 @@ public class JobPostController {
     public ResponseEntity<List<JobPost>> getAllJobPosts(){
         System.out.println(jobPostService.getAllJobPost());
         return ResponseEntity.ok(jobPostService.getAllJobPost());
+    }
+    @GetMapping("/api/companyjobpost")
+    public ResponseEntity<List<JobPost>> getJobPosts(@RequestParam String company){
+        System.out.println(jobPostService.getJobPostByCompany(company));
+        return ResponseEntity.ok(jobPostService.getJobPostByCompany(company));
+    }
+    @GetMapping("/api/idjobpost")
+    public ResponseEntity<JobPost> getJobPost(@RequestParam Long id){
+        System.out.println(jobPostService.findById(id));
+        return ResponseEntity.ok(jobPostService.findById(id).get());
     }
 
     @PostMapping("/api/jobpostimage/{jobPostId}")

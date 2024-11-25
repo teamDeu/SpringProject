@@ -2,11 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import InputArrayTitle from './InputArrayTitle';
 
-const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) => {
+const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{} , value}) => {
     const [inputs, setInputs] = useState([{ id: Date.now(), value: '' }]);
     const inputRefs = useRef([]); // 각 input 요소의 참조를 저장
     const [isComposing, setIsComposing] = useState(false); // 한글 입력 조합 상태
     const [mainInputValue, setMainInputValue] = useState({type : "main" , value : ''})
+    useEffect(() => {
+        console.log(value);
+        if(value.length > 0){
+            setInputs(value);
+        }
+        
+    },[])
     const handleChange = (e, id) => {
         const value = e.target.value;
         setInputs((prev) =>
