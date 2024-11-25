@@ -14,8 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,8 +32,6 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private AdminRepository adminRepository;
-
-
 
 
     @Autowired
@@ -119,12 +116,15 @@ public class UserController {
         public void setName(String name) {
             this.name = name;
         }
+
         public String getPhone() {
             return phone;
         }
+
         public void setPhone(String phone) {
             this.phone = phone;
         }
+
         public String getId() {
             return id;
         }
@@ -225,16 +225,36 @@ public class UserController {
     // 로그인
     @PostMapping("/api/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> loginData, HttpSession session) {
-        String id = loginData.get("id");
-        String password = loginData.get("password");
+        try {
+            String id = loginData.get("id");
+            String password = loginData.get("password");
 
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null && user.getPassword().equals(password)) {
-            session.setAttribute("user",id);
+            System.out.println("Received login request - ID: " + id + ", Password: " + password);
+
+            User user = userRepository.findById(id).orElse(null);
+            if (user == null) {
+                System.err.println("User not found: " + id);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
+            }
+
+            System.out.println("Found user: " + user);
+
+            if (!user.getPassword().equals(password)) {
+                System.err.println("Password mismatch for user: " + id);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
+            }
+
+            session.setAttribute("user", id);
+            System.out.println("Login successful for user: " + id);
             return ResponseEntity.ok("로그인 성공");
+        } catch (Exception e) {
+            System.err.println("Login error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
     }
+
+
 
     // 사용자 정보 업데이트
     // UserController.java
@@ -265,6 +285,7 @@ public class UserController {
                     .body("사용자 정보 업데이트 실패: " + e.getMessage());
         }
     }
+
     // 사용자 정보 업데이트
     @PostMapping("/api/update-user-info2")
     public ResponseEntity<String> updateUserInfo2(@RequestBody UserInfoRequest userInfoRequest) {
@@ -289,48 +310,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/update-or-create-user")
-    public ResponseEntity<String> updateOrCreateUser(@RequestBody UserInfoRequest userInfoRequest) {
-        try {
-            // 사용자 검색
-            Optional<User> optionalUser = userRepository.findById(userInfoRequest.getId());
-
-            if (optionalUser.isPresent()) {
-                // 기존 사용자 업데이트
-                User existingUser = optionalUser.get();
-                existingUser.setName(userInfoRequest.getName());
-                existingUser.setPhone(userInfoRequest.getPhone());
-                existingUser.setEmail(userInfoRequest.getEmail());
-                existingUser.setGender(userInfoRequest.getGender());
-                existingUser.setExperienceLevel(userInfoRequest.getExperienceLevel());
-                existingUser.setEducationLevel(userInfoRequest.getEducationLevel());
-                existingUser.setEducationStatus(userInfoRequest.getEducationStatus());
-                userRepository.save(existingUser);
-                return ResponseEntity.ok("기존 사용자 정보가 업데이트되었습니다.");
-            } else {
-                // 새로운 사용자 생성
-                User newUser = new User();
-                newUser.setId(userInfoRequest.getId());
-                newUser.setName(userInfoRequest.getName());
-                newUser.setPhone(userInfoRequest.getPhone());
-                newUser.setEmail(userInfoRequest.getEmail());
-                newUser.setGender(userInfoRequest.getGender());
-                newUser.setExperienceLevel(userInfoRequest.getExperienceLevel());
-                newUser.setEducationLevel(userInfoRequest.getEducationLevel());
-                newUser.setEducationStatus(userInfoRequest.getEducationStatus());
-                newUser.setPassword("TEMP_PASSWORD"); // 초기 비밀번호
-                newUser.setBirthDate(new Date()); // 기본 날짜
-                userRepository.save(newUser);
-                return ResponseEntity.ok("새로운 사용자가 생성되었습니다.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("사용자 정보 처리 중 오류가 발생했습니다.");
-        }
-    }
-
-
 
     @GetMapping("/api/check-user-basic")
     public ResponseEntity<Boolean> checkUserBasic(@RequestParam String id) {
@@ -348,13 +327,13 @@ public class UserController {
     }
 
     @PostMapping("/api/admin-login")
-    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData , HttpSession session) {
+    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData, HttpSession session) {
         String adminId = loginData.get("admin_id");
         String adminPwd = loginData.get("admin_pwd");
 
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (adminOptional.isPresent() && adminOptional.get().getPassword().equals(adminPwd)) {
-            session.setAttribute("user",adminId);
+            session.setAttribute("user", adminId);
             return ResponseEntity.ok("관리자 로그인 성공");
 
         } else {
@@ -363,11 +342,8 @@ public class UserController {
     }
 
 
-
-
-
     @GetMapping("/api/logout")
-    public ResponseEntity<?> logout(HttpSession session){
+    public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully");
     }
