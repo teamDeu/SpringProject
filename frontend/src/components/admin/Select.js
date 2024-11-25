@@ -1,6 +1,6 @@
 // Select.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 // 스타일 컴포넌트들을 export하여 외부에서 참조 가능하게 합니다.
@@ -8,7 +8,7 @@ export const DropdownContainer = styled.div`
     width: ${({ width }) => width || '130px'};
     margin: ${({ margin }) => margin || '0'};
     position: relative;
-    font-family: 'Nanum Square Neo';
+    font-family: 'Nanum Square Neo', sans-serif;
 `;
 
 export const SelectBox = styled.div`
@@ -23,7 +23,7 @@ export const SelectBox = styled.div`
     justify-content: space-between;
     padding: 0 12px;
     box-sizing: border-box;
-    cursor: default;
+    cursor: pointer;
 `;
 
 export const OptionList = styled.div.attrs((props) => ({
@@ -43,7 +43,6 @@ export const OptionList = styled.div.attrs((props) => ({
     max-height: 300px;
     overflow-y: auto;
   `;
-  
 
 export const ArrowIcon = styled.img`
     width: 20px;
@@ -111,7 +110,7 @@ export const ConfirmButton = styled.button`
     margin-right: 8px;
 `;
 
-export const CancelButton = styled.button`
+export const CancelButtonStyled = styled.button`
     font-family: 'Nanum Square Neo', sans-serif;
     padding: 5px 10px;
     font-size: 13px;
@@ -123,27 +122,45 @@ export const CancelButton = styled.button`
 
 const DropdownSelect = ({
     className, // className prop 추가
-    initialOptions = ["개인회원", "기업회원"],
+    initialOptions = [],
     defaultOption,
     onChange,
-    showPlusButton,
-    showDeleteButton = false,
+    showPlusButton = false, // 기본값 false
+    showDeleteButton = false, // 기본값 false
     width,
     margin
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [newOptionName, setNewOptionName] = useState('');
-    const [selectedOption, setSelectedOption] = useState(defaultOption || "이력서 등록 / 관리");
+    const [selectedOption, setSelectedOption] = useState(defaultOption || (initialOptions.length > 0 ? initialOptions[0] : ""));
     const [options, setOptions] = useState(initialOptions);
 
+    const dropdownRef = useRef(null);
+
     useEffect(() => {
-        setOptions(initialOptions); // initialOptions가 변경될 때 options 상태를 업데이트
+        setOptions(initialOptions); // initialOptions가 변경될 때 옵션 업데이트
+        console.log("DropdownSelect - options updated:", initialOptions); // 디버깅용 로그
     }, [initialOptions]);
 
     useEffect(() => {
-        setSelectedOption(defaultOption); // defaultOption이 변경될 때 selectedOption 업데이트
-    }, [defaultOption]);
+        setSelectedOption(defaultOption || (initialOptions.length > 0 ? initialOptions[0] : ""));
+        console.log("DropdownSelect - selectedOption updated:", defaultOption || (initialOptions.length > 0 ? initialOptions[0] : "")); // 디버깅용 로그
+    }, [defaultOption, initialOptions]);
+
+    // 클릭 외부 감지하여 드롭다운 닫기
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+                setIsAdding(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const toggleOpen = () => setIsOpen((prev) => !prev);
 
@@ -151,12 +168,18 @@ const DropdownSelect = ({
         setSelectedOption(option);
         setIsOpen(false);
         setIsAdding(false); // 옵션 선택 시 추가 모드 종료
+        console.log("DropdownSelect - option selected:", option); // 디버깅용 로그
         if (onChange) onChange(option);
     };
 
     const handleAddOption = () => {
         if (newOptionName.trim()) {
-            setOptions([...options, newOptionName]);
+            if (!options.includes(newOptionName.trim())) {
+                setOptions([...options, newOptionName.trim()]);
+                setSelectedOption(newOptionName.trim());
+                console.log("DropdownSelect - new option added:", newOptionName.trim()); // 디버깅용 로그
+                if (onChange) onChange(newOptionName.trim());
+            }
             setNewOptionName('');
             setIsAdding(false);
         }
@@ -169,6 +192,14 @@ const DropdownSelect = ({
 
     const handleDeleteOption = (option) => {
         setOptions((prevOptions) => prevOptions.filter((opt) => opt !== option));
+        console.log("DropdownSelect - option deleted:", option); // 디버깅용 로그
+        // 만약 삭제된 옵션이 현재 선택된 옵션이라면 선택 초기화
+        if (selectedOption === option) {
+            const newSelected = options.length > 1 ? options[0] : "";
+            setSelectedOption(newSelected);
+            console.log("DropdownSelect - selectedOption reset to:", newSelected); // 디버깅용 로그
+            if (onChange) onChange(newSelected);
+        }
     };
 
     return (
@@ -176,9 +207,10 @@ const DropdownSelect = ({
             className={className} // className 전달
             width={width}
             margin={margin}
+            ref={dropdownRef}
         >
             <SelectBox onClick={toggleOpen}>
-                <span>{selectedOption}</span>
+                <span>{selectedOption || "선택해주세요"}</span>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <ArrowIcon
                         src="/icons/sbtn.png"
@@ -221,7 +253,7 @@ const DropdownSelect = ({
                             onChange={(e) => setNewOptionName(e.target.value)}
                         />
                         <ConfirmButton onClick={handleAddOption}>추가</ConfirmButton>
-                        <CancelButton onClick={handleCancel}>취소</CancelButton>
+                        <CancelButtonStyled onClick={handleCancel}>취소</CancelButtonStyled>
                     </InputContainer>
                 )}
             </OptionList>

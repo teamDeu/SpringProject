@@ -38,10 +38,17 @@ public class GFaqsController {
         return ResponseEntity.ok(gFaqsService.updateGFaqs(id, gFaqs));
     }
 
-    // GFaqs 삭제
+    // 단일 GFaqs 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGFaqs(@PathVariable Long id) {
         gFaqsService.deleteGFaqs(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 다중 GFaqs 삭제
+    @DeleteMapping
+    public ResponseEntity<Void> deleteGFaqs(@RequestBody List<Long> ids) {
+        gFaqsService.deleteGFaqs(ids);
         return ResponseEntity.noContent().build();
     }
 }

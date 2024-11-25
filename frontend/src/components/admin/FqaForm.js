@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { GetGFaqsByTarget, DeleteGFaqs } from "../../api/api"; // 수정된 API 호출 함수
 import AddButton from "../../components/admin/AddButton"; // 추가 버튼 컴포넌트
 
+// Styled-components 정의
 const FAQContainer = styled.div`
   width: 100%;
   padding: 20px;
@@ -84,25 +85,38 @@ const ActionContainer = styled.div`
   }
 `;
 
-const DeleteButton = styled.button`
+
+const DeleteButtonStyled = styled.button`
+  display: flex;
+  align-items: center;
   color: black;
   font-size: 16px;
   font-weight: bold;
-  margin-left: -25px;
   background-color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-family: "Nanum Square Neo", sans-serif;
+  padding: 8px 12px;
+  margin-left:-30px;
+
 `;
+
+const DeleteButton = ({ onClick }) => (
+    <DeleteButtonStyled onClick={onClick}>
+        삭제
+    </DeleteButtonStyled>
+);
 
 const AddLabel = styled.span`
   font-family: "Nanum Square Neo", sans-serif;
   font-weight: bold;
+
 `;
 
 const AddButtonWrapper = styled.div`
   margin-left: auto;
+  margin-right:-15px;
 `;
 
 const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
@@ -198,7 +212,9 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
         alert("선택된 항목이 성공적으로 삭제되었습니다.");
       } catch (error) {
         console.error("Error deleting GFaqs:", error);
-        alert("FAQ 삭제 중 오류가 발생했습니다.");
+        const errorMessage = error.response?.data?.message || error.message || "FAQ 삭제 중 오류가 발생했습니다.";
+        setError(`FAQ 삭제 중 오류가 발생했습니다: ${errorMessage}`);
+        alert(`FAQ 삭제 중 오류가 발생했습니다: ${errorMessage}`);
       }
     }
   };
@@ -230,6 +246,10 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
 
   const filteredData = filterBySearchTerm(faqData);
 
+  if (loading) {
+    return <FAQContainer>로딩 중...</FAQContainer>;
+  }
+
   if (error) {
     return <FAQContainer>{error}</FAQContainer>;
   }
@@ -243,7 +263,9 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
             checked={selectAll}
             onChange={handleSelectAll}
           />
-          <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
+          <DeleteButton onClick={handleDelete}>
+            삭제
+          </DeleteButton>
           <AddButtonWrapper>
             <AddButton to="/faqwrite" iconSrc="/icons/plusbtn.png" altText="Plus Button">
               <AddLabel>추가</AddLabel>

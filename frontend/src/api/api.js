@@ -233,11 +233,25 @@ export const GetGFaqsByTarget = async (target) => {
 export const DeleteGFaqs = async (ids) => {
     try {
         const response = await axios.delete(`http://localhost:8080/api/gfaqs`, {
-            data: { ids }, // DELETE 요청의 본문에 삭제할 ID 배열 전달
+            data:  ids,  // DELETE 요청의 본문에 삭제할 ID 배열 전달
         });
         return response.data;
     } catch (error) {
         console.error('Error deleting GFaqs:', error);
+        throw error;
+    }
+};
+
+
+// 특정 target의 Faq 데이터를 가져오는 API
+export const GetFaqsByTarget = async (target) => {
+    try {
+        console.log(`Calling GetFaqsByTarget with target: ${target}`); // 디버깅용 로그
+        const response = await axios.get(`http://localhost:8080/api/faqs/target/${target}`);
+        console.log("GetFaqsByTarget response:", response.data); // 디버깅용 로그
+        return response.data; // target에 해당하는 Faq 데이터 반환
+    } catch (error) {
+        console.error(`Error fetching Faqs for target: ${target}`, error);
         throw error;
     }
 };

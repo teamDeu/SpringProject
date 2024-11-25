@@ -56,8 +56,13 @@ public class GFaqsService {
         }).orElseThrow(() -> new RuntimeException("GFaqs not found with id " + id));
     }
 
-    // GFaqs 삭제
+    // 단일 GFaqs 삭제
     public void deleteGFaqs(Long id) {
         gFaqsRepository.deleteById(id);
+    }
+
+    // 다중 GFaqs 삭제
+    public void deleteGFaqs(List<Long> ids) {
+        gFaqsRepository.deleteAllById(ids);
     }
 }
