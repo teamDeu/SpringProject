@@ -322,6 +322,17 @@ public class UserController {
     }
 
 
+
+        // 사용자 정보 처리
+        System.out.println("네이버 사용자 정보: " + userInfo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userInfo.get("id"));
+        return ResponseEntity.ok(response);
+    }
+
+
+
     @GetMapping("/api/logout")
     public ResponseEntity<?> logout(HttpSession session){
         session.invalidate();
@@ -358,5 +369,3 @@ public class UserController {
         // 둘 다 존재하지 않으면 404 Not Found 반환
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matching data found");
     }
-
-}

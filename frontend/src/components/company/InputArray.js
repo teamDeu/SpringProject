@@ -6,7 +6,7 @@ const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) =>
     const [inputs, setInputs] = useState([{ id: Date.now(), value: '' }]);
     const inputRefs = useRef([]); // 각 input 요소의 참조를 저장
     const [isComposing, setIsComposing] = useState(false); // 한글 입력 조합 상태
-
+    const [mainInputValue, setMainInputValue] = useState({type : "main" , value : ''})
     const handleChange = (e, id) => {
         const value = e.target.value;
         setInputs((prev) =>
@@ -15,7 +15,9 @@ const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) =>
             )
         );
     };
-
+    const handleMainChange = (e) => {
+        setMainInputValue((prev) => ({...prev,value : e.target.value}))
+    }
     const handleKeyDown = (e, id) => {
         if (isComposing) return; // 한글 조합 중에는 처리 방지
 
@@ -34,7 +36,12 @@ const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) =>
     const handleCompositionEnd = () => setIsComposing(false);
 
     useEffect(() => {
-        updateValue(inputs);
+        if(mainInput){
+            updateValue([...inputs,mainInputValue]);
+        }
+        else{
+            updateValue(inputs);
+        }
         if (inputRefs.current.length > 0) {
             const lastInput = inputRefs.current[inputRefs.current.length - 1].element;
             lastInput?.focus();
@@ -53,7 +60,7 @@ const InputArray = ({ title, placeholder, mainInput , updateValue = () =>{}}) =>
             <InputArrayTitle>{title}</InputArrayTitle>
            
             <InputList>
-                {mainInput && <MainInput placeholder={mainInput}/>}
+                {mainInput && <MainInput onChange ={(e) => handleMainChange(e)} placeholder={mainInput}/>}
                 {inputs.map((input) => (
                     <InputItem key={input.id}>
                         ·

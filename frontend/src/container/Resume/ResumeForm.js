@@ -5,7 +5,7 @@ import emailIcon from './img/emailIcon.png';
 import workIcon from './img/workIcon.png';
 import pnumberIcon from './img/pnumberIcon.png';
 import birthIcon from './img/birthIcon.png';
-import addPhotoIcon from './img/addPhotoIcon.png'; 
+import addPhotoIcon from './img/addPhotoIcon.png';
 import BemailIcon from './img/BemailIcon.png';
 import BworkIcon from './img/BworkIcon.png';
 import BpnumberIcon from './img/BpnumberIcon.png';
@@ -13,56 +13,35 @@ import JobTopBar from '../../components/JobTopBar';
 import BbirthIcon from './img/BbirthIcon.png';
 import Delw from './img/Delw.png';
 
-
 const ResumeForm = () => {
-    const [fileNames, setFileNames] = useState([]);
-    const fileUploadInputRef = useRef(null); 
-
-    const [selectedRegion, setSelectedRegion] = useState("");
-    const [districts, setDistricts] = useState([]);
-    const [selectedDistrict, setSelectedDistrict] = useState("");
 
     const [photoPreview, setPhotoPreview] = useState(null);
-    
-
     const [desiredLocations, setDesiredLocations] = useState([]);
 
-    const [jobRoles, setJobRoles] = useState([]);
-    const [currentJobRole, setCurrentJobRole] = useState("");
-    
+    const [jobCategories, setJobCategories] = useState([]); // JobCategory 데이터 저장
+    const [selectedJobCategory, setSelectedJobCategory] = useState(""); // 선택된 JobCategory 저장
+    const [jobRoles, setJobRoles] = useState([]); // 선택된 직무 저장
+
     const [skills, setSkills] = useState([]);
-    const [currentSkill, setCurrentSkill] = useState("")
+    const [selectedSkill, setSelectedSkill] = useState("");
+    const [selectedSkills, setSelectedSkills] = useState([]); // 선택된 기술 스택
 
 
-    const cities = {
-        전체: ["전체", "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"],
-        서울: ["전체", "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
-        부산: ["전체", "강서구", "금정구", "기장군", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구"],
-        대구: ["전체", "남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"],
-        인천: ["전체", "강화군", "계양구", "남동구", "동구", "미추홀구", "부평구", "서구", "연수구", "옹진군", "중구"],
-        광주: ["전체", "광산구", "남구", "동구", "북구", "서구"],
-        대전: ["전체", "대덕구", "동구", "서구", "유성구", "중구"],
-        울산: ["전체", "남구", "동구", "북구", "울주군", "중구"],
-        세종: ["전체", "세종시"],
-        경기: ["전체", "가평군", "고양시 덕양구", "고양시 일산동구", "고양시 일산서구", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시 분당구", "성남시 수정구", "성남시 중원구", "수원시 권선구", "수원시 영통구", "수원시 장안구", "수원시 팔달구", "시흥시", "안산시 단원구", "안산시 상록구", "안성시", "안양시 동안구", "안양시 만안구", "양주시", "양평군", "여주시", "연천군", "오산시", "용인시 기흥구", "용인시 수지구", "용인시 처인구", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", "하남시", "화성시"],
-        강원: ["전체", "강릉시", "고성군", "동해시", "삼척시", "속초시", "양구군", "양양군", "영월군", "원주시", "인제군", "정선군", "철원군", "춘천시", "태백시", "평창군", "홍천군", "화천군", "횡성군"],
-        충북: ["전체", "괴산군", "단양군", "보은군", "영동군", "옥천군", "음성군", "제천시", "진천군", "청주시 상당구", "청주시 서원구", "청주시 청원구", "청주시 흥덕구", "충주시"],
-        충남: ["전체", "계룡시", "공주시", "금산군", "논산시", "당진시", "보령시", "부여군", "서산시", "서천군", "아산시", "연기군", "예산군", "천안시 동남구", "천안시 서북구", "청양군", "태안군", "홍성군"],
-        전북: ["전체", "고창군", "군산시", "김제시", "남원시", "무주군", "부안군", "순창군", "완주군", "익산시", "임실군", "장수군", "전주시 덕진구", "전주시 완산구", "정읍시", "진안군"],
-        전남: ["전체", "강진군", "고흥군", "곡성군", "광양시", "구례군", "나주시", "담양군", "목포시", "무안군", "보성군", "순천시", "신안군", "여수시", "영광군", "영암군", "완도군", "장성군", "장흥군", "진도군", "함평군", "해남군", "화순군"],
-        경북: ["전체", "경산시", "경주시", "고령군", "구미시", "군위군", "김천시", "문경시", "봉화군", "상주시", "성주군", "안동시", "영덕군", "영양군", "영주시", "영천시", "예천군", "울릉군", "울진군", "의성군", "청도군", "청송군", "칠곡군", "포항시 남구", "포항시 북구"],
-        경남: ["전체", "거제시", "거창군", "고성군", "김해시", "남해군", "밀양시", "사천시", "산청군", "양산시", "의령군", "진주시", "창녕군", "창원시 마산합포구", "창원시 마산회원구", "창원시 성산구", "창원시 의창구", "창원시 진해구", "통영시", "하동군", "함안군", "함양군", "합천군"],
-        제주: ["전체", "서귀포시", "제주시"]
-    };
+    const [locations, setLocations] = useState([]); // 전체 e_locations 데이터
+    const [regionOptions, setRegionOptions] = useState([]); // 선택된 지역에 따른 행정구역
+    const [selectedLocation, setSelectedLocation] = useState(""); // 선택된 지역 (name)
+    const [selectedRegion, setSelectedRegion] = useState(""); // 선택된 행정구역 (region)
+
+    const [resumeFile, setResumeFile] = useState(null);
 
     const [userInfo, setUserInfo] = useState({
-        id: "1234", 
+        id: "1234",
+        name: "",
         email: "",
         birth: "",
         phone: "",
-        name: "",
+        profileImg: "http://localhost:8080/images/mock-profile.png",
     });
-
 
     const [resumeData, setResumeData] = useState({
         title: "",
@@ -71,82 +50,119 @@ const ResumeForm = () => {
         locations: [],
         jobRoles: [],
         skills: [],
-        fileName: "",
+        fileName: "http://localhost:8080/images/mock-profile.png",
         summary: "",
     });
 
-    
-    // 초기 사용자 정보 로드
+    //데이터를 가져오는 함수
     useEffect(() => {
-        const fetchUserInfo = async () => {
+        //개발 직무 카테고리 가져옴
+        const fetchJobCategories = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/api/users/123"); // 사용자 ID
-                
-                
+                const response = await axios.get("http://localhost:8080/api/job-categories");
                 if (response.status === 200) {
-                    const userData = response.data;
-                    console.log("API에서 불러온 사용자 데이터:", userData);
-                    if (userData.birth) {
-                        userData.birth = new Date(userData.birth).toISOString().split("T")[0]; // yyyy-MM-dd 형식으로 변환
-                    }
-                    setUserInfo(userData);
+                    setJobCategories(response.data);
                 }
             } catch (error) {
-                console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+                console.error("JobCategory 데이터를 가져오는 중 오류 발생:", error);
             }
         };
-        fetchUserInfo();
+        fetchJobCategories();
+
+        //기술 스킬 가져옴
+        const fetchSkills = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/skills");
+                if (response.status === 200) {
+                    setSkills(response.data);
+                }
+            } catch (error) {
+                console.error("기술 스택 데이터를 가져오는 중 오류 발생:", error);
+            }
+        };
+        fetchSkills();
+
+        //지역 가져옴
+        const fetchLocations = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/locations");
+                if (response.status === 200) {
+                    setLocations(response.data);
+                }
+            } catch (error) {
+                console.error("e_locations 데이터를 가져오는 중 오류 발생:", error);
+            }
+        };
+        fetchLocations();
     }, []);
+
+
+    // 지역 선택에 따라 행정구역 필터링
+    useEffect(() => {
+        if (selectedLocation) {
+            const filteredRegions = locations
+                .filter((loc) => loc.name === selectedLocation)
+                .map((loc) => loc.region);
+            setRegionOptions(filteredRegions);
+        } else {
+            setRegionOptions([]);
+        }
+    }, [selectedLocation, locations]);
+
+  
+
+
 
     // 이력서 저장 핸들러
     const handleSave = async () => {
         try {
-            // e_users 테이블에 사용자 정보 저장
-            await axios.post("http://localhost:8080/api/users", userInfo, {
+            await axios.post("http://localhost:8080/api/eusers", userInfo, {
                 headers: { "Content-Type": "application/json" },
             });
 
-            // e_resumes 테이블에 이력서 정보 저장
+            let fileUrl = "";
+            if (resumeFile) {
+                const formData = new FormData();
+                formData.append("file", resumeFile);
+
+                const uploadResponse = await axios.post(
+                    "http://localhost:8080/api/file-upload", // 파일 업로드 API 경로
+                    formData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    }
+                );
+                fileUrl = uploadResponse.data.url; // 파일의 URL을 응답에서 가져옴
+            }
+
             const resumeResponse = await axios.post("http://localhost:8080/api/resumes", {
                 userId: userInfo.id,
                 title: resumeData.title,
                 description: resumeData.description,
                 experienceYears: parseInt(resumeData.experienceYears) || 0,
-                fileName: resumeData.fileName,
-                summary: `Skills: ${resumeData.skills.join(", ")}, Job Roles: ${resumeData.jobRoles.join(", ")}`,
+                pdfUrl: fileUrl,
+                summary: resumeData.summary,
             }, {
                 headers: { "Content-Type": "application/json" },
             });
 
-            const resumeId = resumeResponse.data.id; // 저장된 resume의 ID
+            const resumeId = resumeResponse.data.id;
 
-            // e_resume_skills 테이블에 기술 스택 저장
             await Promise.all(
                 resumeData.skills.map(skill =>
-                    axios.post("http://localhost:8080/api/resume-skills", {
-                        resumeId,
-                        skill,
-                    })
+                    axios.post("http://localhost:8080/api/resume-skills", { resumeId, skill })
                 )
             );
 
-            // e_resume_locations 테이블에 희망 근무 지역 저장
             await Promise.all(
                 resumeData.locations.map(location =>
-                    axios.post("http://localhost:8080/api/locations", {
-                        resumeId,
-                        location,
-                    })
+                    axios.post("http://localhost:8080/api/resume-locations", { resumeId, location })
                 )
             );
 
-            // e_resume_job_categories 테이블에 직무 저장
             await Promise.all(
                 resumeData.jobRoles.map(jobRole =>
-                    axios.post("http://localhost:8080/api/job-categories", {
-                        resumeId,
-                        jobRole,
-                    })
+                    axios.post("http://localhost:8080/api/resume-job-categories", { resumeId, jobRole })
                 )
             );
 
@@ -157,85 +173,77 @@ const ResumeForm = () => {
         }
     };
 
-
-    const handleBirthChange = (event) => {
-        const value = event.target.value;
-        setUserInfo({ ...userInfo, birth: value });
-    };
-
-    
-    const handleFileChange = (event) => {
-        const file = event.target.files[0]; 
-    if (file) {
-        setFileNames([file.name]);
-        fileUploadInputRef.current.value = file.name;
-    }
-    };
-
-    const handleRegionChange = (event) => {
-        const region = event.target.value;
-        setSelectedRegion(region);
-        setDistricts(cities[region] || []); 
-        setSelectedDistrict("");
-    }
-
-    const handleDistrictChange = (event) => {
-        setSelectedDistrict(event.target.value);
-    };
-
-    const handleAddLocation = () => {
-        if (selectedRegion && selectedDistrict) {
-            const location = `${selectedRegion} ${selectedDistrict}`;
-            if (!desiredLocations.includes(location)) {
-                setDesiredLocations([...desiredLocations, location]);
-                setSelectedRegion("");
-                setSelectedDistrict("");
-            }
-        }
-    };
-
-    const handleRemoveLocation = (location) => {
-        setDesiredLocations(desiredLocations.filter(item => item !== location));
-    };
-
     const handleAddJobRole = () => {
-        if (currentJobRole && !jobRoles.includes(currentJobRole)) {
-            setJobRoles([...jobRoles, currentJobRole]);
-            setCurrentJobRole("");
+        if (selectedJobCategory && !jobRoles.includes(selectedJobCategory)) {
+            setJobRoles([...jobRoles, selectedJobCategory]);
+            setSelectedJobCategory("");
         }
     };
 
     const handleRemoveJobRole = (role) => {
-        setJobRoles(jobRoles.filter(item => item !== role));
+        setJobRoles(jobRoles.filter((item) => item !== role));
     };
 
-    const handleAddSkill = () => {
-        if (currentSkill && !skills.includes(currentSkill)) {
-            setSkills([...skills, currentSkill]);
-            setCurrentSkill("");
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+    
+            try {
+                const response = await axios.post("http://localhost:8080/api/resumes/upload", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                const fileUrl = response.data;
+    
+                setResumeData((prevState) => ({
+                    ...prevState,
+                    fileName: fileUrl,
+                }));
+            } catch (error) {
+                console.error("Resume file upload failed:", error);
+            }
         }
     };
+    
 
-    const handleRemoveSkill = (skill) => {
-        setSkills(skills.filter(item => item !== skill));
+    const handlePhotoChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+    
+            try {
+                const response = await axios.post(`http://localhost:8080/api/eusers/${userInfo.id}/upload-profile-img`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                const imageUrl = response.data;
+    
+                setUserInfo((prevState) => ({
+                    ...prevState,
+                    profileImg: imageUrl,
+                }));
+    
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPhotoPreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Profile image upload failed:", error);
+            }
+        }
     };
+    
+    
 
     const handlePhotoClick = () => {
-        document.getElementById("photoUploadInput").click();
-    };
-
-    const handlePhotoChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file); 
-            setPhotoPreview(imageUrl); 
+        const input = document.getElementById('photoUploadInput');
+        if (input) {
+            input.click(); // 파일 선택을 트리거
         }
     };
-
-    const handleInputChange = (setter) => (event) => {
-        setter(event.target.value);
-    };
-
+    
 
     return (
         <>
@@ -244,7 +252,6 @@ const ResumeForm = () => {
                 <Title>이력서 작성</Title>
                 <Form>
                     <InputGroup>
-                    
                         <Input
                             type="text"
                             placeholder="이력서 제목을 입력해주세요."
@@ -257,59 +264,57 @@ const ResumeForm = () => {
                             value={resumeData.description}
                             onChange={(e) => setResumeData({ ...resumeData, description: e.target.value })}
                         />
-
-
                     </InputGroup>
 
-                    <Divider />
+                    <UserInfoContainer>
 
-                    <ContactRow>
-                        <ContactInfo>
-                            <UserNameDisplay>{userInfo.name || "사용자 이름"}</UserNameDisplay>
-
-
-                            <InfoField>
-                                <Icon src={userInfo.email ? BemailIcon : emailIcon} alt="이메일 아이콘" />
-                                <InfoFieldInput 
-                                    type="text" 
+                            <UserInfoField>
+                                <UserInfoInput
+                                    type="text"
+                                    placeholder="이름을 입력해주세요."
+                                    value={userInfo.name}
+                                    onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+                                />
+                            </UserInfoField>
+                            <UserInfo>
+                            <UserInfoField>
+                                <UserInfoIcon src={userInfo.email ? BemailIcon : emailIcon} alt="이메일" />
+                                <UserInfoInput
+                                    type="email"
                                     placeholder="이메일을 입력해주세요."
                                     value={userInfo.email}
                                     onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                                 />
-                            </InfoField>
-
-                            <InfoField>
-                                <Icon src={userInfo.birth ? BbirthIcon : birthIcon} alt="생년월일 아이콘" />
-                                <InfoFieldInput 
+                            </UserInfoField>
+                            <UserInfoField>
+                                <UserInfoIcon src={userInfo.birth ? BbirthIcon : birthIcon} alt="생년월일" />
+                                <UserInfoInput
                                     type="date"
                                     placeholder="생년월일을 입력해주세요."
                                     value={userInfo.birth}
-                                    onChange={handleBirthChange}
+                                    onChange={(e) => setUserInfo({ ...userInfo, birth: e.target.value })}
+                                    isSelected={!!userInfo.birth}
                                 />
-                            </InfoField>
-
-                            <InfoField>
-                                <Icon src={resumeData.experienceYears ? BworkIcon : workIcon} alt="경력 아이콘" />
-                                <InfoFieldInput
-                                    type="number"
-                                    placeholder="총 경력을 입력해주세요."
-                                    value={resumeData.experienceYears}
-                                    onChange={(e) => setResumeData({ ...resumeData, experienceYears: e.target.value })}
-                                />
-                            </InfoField>
-    
-                            <InfoField>
-                                <Icon src={userInfo.phone ? BpnumberIcon : pnumberIcon} alt="전화번호 아이콘" />
-                                <InfoFieldInput
-                                    type="text"
+                            </UserInfoField>
+                            <UserInfoField>
+                                <UserInfoIcon src={userInfo.phone ? BpnumberIcon : pnumberIcon} alt="전화번호" />
+                                <UserInfoInput
+                                    type="tel"
                                     placeholder="전화번호를 입력해주세요."
                                     value={userInfo.phone}
                                     onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
                                 />
-                            </InfoField>
-
-                        </ContactInfo>
-                        
+                            </UserInfoField>
+                            <UserInfoField>
+                                <UserInfoIcon src={resumeData.experienceYears ? BworkIcon : workIcon} alt="경력" />
+                                <UserInfoInput
+                                    type="number"
+                                    placeholder="경력을 입력해주세요."
+                                    value={resumeData.experienceYears}
+                                    onChange={(e) => setResumeData({ ...resumeData, experienceYears: e.target.value })}
+                                />
+                            </UserInfoField>
+                        </UserInfo>
                         {photoPreview ? (
                             <PreviewContainer>
                                 <PreviewImage src={photoPreview} alt="미리보기" />
@@ -327,38 +332,79 @@ const ResumeForm = () => {
                                 />
                             </PhotoUpload>
                         )}
-                    </ContactRow>
+
+                    </UserInfoContainer>
+
                     
 
-                    <SelectContainer>
+
+
+                    <InputContainer>
                         <Label>희망 근무 지역</Label>
-                        <SelectRow>
-                            <Select onChange={handleRegionChange} value={selectedRegion} color={selectedRegion ? '#000' : '#BABABA'}>
-                                <option value="">지역</option>
-                                {Object.keys(cities).map((region) => (
-                                    <option key={region} value={region}>{region}</option>
+                        <InputRow>
+                            <Select2
+                                value={selectedLocation}
+                                onChange={(e) => setSelectedLocation(e.target.value)}
+                            >
+                                <option value="">지역을 선택해주세요.</option>
+                                {[...new Set(locations.map((loc) => loc.name))].map((name, index) => (
+                                    <option key={index} value={name}>
+                                        {name}
+                                    </option>
                                 ))}
-                            </Select>
-                            <Select onChange={handleDistrictChange} value={selectedDistrict} color={selectedDistrict ? '#000' : '#BABABA'}>
-                                <option value="">행정구역</option>
-                                {districts.map((district) => (
-                                    <option key={district} value={district}>{district}</option>
+                            </Select2>
+
+                            <Select2
+                                value={selectedRegion}
+                                onChange={(e) => setSelectedRegion(e.target.value)}
+                                disabled={!regionOptions.length}
+                            >
+                                <option value="">행정구역을 선택해주세요.</option>
+                                {regionOptions.map((region, index) => (
+                                    <option key={index} value={region}>
+                                        {region}
+                                    </option>
                                 ))}
-                            </Select>
-                            <AddButton onClick={handleAddLocation}>등록</AddButton>
-                        </SelectRow>
+                            </Select2>
+
+                            {/* 등록 버튼 */}
+                            <AddButton2
+                                onClick={() => {
+                                    if (selectedLocation && selectedRegion) {
+                                        setDesiredLocations([
+                                            ...desiredLocations,
+                                            { name: selectedLocation, region: selectedRegion },
+                                        ]);
+                                        setSelectedLocation("");
+                                        setSelectedRegion("");
+                                    }
+                                }}
+                            >
+                                등록
+                            </AddButton2>
+                        </InputRow>
+
+                        {/* 선택된 지역 및 행정구역 표시 */}
                         <LocationTags>
-                            {resumeData.locations.map((location, index) => (
+                            {desiredLocations.map((loc, index) => (
                                 <LocationTag key={index}>
-                                    {location}
-                                    <DeleteButton onClick={() => handleRemoveLocation(location)}>
+                                    {loc.name} - {loc.region}
+                                    <DeleteButton
+                                        onClick={() =>
+                                            setDesiredLocations(
+                                                desiredLocations.filter((item, idx) => idx !== index)
+                                            )
+                                        }
+                                    >
                                         <img src={Delw} alt="삭제 아이콘" />
                                     </DeleteButton>
                                 </LocationTag>
                             ))}
                         </LocationTags>
+                    </InputContainer>`
 
-                    </SelectContainer>
+
+
 
                     <InputContainer>
                         <Label>간단 소개</Label>
@@ -368,22 +414,25 @@ const ResumeForm = () => {
                             value={resumeData.summary}
                             onChange={(e) => setResumeData({ ...resumeData, summary: e.target.value })}
                         />
-
                     </InputContainer>
-
                     <InputContainer>
                         <Label>개발 직무</Label>
                         <InputRow>
-                            <InputContainerInput 
-                                type="text" 
-                                placeholder="직무를 입력해주세요."
-                                value={currentJobRole}
-                                onChange={(e) => setCurrentJobRole(e.target.value)}
-                            />
+                            <Select
+                                value={selectedJobCategory}
+                                onChange={(e) => setSelectedJobCategory(e.target.value)}
+                            >
+                                <option value="">개발 직무를 선택해주세요.</option>
+                                {jobCategories.map((category) => (
+                                    <option key={category.id} value={category.name}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </Select>
                             <AddButton2 onClick={handleAddJobRole}>등록</AddButton2>
                         </InputRow>
                         <LocationTags>
-                            {resumeData.jobRoles.map((role, index) => (
+                            {jobRoles.map((role, index) => (
                                 <LocationTag key={index}>
                                     {role}
                                     <DeleteButton onClick={() => handleRemoveJobRole(role)}>
@@ -392,44 +441,68 @@ const ResumeForm = () => {
                                 </LocationTag>
                             ))}
                         </LocationTags>
-
                     </InputContainer>
-
                     <InputContainer>
-                        <Label>기술스택(업무 툴/스킬)</Label>
+                        <Label>기술 스택 (업무 툴 / 스킬)</Label>
                         <InputRow>
-                            <InputContainerInput 
-                                type="text" 
-                                placeholder="기술스택을 등록해주세요."
-                                value={currentSkill}
-                                onChange={(e) => setCurrentSkill(e.target.value)}
-                            />
-                            <AddButton2 onClick={handleAddSkill}>등록</AddButton2>
+                            <Select
+                                value={selectedSkill}
+                                onChange={(e) => setSelectedSkill(e.target.value)}
+                            >
+                                <option value="">기술 스택을 선택해주세요.</option>
+                                {skills.map((skill) => (
+                                    <option key={skill.id} value={skill.name}>
+                                        {skill.name}
+                                    </option>
+                                ))}
+                            </Select>
+                            <AddButton2
+                                onClick={() => {
+                                    if (selectedSkill && !selectedSkills.includes(selectedSkill)) {
+                                        setSelectedSkills([...selectedSkills, selectedSkill]);
+                                        setSelectedSkill("");
+                                    }
+                                }}
+                            >
+                                등록
+                            </AddButton2>
                         </InputRow>
                         <LocationTags>
-                            {resumeData.skills.map((skill, index) => (
+                            {selectedSkills.map((skill, index) => (
                                 <LocationTag key={index}>
                                     {skill}
-                                    <DeleteButton onClick={() => handleRemoveSkill(skill)}>
+                                    <DeleteButton
+                                        onClick={() =>
+                                            setSelectedSkills(selectedSkills.filter((s) => s !== skill))
+                                        }
+                                    >
                                         <img src={Delw} alt="삭제 아이콘" />
                                     </DeleteButton>
                                 </LocationTag>
                             ))}
                         </LocationTags>
-
                     </InputContainer>
-
                     <InputContainer>
-                        <Label>이력서 / 자기소개서 등록</Label>
+                        <Label>이력서/자기소개서 등록</Label>
                         <FileUploadContainer>
-                            <FileUploadInput ref={fileUploadInputRef} type="text" placeholder="이력서 및 자기소개서 파일을 등록해주세요." value={resumeData.fileName} readOnly />
+                            <FileUploadInput 
+                                type="text"
+                                placeholder="이력서 및 자기소개서 파일을 등록해주세요."
+                                value={resumeFile ? resumeFile.name : ""}
+                                readOnly
+                            />
                             <FileInputLabel>
                                 <img src={addPhotoIcon} alt="파일 추가 아이콘" />
                                 파일 등록
-                                <FileInput type="file"  onChange={handleFileChange} multiple/>
+                                <FileInput  id="fileUpload"
+                                type="file"
+                                accept=".pdf,.doc,.docx"
+                                onChange={handleFileChange}/>
                             </FileInputLabel>
+
                         </FileUploadContainer>
                     </InputContainer>
+                    
                 </Form>
                 <ButtonContainer>
                     <SaveButton onClick={handleSave}>저장하기</SaveButton>
@@ -440,6 +513,72 @@ const ResumeForm = () => {
 };
 
 export default ResumeForm;
+
+
+const PreviewContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 318px;
+    height: 255px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #F6F6F6;
+`;
+
+const PreviewImage = styled.img`
+    width: 318px;
+    height: 255px;
+    object-fit: contain;
+`;
+
+const PhotoUpload = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 318px;
+    height: 255px;
+    border: 2px dashed #B5B5B5;
+    border-radius: 10px;
+    cursor: pointer;
+
+    img {
+        width: 24px;
+        height: 24px;
+    }
+
+    p {
+        font-size: 12px;
+        color: #00257A;
+        margin: 0;
+    }
+
+    &:hover {
+        border-color: #00257A;
+    }
+`;
+
+
+
+const InputContainerInput = styled.input`
+    margin-bottom: 5px;
+    width: 98.3%;
+    height: 25px;
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-weight: 700;
+    padding: 10px;
+    font-size: 14px;
+    border: 1.2px solid #B5B5B5;
+    border-radius: 10px;
+    outline: none;
+
+    &::placeholder {
+        color: #BABABA; 
+    }
+`;
+
 
 const FormContainer = styled.div`
     padding: 20px;
@@ -476,26 +615,10 @@ const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
     gap: 5px; 
-    width: 90%;
+    width: 91%;
     margin-bottom: 30px; 
 `;
 
-const Divider = styled.div`
-    width: 90%;
-    border-bottom: 1.2px solid #B5B5B5;
-    margin-bottom: 10px;
-`;
-
-const UserNameDisplay = styled.div`
-    font-size: 20px;
-    color: #000000;
-    width: 100%;
-    margin-bottom: 5px;
-    text-align: left;
-    margin-top: 10px;
-    font-family: 'Nanum Square Neo', sans-serif;
-    font-weight: 700;
-`;
 
 const Input = styled.input`
     margin-bottom: 5px;
@@ -514,25 +637,27 @@ const Input = styled.input`
     }
 `;
 
-const ContactRow = styled.div`
+const UserInfoContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     width: 90%;
-    
+
+
 `;
 
-const ContactInfo = styled.div`
+const UserInfo = styled.div`
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 15px;
-    
-    
+    margin-top: 50px;
+    margin-left: -336px;
+    margin-bottom: 50px;
 `;
 
-const InfoField = styled.div`
+
+const UserInfoField = styled.div`
     display: flex;
     align-items: left;
     gap: 0px;
@@ -545,9 +670,16 @@ const InfoField = styled.div`
         color: #000000;
         font-weight: 700; 
     }
+
 `;
 
-const InfoFieldInput = styled.input`
+const UserInfoIcon = styled.img`
+    width: 28px;
+    height: 28px;
+
+`;
+
+const UserInfoInput = styled.input`
     width: 330px;  
     height: 22px;
     padding: 4px;
@@ -556,88 +688,57 @@ const InfoFieldInput = styled.input`
     outline: none;
     font-family: 'Nanum Square Neo', sans-serif;
     font-weight: 700;
+
     &::placeholder {
         color: #BABABA;
     }
-`;
 
-const Icon = styled.img`
-    width: 28px;
-    height: 28px;
-`;
-
-
-
-const PhotoUpload = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 340px;
-    height: 255px;
-    border: none;
-    border-radius: 10px;
-    background: #F6F6F6;
-    text-align: center;
-    color: #BABABA;
-    font-size: 14px;
-    overflow: hidden;
-
-    img {
-        width: 30px;
-        height: 30px;
-        margin-bottom: 8px;
+    &::-webkit-datetime-edit-fields-wrapper {
+        color: ${({ isSelected  }) => (isSelected  ? "#000000" : "#BABABA")}; 
     }
-
-    p {
-        color: #00257A;
-        font-weight: 700; 
-    }
-`;
-
-const PreviewContainer = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 340px;
-    height: 255px;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #F6F6F6;
-`;
-
-const PreviewImage = styled.img`
-    width: 340px;
-    height: 255px;
-    object-fit: contain;
-`;
-
-const SelectContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    justify-content: flex-start;
+    
 
 `;
 
-const SelectRow = styled.div`
-    display: flex;
-    gap: 20px;
-    justify-content: flex-start;
-`;
-
-const Select = styled.select`
-    width: 160px;
-    height: 40px;
+const Select2 = styled.select`
+    width: 300px;
+    height: 47px;
     padding: 5px;
     border: 1.2px solid #B5B5B5;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 15px;
     font-family: 'Nanum Square Neo', sans-serif;
-    color: #BABABA;
     font-weight: 700;
     background-color: #FFFFFF;
-     color: ${({ color }) => color}; 
+    margin-right: 10px;
+
+    color: ${({ value }) => (value ? "#000000" : "#BABABA")}; 
+
+    &:focus {
+        outline: none;
+        border-color: #B5B5B5;
+    }
+
+    option {
+        color: #000000; 
+        font-weight: 500; 
+    }
+`;
+
+
+const Select = styled.select`
+    width: 94%;
+    height: 47px;
+    padding: 5px;
+    border: 1.2px solid #B5B5B5;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-weight: 700;
+    background-color: #FFFFFF;
+    margin-right: 10px;
+
+    color: ${({ value }) => (value ? "#000000" : "#BABABA")}; 
 
     &:focus {
         outline: none;
@@ -655,22 +756,7 @@ const InputContainer = styled.div`
     margin-top: 30px;
 `;
 
-const InputContainerInput = styled.input`
-    margin-bottom: 5px;
-    width: 98.3%;
-    height: 25px;
-    font-family: 'Nanum Square Neo', sans-serif;
-    font-weight: 700;
-    padding: 10px;
-    font-size: 14px;
-    border: 1.2px solid #B5B5B5;
-    border-radius: 10px;
-    outline: none;
 
-    &::placeholder {
-        color: #BABABA; 
-    }
-`;
 
 const Label = styled.p`
     font-size: 20px;
@@ -703,70 +789,8 @@ const SaveButton = styled.button`
     }
 `;
 
-const FileUploadContainer = styled.div` 
-    width: 98.3%;
-    position: relative;
-`;
-
-const FileUploadInput = styled.input`
-    width: 93%;
-    height: 25px; 
-    padding: 10px;
-    padding-right: 90px;
-    font-family: 'Nanum Square Neo', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    border: 1.2px solid #B5B5B5;
-    border-radius: 10px;
-    outline: none;
-
-    &::placeholder {
-        color: #BABABA; 
-    }
-`;
-
-const FileInputLabel = styled.label`
-    position: absolute;
-    right: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 10px;
-    background: none;
-    color: #00257A;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Nanum Square Neo', sans-serif;
-    font-size: 14px;
-
-    img {
-        width: 23px;
-        height: 23px;
-        margin-right: 3px;
-    }
 
 
-`;
-
-
-const FileInput = styled.input`
-    display: none;
-`;
-
-const AddButton = styled.button`
-
-    background-color: #00257A;
-    color: white;
-    border: none;
-    padding: 5px 17px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px; 
-    font-weight: 600;
-    font-family: 'Nanum Square Neo', sans-serif;
-`;
 
 const AddButton2 = styled.button`
 
@@ -774,14 +798,12 @@ const AddButton2 = styled.button`
     color: white;
     border: none;
     padding: 5px 17px;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     margin-left: 5px;
     font-weight: 600;
     font-size: 14px; 
     font-family: 'Nanum Square Neo', sans-serif;
-    width: 60px;
-    height: 46px;
     white-space: nowrap; 
 `;
 
@@ -815,3 +837,62 @@ const DeleteButton = styled.button`
         height: 22px;
     }
 `;
+
+const FileUploadContainer = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+`;
+
+const FileUploadInput = styled.input`
+    width: 93%;
+    height: 25px; 
+    padding: 10px;
+    padding-right: 90px;
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1.2px solid #B5B5B5;
+    border-radius: 10px;
+    outline: none;
+
+    &::placeholder {
+        color: #BABABA; 
+    }
+`;
+
+const FileInputLabel = styled.label`
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: none;
+    color: #00257A;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-size: 14px;
+
+    img {
+        width: 23px;
+        height: 23px;
+        margin-right: 3px;
+    }
+
+
+`;
+
+
+const FileInput = styled.input`
+    display: none;
+`;
+
+
+
+
+

@@ -178,12 +178,12 @@ const JobTopBar = () => {
         else 
             return (
             <NavbarRight>
-                <Link to ="/register">
+                <CustomLink href ="/member">
                     <AuthLink>회원가입</AuthLink>
-                </Link>
-                <Link to ="/login">
-                    <AuthLink to ="/login">로그인</AuthLink>
-                </Link>
+                </CustomLink>
+                <CustomLink href ="/login">
+                    <AuthLink>로그인</AuthLink>
+                </CustomLink>
             </NavbarRight>
         )
     }
@@ -392,6 +392,7 @@ const AuthLink = styled.button`
     font-family: 'Nanum Square Neo', sans-serif;
     display: flex;
     align-items: center;
+    padding : 8px 12px;
     margin-bottom: 40px;
     text-decoration : none;
 `;
@@ -445,6 +446,12 @@ const DropdownLink = styled(Link)`
     }
 `;
 
+const CustomLink = styled.a`
+    text-decoration:none;
+    &:hover > button{
+        font-weight:bold;
+    }
+`
 const DropdownOption = styled.div`
     padding: 10px 15px;
     cursor: pointer;

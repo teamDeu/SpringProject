@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 const StyledTable = styled.table.attrs((props) => ({
   style: {
     // props로 받아온 값을 스타일로만 적용
@@ -52,34 +53,40 @@ const StyledTable = styled.table.attrs((props) => ({
   }
 `;
 
-
 const Table = ({ columns, data, renderRowActions, className, cellPadding, ...props }) => {
-    return (
-      <StyledTable className={className} cellPadding={cellPadding} {...props}>
-        <thead>
-          <tr>
-            {columns.map((column, idx) => (
-              <th key={idx} style={column.headerStyle}>{column.header}</th>
-            ))}
-            {renderRowActions && <th>관리</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, idx) => (
-            <tr key={idx}>
-              {columns.map((column, colIdx) => (
-                <td key={colIdx}>
-                  {column.Cell ? column.Cell(row) : row[column.accessor]}
-                </td>
-              ))}
-              {renderRowActions && (
-                <td>{renderRowActions(row, idx)}</td>
-              )}
-            </tr>
+  return (
+    <StyledTable className={className} cellPadding={cellPadding} {...props}>
+      <thead>
+        <tr>
+          {columns.map((column, idx) => (
+            <th key={idx} style={column.headerStyle}>{column.header}</th>
           ))}
-        </tbody>
-      </StyledTable>
-    );
+          {renderRowActions && <th>관리</th>}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row, idx) => (
+          <tr key={idx}>
+            {columns.map((column, colIdx) => (
+              <td key={colIdx}>
+              {
+                column.Cell
+                  ? column.Cell(row) || '-' // Cell 함수가 null/undefined를 반환하면 '-' 표시
+                  : (row[column.accessor] !== null && row[column.accessor] !== undefined
+                    ? row[column.accessor] // DB에서 값이 있으면 그대로 표시
+                    : '-') // 값이 null 또는 undefined면 '-' 표시
+              }
+            </td>
+            
+            ))}
+            {renderRowActions && (
+              <td>{renderRowActions(row, idx)}</td>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </StyledTable>
+  );
 };
 
 export default Table;
