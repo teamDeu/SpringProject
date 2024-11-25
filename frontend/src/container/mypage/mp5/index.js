@@ -1,7 +1,7 @@
 // index.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import JobTopBar from '../../../components/JobTopBar2';
+import JobTopBar from '../../../components/JobTopBar';
 import JobCard from '../../../components/mypage/JobCard';
 import CompanyCard from '../../../components/mypage/CompanyCard';
 

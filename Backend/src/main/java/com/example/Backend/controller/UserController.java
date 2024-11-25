@@ -6,8 +6,6 @@ import com.example.Backend.model.User;
 import com.example.Backend.repository.AdminRepository;
 import com.example.Backend.repository.CompanyRepository;
 import com.example.Backend.repository.UserRepository;
-import com.example.Backend.service.KakaoService;
-import com.example.Backend.service.NaverService;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -16,8 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -295,46 +292,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/update-or-create-user")
-    public ResponseEntity<String> updateOrCreateUser(@RequestBody UserInfoRequest userInfoRequest) {
-        try {
-            // 사용자 검색
-            Optional<User> optionalUser = userRepository.findById(userInfoRequest.getId());
 
-            if (optionalUser.isPresent()) {
-                // 기존 사용자 업데이트
-                User existingUser = optionalUser.get();
-                existingUser.setName(userInfoRequest.getName());
-                existingUser.setPhone(userInfoRequest.getPhone());
-                existingUser.setEmail(userInfoRequest.getEmail());
-                existingUser.setGender(userInfoRequest.getGender());
-                existingUser.setExperienceLevel(userInfoRequest.getExperienceLevel());
-                existingUser.setEducationLevel(userInfoRequest.getEducationLevel());
-                existingUser.setEducationStatus(userInfoRequest.getEducationStatus());
-                userRepository.save(existingUser);
-                return ResponseEntity.ok("기존 사용자 정보가 업데이트되었습니다.");
-            } else {
-                // 새로운 사용자 생성
-                User newUser = new User();
-                newUser.setId(userInfoRequest.getId());
-                newUser.setName(userInfoRequest.getName());
-                newUser.setPhone(userInfoRequest.getPhone());
-                newUser.setEmail(userInfoRequest.getEmail());
-                newUser.setGender(userInfoRequest.getGender());
-                newUser.setExperienceLevel(userInfoRequest.getExperienceLevel());
-                newUser.setEducationLevel(userInfoRequest.getEducationLevel());
-                newUser.setEducationStatus(userInfoRequest.getEducationStatus());
-                newUser.setPassword("TEMP_PASSWORD"); // 초기 비밀번호
-                newUser.setBirthDate(new Date()); // 기본 날짜
-                userRepository.save(newUser);
-                return ResponseEntity.ok("새로운 사용자가 생성되었습니다.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("사용자 정보 처리 중 오류가 발생했습니다.");
-        }
-    }
 
 
 
@@ -367,36 +325,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
         }
     }
-    @PostMapping("/api/naver-login")
-    public ResponseEntity<Map<String, Object>> naverLogin(@RequestBody Map<String, String> request) {
-        String code = request.get("code");
-        String state = request.get("state");
-        Map<String, Object> userInfo = naverService.getUserInfo(code, state);
 
-
-        // 사용자 정보 처리
-        System.out.println("네이버 사용자 정보: " + userInfo);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userInfo.get("id"));
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/api/kakao-login")
-    public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestBody Map<String, String> request) {
-        String code = request.get("code");
-        Map<String, Object> userInfo = kakaoService.getUserInfo(code);
-
-        // 사용자 정보 처리
-        System.out.println("카카오 사용자 정보: " + userInfo);
-
-        if (userInfo == null || !userInfo.containsKey("id")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "사용자 ID를 가져오지 못했습니다."));
-        }
-
-        String userId = userInfo.get("id").toString(); // 카카오 사용자 ID
-        return ResponseEntity.ok(Map.of("userId", userId));
-    }
 
     @GetMapping("/api/logout")
     public ResponseEntity<?> logout(HttpSession session){

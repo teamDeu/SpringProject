@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/common/Header/Header';
 import EmailAndCareerInput from '../../../components/log/EmailAndCareerInput';
 import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
 import axios from 'axios';
 import { waitForSessionId } from '../../../context/SessionProvider';
+import JobTopBar from '../../../components/JobTopBar';
 
 const BasicPage = () => {
     const navigate = useNavigate();
@@ -81,7 +81,7 @@ const BasicPage = () => {
     return (
         <Container>
             <HeaderContainer>
-                <Header />
+                <JobTopBar />
             </HeaderContainer>
             <PageContainer>
                 <IntroContainer>

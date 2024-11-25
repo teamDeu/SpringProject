@@ -115,7 +115,7 @@ const Index = () => {
                 );
 
                 if (checkBasicResponse.data) {
-                    navigate('/basic'); // 기본 정보 입력 완료 시
+                    navigate('/main'); // 기본 정보 입력 완료 시
                 } else {
                     navigate('/basic'); // 기본 정보 입력 미완료 시
                 }

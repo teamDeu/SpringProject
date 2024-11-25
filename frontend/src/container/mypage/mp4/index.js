@@ -1,7 +1,7 @@
 // index.js
 import React from 'react';
 import styled from 'styled-components';
-import JobTopBar from '../../../components/JobTopBar2';
+import JobTopBar from '../../../components/JobTopBar';
 import IDInput2 from '../../../components/mypage/IDinput2';
 import ConfirmButton from '../../../components/mypage/ConfirmButton';
 import CancelButton from '../../../components/mypage/CancelButton';

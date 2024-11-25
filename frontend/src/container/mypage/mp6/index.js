@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import JobTopBar2 from '../../../components/JobTopBar2';
+import JobTopBar2 from '../../../components/JobTopBar';
 import JobApplicationStatus from '../../../components/mypage/JobApplicationStatus';
 
 const Index = () => {
