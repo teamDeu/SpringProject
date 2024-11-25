@@ -31,8 +31,7 @@ import Admin from './container/admin';
 import Amember from './container/admin/amember';
 import Job from './container/admin/job';
 import Faq from './container/admin/faq';
-import KakaoCallback from "./container/log/KakaoCallback"
-import NaverCallback from "./container/log/NaverCallback"
+
 
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
@@ -100,9 +99,6 @@ function App() {
             <Route path="resume" element={<Resume />} />
             <Route path="myresume" element={<MyResume />} />
             <Route path="resumeform" element={<ResumeForm />} />
-            <Route path="kakao-callback" element={<KakaoCallback/>}/>
-            <Route path="naver-callback" element={<NaverCallback/>}/>
-
             <Route path="/editresume/:id" element={<EditResume />} />
             <Route path="findpwd" element={<Findpwd/>}/>
 
