@@ -1,10 +1,11 @@
+// FAQForm.js
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { GetFAQsByTarget } from "../../api/api"; // API 호출 함수
+import { GetGFaqsByTarget, DeleteGFaqs } from "../../api/api"; // 수정된 API 호출 함수
 import AddButton from "../../components/admin/AddButton"; // 추가 버튼 컴포넌트
 
 const FAQContainer = styled.div`
-  width: 101%;
+  width: 100%;
   padding: 20px;
   font-family: "Nanum Square Neo", sans-serif;
 `;
@@ -55,13 +56,12 @@ const Answer = styled.div`
   font-size: 15px;
   color: #333;
   line-height: 1.7;
-  white-space: pre;
+  white-space: pre-wrap;
   word-wrap: break-word;
 `;
 
 const Checkbox = styled.input`
   margin-right: 20px;
-  margin-left: -25px;
   width: 17px;
   height: 17px;
 `;
@@ -77,8 +77,8 @@ const ActionContainer = styled.div`
     content: "";
     position: absolute;
     bottom: -10px;
-    left: -25px;
-    width: 102%;
+    left: 0;
+    width: 100%;
     height: 1px;
     background-color: black;
   }
@@ -103,7 +103,6 @@ const AddLabel = styled.span`
 
 const AddButtonWrapper = styled.div`
   margin-left: auto;
-  margin-right: -15px;
 `;
 
 const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
@@ -111,40 +110,61 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
   const [expandedIndexes, setExpandedIndexes] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch FAQ data based on selectedType
+  // Fetch GFaqs data based on selectedType
   useEffect(() => {
-    const fetchFAQData = async () => {
+    const fetchGFaqsData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const target = selectedType === "individual" ? "개인_FAQ" : "기업_FAQ";
-        const data = await GetFAQsByTarget(target); // API 호출
+        console.log(`Fetching GFaqs for target: ${target}`);
+        const data = await GetGFaqsByTarget(target); // API 호출
+        console.log("Fetched data:", data); // 데이터 확인
+
+        if (!Array.isArray(data)) {
+          throw new Error("Fetched data is not an array");
+        }
+
         const groupedData = groupByTitle(data); // 데이터 그룹화
+        console.log("Grouped data:", groupedData); // 그룹화된 데이터 확인
         setFaqData(groupedData);
       } catch (error) {
-        console.error("Error fetching FAQ data:", error);
+        console.error("Error fetching GFaqs data:", error);
+        setError("FAQ 데이터를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchFAQData();
+    if (selectedType) {
+      fetchGFaqsData();
+    }
   }, [selectedType]);
 
-  // Group FAQs by title
+  // Group GFaqs by Faq title
   const groupByTitle = (data) => {
     const grouped = {};
     data.forEach((item) => {
-      if (!grouped[item.title]) {
-        grouped[item.title] = [];
+      if (item.faq && item.faq.title) {
+        if (!grouped[item.faq.title]) {
+          grouped[item.faq.title] = [];
+        }
+        grouped[item.faq.title].push(item);
+      } else {
+        console.warn("Invalid item format:", item);
       }
-      grouped[item.title].push(item);
     });
     return Object.entries(grouped).map(([title, questions]) => ({ title, questions }));
   };
 
-  const handleToggle = (index) => {
+  const handleToggle = (id) => {
     setExpandedIndexes((prevIndexes) =>
-      prevIndexes.includes(index)
-        ? prevIndexes.filter((i) => i !== index)
-        : [...prevIndexes, index]
+      prevIndexes.includes(id)
+        ? prevIndexes.filter((i) => i !== id)
+        : [...prevIndexes, id]
     );
   };
 
@@ -156,20 +176,30 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
     );
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedItems.length === 0) {
       alert("삭제할 항목을 선택해주세요.");
       return;
     }
     const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
     if (confirmDelete) {
-      const updatedData = faqData.map((group) => ({
-        ...group,
-        questions: group.questions.filter((item) => !selectedItems.includes(item.id)),
-      }));
-      setFaqData(updatedData.filter((group) => group.questions.length > 0)); // 질문 없는 그룹 제거
-      setSelectedItems([]);
-      setSelectAll(false);
+      try {
+        await DeleteGFaqs(selectedItems); // API 호출하여 삭제
+        console.log("Deleted items:", selectedItems);
+
+        // 삭제가 성공하면 UI에서 항목 제거
+        const updatedData = faqData.map((group) => ({
+          ...group,
+          questions: group.questions.filter((item) => !selectedItems.includes(item.id)),
+        }));
+        setFaqData(updatedData.filter((group) => group.questions.length > 0)); // 질문 없는 그룹 제거
+        setSelectedItems([]);
+        setSelectAll(false);
+        alert("선택된 항목이 성공적으로 삭제되었습니다.");
+      } catch (error) {
+        console.error("Error deleting GFaqs:", error);
+        alert("FAQ 삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -183,7 +213,7 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
     setSelectAll(!selectAll);
   };
 
-  // Filter FAQ data by search term
+  // Filter GFaqs data by search term
   const filterBySearchTerm = (data) => {
     if (!searchTerm) return data; // 검색어가 없으면 원본 데이터 반환
     return data
@@ -200,11 +230,19 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
 
   const filteredData = filterBySearchTerm(faqData);
 
+  if (error) {
+    return <FAQContainer>{error}</FAQContainer>;
+  }
+
   return (
     <FAQContainer>
       {!hideControls && (
         <ActionContainer>
-          <Checkbox type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+          <Checkbox
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />
           <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
           <AddButtonWrapper>
             <AddButton to="/faqwrite" iconSrc="/icons/plusbtn.png" altText="Plus Button">
@@ -233,6 +271,7 @@ const FAQForm = ({ selectedType, hideControls = false, searchTerm = "" }) => {
                       src="/icons/sbtn.png"
                       expanded={expandedIndexes.includes(item.id)}
                       onClick={() => handleToggle(item.id)}
+                      alt="Toggle Icon"
                     />
                   </Question>
                 </QuestionContainer>

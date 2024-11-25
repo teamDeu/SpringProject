@@ -216,14 +216,28 @@ export const UpdateFAQTitle = async (id, updatedData) => {
     }
   };
 
-// 특정 target의 FAQ 데이터를 가져오는 API
-export const GetFAQsByTarget = async (target) => {
+// 특정 target의 GFaqs 데이터를 가져오는 API
+export const GetGFaqsByTarget = async (target) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/faqs/target/${target}`);
-      return response.data; // target에 해당하는 FAQ 데이터 반환
+        const response = await axios.get(`http://localhost:8080/api/gfaqs/faq`, {
+            params: { target }, // Faq 타겟을 기준으로 GFaqs 조회
+        });
+        return response.data; // target에 해당하는 GFaqs 데이터 반환
     } catch (error) {
-      console.error(`Error fetching FAQs for target: ${target}`, error);
-      throw error;
+        console.error(`Error fetching GFaqs for target: ${target}`, error);
+        throw error;
     }
-  };
-  
+};
+
+// 선택된 GFaq 항목을 삭제하는 API 함수
+export const DeleteGFaqs = async (ids) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/gfaqs`, {
+            data: { ids }, // DELETE 요청의 본문에 삭제할 ID 배열 전달
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting GFaqs:', error);
+        throw error;
+    }
+};
