@@ -14,13 +14,13 @@ public class KakaoUser {
     private String kakaoId; // 카카오 사용자 고유 ID
 
     @Column(name = "email", nullable = true)
-    private String email; // 이메일
+    private String email; // 이메일 (account_email)
 
-    @Column(name = "name", nullable = true)
-    private String name; // 이름 (카카오에서 가져온 이름)
+    @Column(name = "nickname", nullable = true)
+    private String nickname; // 닉네임 (profile_nickname)
 
     @Column(name = "profile_image", nullable = true, length = 500)
-    private String profileImage; // 프로필 이미지 URL
+    private String profileImage; // 프로필 이미지 URL (profile_image)
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true)
@@ -51,12 +51,12 @@ public class KakaoUser {
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getProfileImage() {
