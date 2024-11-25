@@ -6,8 +6,6 @@ import com.example.Backend.model.User;
 import com.example.Backend.repository.AdminRepository;
 import com.example.Backend.repository.CompanyRepository;
 import com.example.Backend.repository.UserRepository;
-import com.example.Backend.service.KakaoService;
-import com.example.Backend.service.NaverService;
 import com.example.Backend.service.SmsService;
 import com.example.Backend.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -363,36 +361,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("관리자 로그인 실패");
         }
     }
-    @PostMapping("/api/naver-login")
-    public ResponseEntity<Map<String, Object>> naverLogin(@RequestBody Map<String, String> request) {
-        String code = request.get("code");
-        String state = request.get("state");
-        Map<String, Object> userInfo = naverService.getUserInfo(code, state);
 
-
-        // 사용자 정보 처리
-        System.out.println("네이버 사용자 정보: " + userInfo);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userInfo.get("id"));
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/api/kakao-login")
-    public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestBody Map<String, String> request) {
-        String code = request.get("code");
-        Map<String, Object> userInfo = kakaoService.getUserInfo(code);
-
-        // 사용자 정보 처리
-        System.out.println("카카오 사용자 정보: " + userInfo);
-
-        if (userInfo == null || !userInfo.containsKey("id")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "사용자 ID를 가져오지 못했습니다."));
-        }
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userInfo.get("id"));
-        return ResponseEntity.ok(response);
-    }
 
 
 
