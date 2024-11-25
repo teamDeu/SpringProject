@@ -34,11 +34,7 @@ public class UserController {
     private AdminRepository adminRepository;
 
 
-    @Autowired
-    private NaverService naverService;
 
-    @Autowired
-    private KakaoService kakaoService;
 
     @Autowired
     private CompanyRepository companyRepository;
