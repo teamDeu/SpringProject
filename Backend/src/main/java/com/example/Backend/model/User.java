@@ -46,6 +46,13 @@ public class User {
     @Column(name = "phone_verified", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean phoneVerified = false;
 
+    @Column(name = "kakao_id", unique = true, nullable = true)
+    private String kakaoId; // 카카오 사용자 ID
+
+    @Column(name = "profile_image", nullable = true, length = 500)
+    private String profileImage; // 프로필 이미지 URL
+
+
     // Getters and Setters
 
     public String getId() {

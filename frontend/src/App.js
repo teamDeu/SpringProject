@@ -31,7 +31,7 @@ import Admin from './container/admin';
 import Amember from './container/admin/amember';
 import Job from './container/admin/job';
 import Faq from './container/admin/faq';
-
+import Kakaocallback from './container/log/kakaocallback';
 
 import Announcements from './container/admin/announcements';
 import Areview from './container/admin/areview';
@@ -101,6 +101,7 @@ function App() {
             <Route path="resumeform" element={<ResumeForm />} />
             <Route path="/editresume/:id" element={<EditResume />} />
             <Route path="findpwd" element={<Findpwd/>}/>
+            <Route path="/kakao-callback" element={<Kakaocallback />} />
 
             <Route path="rpwd" element={<Rpwd/>}/>
             <Route path="crpwd" element={<Crpwd/>}/>

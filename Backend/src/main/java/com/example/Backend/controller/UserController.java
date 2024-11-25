@@ -35,7 +35,6 @@ public class UserController {
 
 
 
-
     @Autowired
     private CompanyRepository companyRepository;
 
@@ -359,4 +358,5 @@ public class UserController {
         // 둘 다 존재하지 않으면 404 Not Found 반환
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matching data found");
     }
+
 }
