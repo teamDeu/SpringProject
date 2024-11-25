@@ -34,7 +34,6 @@ public class UserController {
     private AdminRepository adminRepository;
 
 
-
     @Autowired
     private CompanyRepository companyRepository;
 
@@ -117,12 +116,15 @@ public class UserController {
         public void setName(String name) {
             this.name = name;
         }
+
         public String getPhone() {
             return phone;
         }
+
         public void setPhone(String phone) {
             this.phone = phone;
         }
+
         public String getId() {
             return id;
         }
@@ -228,7 +230,7 @@ public class UserController {
 
         User user = userRepository.findById(id).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
-            session.setAttribute("user",id);
+            session.setAttribute("user", id);
             return ResponseEntity.ok("로그인 성공");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못되었습니다.");
@@ -263,6 +265,7 @@ public class UserController {
                     .body("사용자 정보 업데이트 실패: " + e.getMessage());
         }
     }
+
     // 사용자 정보 업데이트
     @PostMapping("/api/update-user-info2")
     public ResponseEntity<String> updateUserInfo2(@RequestBody UserInfoRequest userInfoRequest) {
@@ -288,9 +291,6 @@ public class UserController {
     }
 
 
-
-
-
     @GetMapping("/api/check-user-basic")
     public ResponseEntity<Boolean> checkUserBasic(@RequestParam String id) {
         Optional<User> userOptional = userRepository.findById(id);
@@ -307,13 +307,13 @@ public class UserController {
     }
 
     @PostMapping("/api/admin-login")
-    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData , HttpSession session) {
+    public ResponseEntity<String> adminLogin(@RequestBody Map<String, String> loginData, HttpSession session) {
         String adminId = loginData.get("admin_id");
         String adminPwd = loginData.get("admin_pwd");
 
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (adminOptional.isPresent() && adminOptional.get().getPassword().equals(adminPwd)) {
-            session.setAttribute("user",adminId);
+            session.setAttribute("user", adminId);
             return ResponseEntity.ok("관리자 로그인 성공");
 
         } else {
@@ -322,19 +322,8 @@ public class UserController {
     }
 
 
-
-        // 사용자 정보 처리
-        System.out.println("네이버 사용자 정보: " + userInfo);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userInfo.get("id"));
-        return ResponseEntity.ok(response);
-    }
-
-
-
     @GetMapping("/api/logout")
-    public ResponseEntity<?> logout(HttpSession session){
+    public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully");
     }
@@ -369,3 +358,4 @@ public class UserController {
         // 둘 다 존재하지 않으면 404 Not Found 반환
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matching data found");
     }
+}
