@@ -7,25 +7,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "g_faqs")
-public class FAQ {
+@Table(
+        name = "faq",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"title", "target"}, name = "unique_title_target")
+        }
+)
+public class Faq {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(name = "question", nullable = false)
-    private String question;
-
-    @Column(name = "answer", nullable = false, columnDefinition = "TEXT")
-    private String answer;
-
-    @Column(name = "target", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "target", nullable = false, length = 20)
     private Target target;
 
     public enum Target {
