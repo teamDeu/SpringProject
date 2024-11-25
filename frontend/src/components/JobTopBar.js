@@ -216,12 +216,9 @@ const JobTopBar = () => {
     },[sessionId])
 
     useEffect(() => {
-        console.log(object);
         if(object){
             setObjectData(object.data);
             setObjectType(object.type);
-            console.log(objectType);
-            console.log(objectData);
         }
     },[object])
     return (

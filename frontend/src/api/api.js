@@ -60,7 +60,6 @@ export const GetAllSkills = () => {
 
 
 export const PostJobPost = async(jobPost) => {
-
     console.log("Sending company:", jobPost); // 요청 본문 확인
     console.log("images" , jobPost.aboutCompany.images)
 
@@ -98,10 +97,23 @@ export const PostJobPost = async(jobPost) => {
       } catch (error) {
         return "error";
       }
-    
 }
 
 //채용정보 데이터를 가져오는 API
+export const GetCompanyJobPosts = (company) => {
+    return axios.get('http://localhost:8080/api/companyjobpost',{
+        params: {
+            company : company
+        }
+    })
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+};
+
+
 export const GetAllJobPosts = () => {
     return axios.get('http://localhost:8080/api/jobpost')
         .then(response => response.data)
@@ -110,6 +122,20 @@ export const GetAllJobPosts = () => {
             throw error;
         });
 };
+
+export const GetIdJobPost = (id) => {
+    return axios.get('http://localhost:8080/api/idjobpost',{
+        params :{
+            id : id
+        }
+    })
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+};
+
 
 //채용정보 데이터를 삭제하는 API
 export const DeleteJobPost = async (id) => {

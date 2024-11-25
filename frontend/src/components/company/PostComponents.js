@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import RoundedLabel from './RoundedLabel'
 import TextButton from '../common/TextButton'
 import PostResumeInfo from './PostResumeInfo'
+import { useNavigate } from 'react-router'
 const tempData = {
     postTitle : "[플레이오]Python 백엔드 개발",
     postStartDate : "2024-11-01",
@@ -17,10 +18,24 @@ const tempData = {
     }
     
 }
+
+
 const PostComponents = ({data = tempData}) => {
+    const navigate = useNavigate();
     const date = new Date();
     const endDate = new Date(data.postEndDate);
     const isIng = date.getTime() <= endDate.getTime();
+
+    const handelDelete = (e) => {
+        console.log("click : ",e.target.parentNode.parentNode)
+        alert("삭제되었습니다.");
+        e.target.parentNode.parentNode.remove();
+    }
+    
+    const handelModify = () => {
+        navigate("/CompanyRegPost",{ state: data.postId })
+    }
+
   return (
     <Container>
         <StateSection>
@@ -34,9 +49,9 @@ const PostComponents = ({data = tempData}) => {
         <ButtonSection>
             <TextButton fontsize = "18px" color ="#B5B5B5">마감</TextButton>
             <ButtonDivider>|</ButtonDivider>
-            <TextButton fontsize = "18px" color ="#B5B5B5">수정</TextButton>
+            <TextButton onclick = {handelModify} fontsize = "18px" color ="#B5B5B5">수정</TextButton>
             <ButtonDivider>|</ButtonDivider>
-            <TextButton fontsize = "18px" color ="#B5B5B5">삭제</TextButton>
+            <TextButton onclick = {(e) => {handelDelete(e)}} fontsize = "18px" color ="#B5B5B5">삭제</TextButton>
         </ButtonSection>
     </Container>
   )

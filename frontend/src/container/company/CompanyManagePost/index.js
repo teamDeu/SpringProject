@@ -6,7 +6,8 @@ import JobTopBar from '../../../components/JobTopBar'
 import Tab from '../../../components/company/Tab'
 import PostComponents from '../../../components/company/PostComponents'
 import FilledButton from '../../../components/FilledButton'
-import { GetAllJobPosts } from '../../../api/api'
+import { GetAllJobPosts, GetCompanyJobPosts } from '../../../api/api'
+import { waitForSessionId } from '../../../context/SessionProvider'
 
 
 
@@ -14,10 +15,25 @@ import { GetAllJobPosts } from '../../../api/api'
 const Index = () => {
   const [postComponent,setPostComponent] = useState([]);
   const [filteredComponent,setFilteredComponent] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [postData, setPostData] = useState();
+  useEffect(() => {
+    const fetchSession = async () => {
+        try {
+            const sessionId = await waitForSessionId();
+            setSessionId(sessionId);
+        } catch (error) {
+            console.error("Failed to fetch session:", error);
+        }
+    };
+    fetchSession();
+}, []);
+
   useEffect(() => {
     const fecthData = async() => {
-      const postData = await GetAllJobPosts();
+      
       const formattedData = (postData || []).map(data => ({
+        postId : data.id,
         postTitle : data.title,
         postStartDate : data.postDate.split("T")[0],
         postEndDate : data.endDate.split("T")[0],
@@ -33,8 +49,17 @@ const Index = () => {
     }
 
     fecthData();
-  },[])
+  },[postData])
+  useEffect(() => {
+    const fetchPostData = async() => {
+      const getPostData = await GetCompanyJobPosts(sessionId);
+      setPostData(getPostData);
+    }
+    if(sessionId){
+      fetchPostData();
+    }
 
+  },[sessionId])
   const tabOptions = [
     {
       title : "전체",
@@ -84,7 +109,7 @@ const Index = () => {
               </ButtonArticle>
             </TabSection>
             <ComponetsSection>
-              {filteredComponent && filteredComponent.map((data) => <PostComponents data ={data}/>)}
+              {filteredComponent && filteredComponent.map((data) => <PostComponents key = {data.postId} data ={data}/>)}
             </ComponetsSection>
         </MainContent>
     </Container>
