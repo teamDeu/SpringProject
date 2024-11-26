@@ -9,9 +9,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -49,10 +49,10 @@ public class KakaoService {
             // 3. 사용자 정보 추출
             String kakaoId = String.valueOf(userInfoResponse.get("id"));
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfoResponse.get("kakao_account");
-            String email = (String) kakaoAccount.get("email");
+            String email = kakaoAccount != null ? (String) kakaoAccount.get("email") : null;
             Map<String, Object> properties = (Map<String, Object>) userInfoResponse.get("properties");
-            String nickname = (String) properties.get("nickname");
-            String profileImage = (String) properties.get("profile_image");
+            String nickname = properties != null ? (String) properties.get("nickname") : "사용자";
+            String profileImage = properties != null ? (String) properties.get("profile_image") : null;
 
             // 4. 기존 사용자 검색 또는 신규 사용자 생성
             return kakaoUserRepository.findByKakaoId(kakaoId)
@@ -89,14 +89,21 @@ public class KakaoService {
 
             System.out.println("Access Token 응답: " + response.getBody());
 
-            return (String) response.getBody().get("access_token");
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null || responseBody.get("access_token") == null) {
+                throw new RuntimeException("Access Token 응답이 비어있습니다.");
+            }
+
+            return (String) responseBody.get("access_token");
+        } catch (HttpClientErrorException e) {
+            // Kakao 에러 응답 디버깅
+            System.err.println("Kakao API 에러: " + e.getResponseBodyAsString());
+            throw new RuntimeException("Access Token 요청 중 오류 발생: " + e.getMessage(), e);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Access Token 요청 중 오류 발생: " + e.getMessage(), e);
         }
     }
-
-
 
     // 사용자 정보 요청
     private Map<String, Object> getUserInfo(String accessToken) {
@@ -116,7 +123,12 @@ public class KakaoService {
 
             System.out.println("User Info Response: " + response.getBody());
 
-            return response.getBody();
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                throw new RuntimeException("사용자 정보 응답이 비어있습니다.");
+            }
+
+            return responseBody;
         } catch (Exception e) {
             throw new RuntimeException("사용자 정보 요청 중 오류 발생: " + e.getMessage(), e);
         }

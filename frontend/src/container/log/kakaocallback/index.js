@@ -5,6 +5,7 @@ import axios from 'axios';
 const Index = () => {
     const navigate = useNavigate();
     const [debugMessage, setDebugMessage] = useState(""); // 디버깅 메시지 상태
+    const [authCode, setAuthCode] = useState(""); // 인증 코드 상태
 
     useEffect(() => {
         const handleKakaoCallback = async () => {
@@ -16,6 +17,11 @@ const Index = () => {
                 alert('카카오 인증 실패: 인증 코드가 없습니다.');
                 return;
             }
+
+            // 인증 코드 확인 메시지
+            console.log('인가 코드:', code);
+            setDebugMessage(`인가 코드 수신 성공: ${code}`);
+            setAuthCode(code); // 상태에 인증 코드 저장
 
             try {
                 // 백엔드로 인증 코드 전송
@@ -50,6 +56,10 @@ const Index = () => {
     return (
         <div>
             <h1>카카오 로그인 처리 중...</h1>
+            {/* 인증 코드 출력 */}
+            <div>
+                <strong>인가 코드:</strong> {authCode || "없음"}
+            </div>
             {/* 디버깅 메시지 출력 */}
             <pre style={{ color: 'red', whiteSpace: 'pre-wrap' }}>
                 {debugMessage}

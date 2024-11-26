@@ -378,4 +378,19 @@ public class UserController {
         // 둘 다 존재하지 않으면 404 Not Found 반환
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matching data found");
     }
+    @GetMapping("/api/user-info")
+    public ResponseEntity<?> getUserInfo(HttpSession session) {
+        String userId = (String) session.getAttribute("user");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(userOptional.get());
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다.");
+    }
+
 }
