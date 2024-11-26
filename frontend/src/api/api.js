@@ -281,3 +281,57 @@ export const GetFaqsByTarget = async (target) => {
         throw error;
     }
 };
+// 사용자 정보 가져오기 API
+export const getUserInfo = async () => {
+    try {
+        // API 호출
+        const response = await axios.get('http://localhost:8080/api/user-info', {
+            withCredentials: true, // 세션 관리가 필요한 경우 사용
+        });
+        console.log('User Info API Response:', response.data); // 디버깅 로그
+        return response.data; // 데이터 반환    
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        throw error; // 오류를 상위로 전달
+    }
+};
+// 회원탈퇴 API
+export const deleteUserAccount = async () => {
+    try {
+        // API 호출
+        const response = await axios.delete('http://localhost:8080/api/delete-account', {
+            withCredentials: true, // 세션 관리가 필요한 경우 사용
+        });
+        console.log('Delete User Account API Response:', response.data); // 디버깅 로그
+        return response.data; // 데이터 반환
+    } catch (error) {
+        console.error('Error deleting user account:', error);
+        throw error; // 오류를 상위로 전달
+    }
+};
+export const changePassword = async (currentPassword, newPassword) => {
+    try {
+        const response = await axios.put(
+            'http://localhost:8080/api/change-password',
+            {
+                currentPassword,
+                newPassword,
+            },
+            { withCredentials: true } // 세션 인증 포함
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error changing password:', error);
+        throw error;
+    }
+};
+export const updateUserInfo = async (userInfo) => {
+    const response = await fetch('http://localhost:8080/api/update-user-info2', { // URL 수정
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userInfo),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to update user info');
+    }
+};

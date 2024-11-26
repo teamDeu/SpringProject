@@ -68,7 +68,7 @@ const BasicPage = () => {
     
             if (response.status === 200) {
                 alert('사용자 정보가 성공적으로 저장되었습니다.');
-                navigate('/dashboard');
+                navigate('/main');
             }
         } catch (error) {
             console.error('사용자 정보 저장 실패:', error);

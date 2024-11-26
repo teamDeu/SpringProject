@@ -1,36 +1,38 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const IDInput2 = ({ label, placeholder, value, onChange }) => {
+const EmailAndCareerInput2 = ({ label, placeholder, value = '', onChange }) => {
     return (
         <Container>
             <Label>{label}</Label>
             <Divider>|</Divider>
             <Input
                 placeholder={placeholder}
-                value={value} // value를 props로 전달받음
-                onChange={onChange} // onChange를 props로 전달받음
+                value={value} // 기본값을 ''로 설정해 에러 방지
+                onChange={(e) => {
+                    if (onChange) {
+                        onChange(e.target.value); // `onChange`가 존재할 경우에만 호출
+                    }
+                }}
             />
         </Container>
     );
 };
 
-export default IDInput2;
 
 const Container = styled.div`
+    width: 1060px;
     display: flex;
     align-items: center;
     padding: 10px;
     border: 1px solid #B5B5B5;
     border-radius: 4px;
-    background-color: #ffffff;
+    background-color: #fff;
     margin-bottom: 15px;
-    width: 100%; /* 전체 너비 설정 */
-    max-width: 1060px; /* 원하는 최대 너비 */
 `;
 
 const Label = styled.label`
-    width: 150px; /* 레이블 너비 */
+    width: 80px;
     font-size: 16px;
     color: #333;
 `;
@@ -44,9 +46,12 @@ const Input = styled.input`
     flex: 1;
     padding: 8px;
     border: none;
-    color: #333;
-    font-size: 16px;
+    border-radius: 4px;
+    background-color: #F1F1F1;
+    color: #888;
     &::placeholder {
-        color: #bbb;
+        color: #ccc;
     }
 `;
+
+export default EmailAndCareerInput2;

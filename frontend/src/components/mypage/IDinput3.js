@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const IDInput3 = ({ label, placeholder }) => {
+const IDInput3 = ({ label, value, placeholder }) => {
     return (
         <Container>
             <Label>{label}</Label>
             <Divider>|</Divider>
-            <Input placeholder={placeholder} readOnly />
+            <Input
+                value={value || ''} // value를 바인딩
+                placeholder={placeholder}
+                readOnly
+            />
         </Container>
     );
 };
@@ -19,12 +23,12 @@ const Container = styled.div`
     border-radius: 4px;
     background-color: #ffffff;
     margin-bottom: 15px;
-    width: 100%; /* 전체 너비 설정 */
-    max-width: 1060px; /* 원하는 최대 너비 */
+    width: 100%;
+    max-width: 1060px;
 `;
 
 const Label = styled.label`
-    width: 60px; /* 레이블 너비 */
+    width: 60px;
     font-size: 16px;
     color: #333;
 `;
@@ -40,8 +44,8 @@ const Input = styled.input`
     border: none;
     color: #333;
     font-size: 16px;
-    background-color: #f9f9f9; /* 읽기 전용 느낌을 주기 위해 배경색 추가 */
-    cursor: not-allowed; /* 커서 모양 변경 */
+    background-color: #f9f9f9;
+    cursor: not-allowed;
     &::placeholder {
         color: #bbb;
     }

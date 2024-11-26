@@ -1,9 +1,8 @@
-// EditButton.js
 import React from 'react';
 import styled from 'styled-components';
 
-const EditButton2 = () => {
-    return <Button>저장</Button>;
+const EditButton2 = ({ onClick }) => {
+    return <Button onClick={onClick}>저장</Button>; // onClick 전달
 };
 
 export default EditButton2;

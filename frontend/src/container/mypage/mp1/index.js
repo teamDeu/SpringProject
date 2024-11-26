@@ -1,16 +1,50 @@
 // index.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import JobTopBar from '../../../components/JobTopBar';
 import IDInput from '../../../components/mypage/IDinput3';
 import PasswordInput from '../../../components/mypage/PasswordInput';
 import EditButton from '../../../components/mypage/EditButton';
+import { getUserInfo, deleteUserAccount } from '../../../api/api';
 
 const Index = () => {
-    const handleDeleteAccount = () => {
-        alert("회원탈퇴 버튼이 클릭되었습니다.");
-        // 회원탈퇴 로직을 여기에 추가
+    const [userInfo, setUserInfo] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await getUserInfo(); // API 호출
+                setUserInfo(response);
+            } catch (error) {
+                console.error('Failed to fetch user info:', error);
+                if (error.response?.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    navigate('/login');
+                }
+            }
+        };
+        fetchUserInfo();
+    }, [navigate]);
+
+    const handleEdit = () => {
+        navigate('/mp2', { state: userInfo }); // MP2로 데이터 전달
     };
+    
+    const handleDeleteAccount = async () => {
+        if (window.confirm('정말로 회원탈퇴를 하시겠습니까?')) {
+            try {
+                await deleteUserAccount(); // API 호출
+                alert('회원탈퇴가 완료되었습니다.');
+                navigate('/login');
+            } catch (error) {
+                console.error('Failed to delete account:', error);
+                alert('회원탈퇴에 실패했습니다.');
+            }
+        }
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -21,22 +55,42 @@ const Index = () => {
                     <Section>
                         <SectionTitleWrapper>
                             <SectionTitle>로그인 정보</SectionTitle>
-                            <EditButton>수정</EditButton>
+                            <EditButton onClick={handleEdit}>수정</EditButton> {/* 수정 버튼 */}
                         </SectionTitleWrapper>
                         <Row>
-                            <IDInput label="아이디" placeholder="1234" />
+                            <IDInput
+                                label="아이디"
+                                value={userInfo?.id || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <PasswordInput label="비밀번호" placeholder="*****" />
+                            <PasswordInput
+                                label="비밀번호"
+                                value={userInfo?.password || '*****'}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="이름" placeholder="박정현" />
+                            <IDInput
+                                label="이름"
+                                value={userInfo?.name || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="전화번호" placeholder="010-8013-1233" />
+                            <IDInput
+                                label="전화번호"
+                                value={userInfo?.phone || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="생년월일" placeholder="1997.05.08" />
+                            <IDInput
+                                label="생년월일"
+                                value={userInfo?.birthDate || ''}
+                                readOnly
+                            />
                         </Row>
                     </Section>
 
@@ -46,19 +100,37 @@ const Index = () => {
                             <EditButton>수정</EditButton>
                         </SectionTitleWrapper>
                         <Row>
-                            <IDInput label="이메일" placeholder="1234@naver.com" />
+                            <IDInput
+                                label="이메일"
+                                value={userInfo?.email || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="성별" placeholder="남" />
+                            <IDInput
+                                label="성별"
+                                value={userInfo?.gender || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="경력" placeholder="신입" />
+                            <IDInput
+                                label="경력"
+                                value={userInfo?.experienceLevel || ''}
+                                readOnly
+                            />
                         </Row>
                         <Row>
-                            <IDInput label="최종 학력" placeholder="대학교(4년) 졸업 예정" />
+                            <IDInput
+                                label="최종 학력"
+                                value={userInfo?.educationLevel || ''}
+                                readOnly
+                            />
                         </Row>
                         <DeleteAccountWrapper>
-                            <DeleteAccountButton onClick={handleDeleteAccount}>회원탈퇴</DeleteAccountButton>
+                            <DeleteAccountButton onClick={handleDeleteAccount}>
+                                회원탈퇴
+                            </DeleteAccountButton>
                         </DeleteAccountWrapper>
                     </Section>
                 </FormContainer>
@@ -74,7 +146,6 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    
 `;
 
 const HeaderContainer = styled.div`
@@ -90,13 +161,11 @@ const PageContent = styled.div`
     margin-top: 40px;
 `;
 
-
-
 const FormContainer = styled.div`
     width: 100%;
     padding: 60px 300px;
-    border: 1px solid #B5B5B5; /* 테두리 추가 */
-    border-radius: 8px; /* 모서리 둥글게 */
+    border: 1px solid #B5B5B5;
+    border-radius: 8px;
     background-color: #fff;
 `;
 
@@ -125,7 +194,6 @@ const Row = styled.div`
     margin-bottom: 15px;
 `;
 
-
 const DeleteAccountWrapper = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -139,6 +207,7 @@ const DeleteAccountButton = styled.button`
     font-size: 14px;
     cursor: pointer;
     text-decoration: underline;
+
     &:hover {
         color: #333;
     }

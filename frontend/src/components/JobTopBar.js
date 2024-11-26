@@ -80,10 +80,10 @@ const JobTopBar = () => {
                             <NavItem>
                                 <NavButton>마이페이지</NavButton>
                                 <DropdownContent>
-                                    <Link to="mp5">
+                                    <Link to="/mp5">
                                     <DropdownButton>스크랩/관심기업</DropdownButton>
                                     </Link>
-                                    <Link to="mp6">
+                                    <Link to="/mp6">
                                     <DropdownButton>지원내역</DropdownButton>
                                     </Link>
                                 </DropdownContent>

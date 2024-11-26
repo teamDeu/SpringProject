@@ -1,9 +1,8 @@
-// ConfirmButton.js
 import React from 'react';
 import styled from 'styled-components';
 
-const ConfirmButton = ({ children }) => {
-    return <Button>{children}</Button>;
+const ConfirmButton = ({ children, onClick }) => {
+    return <Button onClick={onClick}>{children}</Button>; // onClick 속성 추가
 };
 
 export default ConfirmButton;

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.sql.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -100,14 +101,24 @@ public class UserController {
     }
 
     public static class UserInfoRequest {
+        private String id;
         private String name;
         private String phone;
-        private String id;
         private String email;
         private String gender;
         private String experienceLevel;
         private String educationLevel;
         private String educationStatus;
+        private String birthDate; // 생년월일을 String으로 선언
+
+        // Getters and Setters
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getName() {
             return name;
@@ -123,14 +134,6 @@ public class UserController {
 
         public void setPhone(String phone) {
             this.phone = phone;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
         }
 
         public String getEmail() {
@@ -172,7 +175,16 @@ public class UserController {
         public void setEducationStatus(String educationStatus) {
             this.educationStatus = educationStatus;
         }
+
+        public String getBirthDate() {
+            return birthDate;
+        }
+
+        public void setBirthDate(String birthDate) {
+            this.birthDate = birthDate;
+        }
     }
+
 
     // 아이디 중복 확인
     @GetMapping("/check-duplicate")
@@ -287,14 +299,24 @@ public class UserController {
     }
 
     // 사용자 정보 업데이트
+// UserController.java
     @PostMapping("/api/update-user-info2")
     public ResponseEntity<String> updateUserInfo2(@RequestBody UserInfoRequest userInfoRequest) {
         try {
             User user = userRepository.findById(userInfoRequest.getId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 ID입니다."));
 
+            // 이름, 전화번호, 생년월일 업데이트
             user.setName(userInfoRequest.getName());
             user.setPhone(userInfoRequest.getPhone());
+
+            // 생년월일이 올바른 형식인지 검증
+            try {
+                user.setBirthDate(Date.valueOf(userInfoRequest.getBirthDate())); // String -> Date 변환
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 생년월일 형식입니다. (yyyy-MM-dd)");
+            }
+
             user.setEmail(userInfoRequest.getEmail());
             user.setGender(userInfoRequest.getGender());
             user.setExperienceLevel(userInfoRequest.getExperienceLevel());
@@ -309,6 +331,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 정보 업데이트 실패");
         }
     }
+
+
 
 
     @GetMapping("/api/check-user-basic")
@@ -392,5 +416,30 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다.");
     }
+    @PutMapping("/api/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> requestData, HttpSession session) {
+        String userId = (String) session.getAttribute("user"); // 세션에서 사용자 ID 가져오기
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        String currentPassword = requestData.get("currentPassword");
+        String newPassword = requestData.get("newPassword");
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
+        }
+
+        User user = optionalUser.get();
+        if (!user.getPassword().equals(currentPassword)) { // 현재 비밀번호 확인
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setPassword(newPassword); // 새 비밀번호 설정
+        userRepository.save(user);
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
 
 }
