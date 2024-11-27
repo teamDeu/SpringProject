@@ -1,6 +1,9 @@
+// AForm.js
+
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import AddButton from "../../components/admin/AddButton";
+import { GetGNoticesByTarget, DeleteGNotice } from "../../api/api"; // API 함수 임포트
 
 const AFormContainer = styled.div`
   margin-left: 5px;
@@ -77,24 +80,23 @@ const ItemCheckbox = styled.input`
 
 const ContentContainer = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: row; /* 세로에서 가로로 변경 */
   flex: 1; /* 남은 공간을 차지 */
-`;
-
-const Category = styled.div`
-  font-size: 14px;
-  color: black;
-  width: 70px; /* 고정된 너비 */
-  text-align: left;
-  margin-right: 10px; /* 카테고리와 타이틀 간 간격 */
+  align-items: center; /* 수직 가운데 정렬 */
+  gap: 10px; /* 요소 간 간격 추가 */
 `;
 
 const Title = styled.div`
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px; /* 작게 변경 */
+  color: #555; /* 회색으로 변경 */
 `;
 
-const Date = styled.div`
+const Question = styled.div`
+  font-size: 16px; /* 크게 변경 */
+  font-weight: bold; /* 굵게 변경 */
+`;
+
+const DateStyled = styled.div`
   font-size: 14px;
   color: gray;
 `;
@@ -113,35 +115,26 @@ const AForm = ({
   const [announcements, setAnnouncements] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = [
-        { id: 1, type: "individual", category: "이벤트", title: "한글날 이벤트!", date: "2024.10.09" },
-        { id: 2, type: "individual", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 3, type: "corporate", category: "공지", title: "서비스 오픈! 외국인 채용은 'Komate'", date: "2024.11.02" },
-        { id: 4, type: "corporate", category: "안내", title: "구인구직 개인정보 처리방침 개정 내용 사전 안내", date: "2024.10.22" },
-        { id: 5, type: "individual", category: "이벤트", title: "한글날 이벤트!", date: "2024.10.09" },
-        { id: 6, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 7, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 8, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 9, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 10, type: "individual", category: "이벤트", title: "한글날 이벤트!", date: "2024.10.09" },
-        { id: 11, type: "individual", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 12, type: "corporate", category: "공지", title: "서비스 오픈! 외국인 채용은 'Komate'", date: "2024.11.02" },
-        { id: 13, type: "corporate", category: "안내", title: "구인구직 개인정보 처리방침 개정 내용 사전 안내", date: "2024.10.22" },
-        { id: 14, type: "individual", category: "이벤트", title: "한글날 이벤트!", date: "2024.10.09" },
-        { id: 15, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 16, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 17, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        { id: 18, type: "corporate", category: "공지", title: "SSAFY 청년 SW 아카데미 채용박람회 참여기업 모집", date: "2024.10.02" },
-        // 더 많은 데이터를 추가할 수 있습니다.
-      ];
-      setAnnouncements(data);
+      setLoading(true); // 로딩 시작
+      try {
+        const data = await GetGNoticesByTarget(selectedType);
+        console.log('GNotices Data:', data); // API 응답 데이터 확인
+        setAnnouncements(data || []);
+        onTotalItemsChange(data ? data.length : 0);
+      } catch (error) {
+        console.error("Error fetching GNotices:", error);
+        alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+      }
+      setLoading(false); // 로딩 종료
     };
 
     fetchData();
-  }, []);
+  }, [selectedType, onTotalItemsChange]);
+
   useEffect(() => {
     if (resetSelections) {
       setSelectedItems([]); // 선택된 항목 초기화
@@ -166,16 +159,27 @@ const AForm = ({
     setSelectAll(!selectAll);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedItems.length === 0) {
       alert("삭제할 항목을 선택해주세요.");
       return;
     }
     const confirmDelete = window.confirm("선택한 항목을 삭제하시겠습니까?");
     if (confirmDelete) {
-      setAnnouncements(announcements.filter((item) => !selectedItems.includes(item.id)));
-      setSelectedItems([]);
-      setSelectAll(false);
+      try {
+        // 선택된 항목을 모두 삭제
+        await Promise.all(selectedItems.map(id => DeleteGNotice(id)));
+        // 삭제 후 상태 업데이트
+        const updatedAnnouncements = announcements.filter((item) => !selectedItems.includes(item.id));
+        setAnnouncements(updatedAnnouncements);
+        setSelectedItems([]);
+        setSelectAll(false);
+        // onTotalItemsChange는 useEffect에서 자동으로 처리됩니다.
+        alert("선택한 항목이 성공적으로 삭제되었습니다.");
+      } catch (error) {
+        console.error("Error deleting GNotices:", error);
+        alert("삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -187,13 +191,20 @@ const AForm = ({
     );
   };
 
- // 필터링 로직: 선택된 타입, 카테고리, 검색어를 기반으로 필터링
- const filteredAnnouncements = announcements.filter((item) => {
-  const matchesType = selectedType === "all" || item.type === selectedType;
-  const matchesCategory = selectedCategory === "전체" || item.category === selectedCategory;
-  const matchesSearch = item.title.toLowerCase().includes((searchTerm || "").toLowerCase()); // searchTerm 기본값 설정
-  return matchesType && matchesCategory && matchesSearch;
-});
+  // 필터링 로직: 선택된 타입, 카테고리, 검색어를 기반으로 필터링
+  const typeMapping = {
+    "all": "전체",
+    "individual": "개인회원",
+    "corporate": "기업회원"
+  };
+  const targetType = typeMapping[selectedType] || "전체";
+
+  const filteredAnnouncements = (announcements || []).filter((item) => {
+    const matchesType = selectedType === "all" ? item.target === "전체" : item.target === targetType;
+    const matchesCategory = selectedCategory === "전체" || (item.notice && item.notice.title === selectedCategory);
+    const matchesSearch = (item.title || "").toLowerCase().includes((searchTerm || "").toLowerCase());
+    return matchesType && matchesCategory && matchesSearch;
+  });
 
   useEffect(() => {
     onTotalItemsChange(filteredAnnouncements.length);
@@ -211,7 +222,7 @@ const AForm = ({
         <ActionContainer>
           <Checkbox
             type="checkbox"
-            checked={paginatedAnnouncements.every((item) => selectedItems.includes(item.id))}
+            checked={paginatedAnnouncements.length > 0 && paginatedAnnouncements.every((item) => selectedItems.includes(item.id))}
             onChange={handleSelectAll}
           />
           <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
@@ -223,24 +234,26 @@ const AForm = ({
         </ActionContainer>
       )}
 
-      <AnnouncementList>
-        {paginatedAnnouncements.map((item) => (
-          <AnnouncementItem key={item.id}>
-            {!hideActions && (
-              <ItemCheckbox
-                type="checkbox"
-                checked={selectedItems.includes(item.id)}
-                onChange={() => handleItemCheckbox(item.id)}
-              />
-            )}
-            <ContentContainer>
-              <Category>{`[${item.category}]`}</Category>
-              <Title>{item.title}</Title>
-            </ContentContainer>
-            <Date>{item.date}</Date>
-          </AnnouncementItem>
-        ))}
-      </AnnouncementList>
+      {!loading && paginatedAnnouncements.length > 0 && (
+        <AnnouncementList>
+          {paginatedAnnouncements.map((item) => (
+            <AnnouncementItem key={item.id}>
+              {!hideActions && (
+                <ItemCheckbox
+                  type="checkbox"
+                  checked={selectedItems.includes(item.id)}
+                  onChange={() => handleItemCheckbox(item.id)}
+                />
+              )}
+              <ContentContainer>
+                <Title>[{item.title}]</Title> {/* 제목에 대괄호 추가 */}
+                <Question>{item.question}</Question> {/* 스타일 변경된 질문 */}
+              </ContentContainer>
+              <DateStyled>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}</DateStyled>
+            </AnnouncementItem>
+          ))}
+        </AnnouncementList>
+      )}
     </AFormContainer>
   );
 };

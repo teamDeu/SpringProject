@@ -367,3 +367,30 @@ export const CreateGFaq = async (faqId, gfaq) => {
         throw error;
     }
 };
+
+//공지사항
+// g_notices 데이터를 특정 타겟으로 가져오는 API 함수
+export const GetGNoticesByTarget = async (target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/g_notices', {
+            params: {
+                target: target === "all" ? "전체" : target === "individual" ? "개인회원" : "기업회원",
+            },
+        });
+        return response.data; // 전체 GNotices 배열 반환
+    } catch (error) {
+        console.error(`Error fetching GNotices for target: ${target}`, error);
+        throw error;
+    }
+};
+
+// g_notices 데이터를 삭제하는 API 함수
+export const DeleteGNotice = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/g_notices/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting GNotice with id ${id}:`, error);
+        throw error;
+    }
+};

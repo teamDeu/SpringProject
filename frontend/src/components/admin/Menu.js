@@ -38,7 +38,7 @@ const Menu = () => {
             (iconKey === 's1' && location.pathname.includes('/amember')) ||
             (iconKey === 's2' && location.pathname.includes('/job')) ||
             (iconKey === 's3' && location.pathname.includes('/faq')) ||
-            (iconKey === 's4' && location.pathname.includes('/announcements')) ||
+            (iconKey === 's4' && location.pathname.includes('/notices')) ||
             (iconKey === 's5' && location.pathname.includes('/areview'))
         );
     };
@@ -48,7 +48,7 @@ const Menu = () => {
         { path: "/amember", label: "회원 관리", icon: "s1", hoverIcon: "/icons/s1_1.png", defaultIcon: "/icons/s1.png" },
         { path: "/job", label: "채용정보 관리", icon: "s2", hoverIcon: "/icons/s2_1.png", defaultIcon: "/icons/s2.png" },
         { path: "/faq", label: "FAQ", icon: "s3", hoverIcon: "/icons/s3_1.png", defaultIcon: "/icons/s3.png" },
-        { path: "/announcements", label: "공지사항", icon: "s4", hoverIcon: "/icons/s4_1.png", defaultIcon: "/icons/s4.png" },
+        { path: "/notices", label: "공지사항", icon: "s4", hoverIcon: "/icons/s4_1.png", defaultIcon: "/icons/s4.png" },
         { path: "/areview", label: "리뷰 관리", icon: "s5", hoverIcon: "/icons/s5_1.png", defaultIcon: "/icons/s5.png" }
     ];
 

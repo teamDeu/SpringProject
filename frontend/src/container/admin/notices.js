@@ -59,6 +59,7 @@ const Announcements = () => {
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
   const itemsPerPage = 8; // 페이지당 항목 수
   const [resetSelections, setResetSelections] = useState(false); // 체크박스 초기화 상태
+  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태 (추가 가능)
 
   const handleButtonClick = (type) => {
     if (type === "전체") setSelectedType("all");
@@ -77,6 +78,7 @@ const Announcements = () => {
     const calculatedPages = Math.ceil(totalItems / itemsPerPage);
     setTotalPages(calculatedPages);
   };
+
   return (
     <Container>
       <Menu />
@@ -91,8 +93,8 @@ const Announcements = () => {
           <FormBox>
             <AForm
               selectedType={selectedType}
-              selectedCategory="전체" // 기본값으로 전체 카테고리를 설정
-              searchTerm="" // 검색어 기본값 설정
+              selectedCategory="전체" // 필요 시 실제 카테고리 사용
+              searchTerm={searchTerm} // 검색어 전달 (필요 시 추가 UI 구현)
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               onTotalItemsChange={updateTotalPages} // totalPages 업데이트 콜백
@@ -103,9 +105,8 @@ const Announcements = () => {
             <PaginationBox>
               <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages} // AForm 내부 데이터를 기반으로 계산할 수 있음
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
-  
               />
             </PaginationBox>
           </FormBox>
