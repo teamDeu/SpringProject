@@ -84,8 +84,7 @@ public class CompanyController {
 
         String originalFilename = file.getOriginalFilename();
         String uniqueFilename = Util.generateUniqueFilename(uploadDir, Objects.requireNonNull(originalFilename));
-        String filepath = uploadDir + "/" + uniqueFilename;
-        company.setLogoUrl(filepath);
+        company.setLogoUrl(uniqueFilename);
         companyService.saveCompany(company);
 
     return ResponseEntity.ok(company);

@@ -4,11 +4,23 @@ import InputArrayTitle from './InputArrayTitle'
 import TextButton from '../../components/common/TextButton'
 
 const searchIcon = process.env.PUBLIC_URL + '/icons/search.png';
-const SearchInput = ({title,data,placeholder,onChange}) => {
+const SearchInput = ({title,data,placeholder,onChange,value}) => {
   const [searchData , setSearchData] = useState(data);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedData , setSelectedData] = useState([]);
   const [inputValue , setInputValue] = useState("");
+  useEffect(() => {
+    if (typeof value === 'string') {
+        const parsedValue = JSON.parse(value);
+        
+        // Inputs 초기화
+        const filteredInputs = parsedValue;
+        if (JSON.stringify(filteredInputs) !== JSON.stringify(inputValue)) {
+          setSelectedData(filteredInputs);
+        }
+    }
+}, [value]);
+
   const onClickItem = (getitem) => {
     if(selectedData.findIndex((item) => item.name == getitem.name) === -1){
       setSelectedData([...selectedData,getitem])

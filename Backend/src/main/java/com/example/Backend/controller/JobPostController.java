@@ -11,10 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class JobPostController {
@@ -25,6 +22,9 @@ public class JobPostController {
     @PostMapping("/api/jobpost")
     public ResponseEntity<JobPost> saveJobPost(@RequestBody JobPost jobPost)
     {
+        Date date = new Date();
+        System.out.println(date);
+        jobPost.setModifyDate(date);
         System.out.println(jobPost);
         JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
         return ResponseEntity.ok(savedJobPost);
@@ -54,7 +54,7 @@ public class JobPostController {
         JobPost jobPost = jobPostService.findById(jobPostId)
                 .orElseThrow(() -> new RuntimeException("JobPost not found"));
         List<String> filePaths = new ArrayList<>();
-
+        jobPostService.deleteJobPostImage(jobPostId);
         try {
             for (MultipartFile file : files) {
                 // 파일 저장 경로 (예제)
@@ -67,8 +67,8 @@ public class JobPostController {
                 String filePath = uploadDir + "/" + uniqueFilename;
 
                 JobPostImage jobPostImage = new JobPostImage();
-                jobPostImage.setJobPost(jobPost);
-                jobPostImage.setImgPath(filePath);
+                jobPostImage.setPostId(jobPostId);
+                jobPostImage.setImgPath(uniqueFilename);
                 jobPostImage.setImgName(originalFilename);
                 jobPostService.saveJobPostImage(jobPostImage);
                 // 파일 저장 로직
@@ -103,4 +103,8 @@ public class JobPostController {
         }
     }
 
+    @GetMapping("/api/jobpostimage")
+    public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
+        return ResponseEntity.ok(jobPostService.getPostImage(id));
+    }
 }

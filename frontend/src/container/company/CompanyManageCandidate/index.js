@@ -13,14 +13,13 @@ const options = [
         onClick : () =>{}
     },
     {
-        title : "서류전형",
+        title : "서류합격",
         onClick : () =>{}
     },
     {
         title : "최종합격",
         onClick : () =>{}
     },
-
 ]
 const index = () => {
   return (

@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface JobPostRepository extends JpaRepository<JobPost,Long>{
-    List<JobPost> findByCompanyOrderByPostDateDesc(String company);
+    List<JobPost> findByCompanyOrderByModifyDateDesc(String company);
 }

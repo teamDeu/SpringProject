@@ -5,6 +5,7 @@ import RoundedLabel from './RoundedLabel'
 import TextButton from '../common/TextButton'
 import PostResumeInfo from './PostResumeInfo'
 import { useNavigate } from 'react-router'
+import { DeleteJobPost } from '../../api/api'
 const tempData = {
     postTitle : "[플레이오]Python 백엔드 개발",
     postStartDate : "2024-11-01",
@@ -30,19 +31,23 @@ const PostComponents = ({data = tempData}) => {
         console.log("click : ",e.target.parentNode.parentNode)
         alert("삭제되었습니다.");
         e.target.parentNode.parentNode.remove();
+        DeleteJobPost(data.postId);
     }
     
     const handelModify = () => {
         navigate("/CompanyRegPost",{ state: data.postId })
     }
 
+    const handelTitle = () => {
+        navigate("/CompanyManageCandidate",{state : data.postId})
+    }
   return (
     <Container>
         <StateSection>
             {isIng ? <RoundedLabel color = "red">진행중</RoundedLabel> : <RoundedLabel color = "#B5B5B5">마감</RoundedLabel> }
         </StateSection>
         <InfoSection>
-            <InfoTitle>{data.postTitle}</InfoTitle>
+            <InfoTitle onClick={handelTitle}>{data.postTitle}</InfoTitle>
             <InfoDate>{data.postStartDate} ~ {data.postEndDate} &nbsp;I&nbsp; {data.postUpdateDate} 수정 </InfoDate>
             <PostResumeInfo postResumeInfo={data.postResumeInfo}/>
         </InfoSection>
@@ -91,9 +96,14 @@ const ButtonDivider = styled.div`
 const InfoTitle = styled.div`
     font-size : 24px;
     font-weight : bold;
+    cursor : pointer;
+    &:hover {
+        color : rgba(0,0,0,0.5);
+    }
 `
 
 const InfoDate = styled.div`
     font-size : 16px;
     color : #746E6E;
+
 `

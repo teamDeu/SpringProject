@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import styled from "styled-components";
 import CustomCalendar from "../../components/common/CustomCalender"
 
@@ -16,7 +16,7 @@ const Content = memo(({ type, value, onChange }) => {
   );
 });
 
-const PostInfoTable = ({ updateValue }) => {
+const PostInfoTable = ({ updateValue , value}) => {
   const [dateValue, setDate] = useState("");
   const [onCalender, setOnCalender] = useState(false);
   const [tableValue, setTableValue] = useState({
@@ -28,6 +28,16 @@ const PostInfoTable = ({ updateValue }) => {
     education: "",
     commuteTime: "",
   });
+  const keys = Object.keys(tableValue)
+  useEffect(() => {
+    
+    keys.forEach((key) => {
+      if(value[key] !== tableValue[key]){
+        setTableValue((prev) => ({...prev,[key] : value[key]}))
+      }
+      
+    })
+  },[value])
 
   const handleChange = (type, newValue) => {
     setTableValue((prev) => ({ ...prev, [type]: newValue }));
@@ -80,7 +90,7 @@ const PostInfoTable = ({ updateValue }) => {
           <Row>
             <TitleCell>마감일</TitleCell>
             <ContentCell>
-                        <Input onBlur = {(e) => {setTableValue((prev) => ({...prev,"endDate" : e.target.value}))}} value ={dateValue}/>
+                        <Input onBlur = {(e) => {setTableValue((prev) => ({...prev,"endDate" : e.target.value}))}} value ={tableValue.endDate.split("T")[0] }/>
                         {onCalender && (<CalendarSection>
                             <CustomCalendar onChange = {(e) => {onChangeCalender(e)}}  value = {dateValue}/>
                         </CalendarSection>)}

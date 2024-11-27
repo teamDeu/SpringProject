@@ -72,16 +72,15 @@ public class JobPost {
     private String aboutCompany;
 
     @Column(name = "post_date")
-    @CurrentTimestamp
     private Date postDate;
 
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
+    @Column(name = "modify_date")
+    @CurrentTimestamp
+    private Date modifyDate;
+
     @Column(name = "views")
     private Long views;
-
-    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<JobPostImage> images;
 }

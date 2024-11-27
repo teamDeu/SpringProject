@@ -19,12 +19,10 @@ public class JobPostImage {
     @Column(name ="id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false) // 외래키 설정
-    @JsonBackReference
-    private JobPost jobPost;
+    @Column(name = "post_id") // 외래키 설정
+    private Long postId;
 
-    @Column(name="img_name")
+ ;  @Column(name="img_name")
     private String imgName;
 
     @Column(name ="img_path")

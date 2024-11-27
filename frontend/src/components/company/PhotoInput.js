@@ -1,12 +1,31 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 const addIcon = process.env.PUBLIC_URL + '/icons/add.png';
-const PhotoInput = ({updateImage , imageLength , justifyContent}) => {
+
+async function createFileFromImgSrc(imgSrc, fileName = 'image.jpg') {
+  try {
+      // Fetch 이미지를 다운로드
+      const response = await fetch(imgSrc);
+      if (!response.ok) throw new Error('Failed to fetch image');
+      
+      // Blob 데이터로 변환
+      const blob = await response.blob();
+      
+      // Blob으로 File 객체 생성
+      const file = new File([blob], fileName, { type: blob.type });
+      
+      return file;
+  } catch (error) {
+      console.error('Error creating file:', error);
+  }
+}
+
+const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) => {
   const [images, setImages] = useState([]);
   const [imageFile,setImageFile] = useState([]);
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
-
+    console.log(files);
     if (images.length + files.length > imageLength) {
       alert("최대 4개의 이미지만 업로드할 수 있습니다.");
       return;
@@ -22,8 +41,25 @@ const PhotoInput = ({updateImage , imageLength , justifyContent}) => {
     setImageFile((prev) => prev.filter((_, i) => i !== index));
   };
   useEffect(() => {
+    if(value.length > 0){
+      value.forEach((item) => {
+        if(item && item.imgPath){
+          const imgSrc = `http://localhost:8080/uploads/${item.imgPath}`
+        setImages((prev) => [...prev,imgSrc])
+        const fetchImageFile = async() =>{
+          const newImageFile = await createFileFromImgSrc(imgSrc,item.imgName)
+          console.log(newImageFile);
+          setImageFile((prev) => ([...prev,newImageFile]));
+          };
+        fetchImageFile();
+        }
+      })
+    }
+  },[value])
+  useEffect(() => {
     updateImage(imageFile);
-  },[images])
+  },[imageFile])
+
   return (
     <Container justifyContent = {justifyContent}>
       <FileInputWrapper>

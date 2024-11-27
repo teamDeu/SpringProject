@@ -11,11 +11,12 @@ import FilledButton from '../../../components/FilledButton'
 import { GetAllSkills, GetIdJobPost, PostJobPost } from '../../../api/api'
 import InputArrayTitle from '../../../components/company/InputArrayTitle'
 import { waitForSessionId } from '../../../context/SessionProvider'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 const searchIcon = process.env.PUBLIC_URL + '/icons/search.png';
 
 const Index = () => {
   const [sessionId, setSessionId] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchSession = async () => {
         try {
@@ -55,6 +56,7 @@ const Index = () => {
           if(state){
             const postData = await GetIdJobPost(state);
             setPostInfo({...postData,company : sessionId});
+            console.log("getPostData: ", postData);
           }
 
         } catch (error) {
@@ -65,9 +67,15 @@ const Index = () => {
   },[])
 
   const updatePostInfo = (type,value) =>{
-    setPostInfo(prev => ({...prev,[type] : value}));
+    if(postInfo[type] != value){
+      setPostInfo(prev => ({...prev,[type] : value}));
+    }
   }
-
+  const handelPost = (type) => {
+    alert(type +"이 완료되었습니다.")
+    navigate("/companymanagepost")
+    PostJobPost(postInfo)
+  }
   const updatePostInfoTable = (tableValue) =>{
     const keys = Object.keys(tableValue);
     keys.forEach((key) => updatePostInfo(key,tableValue[key]))
@@ -78,6 +86,10 @@ const Index = () => {
   },[sessionId])
   useEffect(() => {
     console.log(postInfo);
+    if(postInfo.company == null){
+      setPostInfo((prev) => ({...prev,company : sessionId}))
+    }
+
   },[postInfo])
   return (
     <Container>
@@ -89,11 +101,11 @@ const Index = () => {
             <TitleInputSection>
             <InputArrayTitle>채용 정보 (간단 요약)</InputArrayTitle>
             <InputSection>
-                <TitleInput value ={postInfo.title} onBlur = {(e) => {updatePostInfo("title",e.target.value)}} placeholder='채용 공고 제목을 입력해주세요.'/>
-                <CaptionInput value = {postInfo.companyName} onBlur = {(e) => {updatePostInfo("companyName",e.target.value)}} placeholder='기업 이름을 입력해주세요'/>
+                <TitleInput value ={postInfo.title} onChange = {(e) => {updatePostInfo("title",e.target.value)}} onBlur = {(e) => {updatePostInfo("title",e.target.value)}} placeholder='채용 공고 제목을 입력해주세요.'/>
+                <CaptionInput value = {postInfo.companyName} onChange = {(e) => {updatePostInfo("companyName",e.target.value)}} onBlur = {(e) => {updatePostInfo("companyName",e.target.value)}} placeholder='기업 이름을 입력해주세요'/>
             </InputSection>
             </TitleInputSection>
-            <PostInfoTable value ={postInfo} keys ={["experience", "salary", "education", "employmentType", "commuteTime", "location"]} updateValue = {(tableValue) => {updatePostInfoTable(tableValue)}}/>
+            <PostInfoTable value ={postInfo} updateValue = {(tableValue) => {updatePostInfoTable(tableValue)}}/>
             <SearchInput value = {postInfo.skills} data ={skillData} title ="기술스택(업무 툴/스킬)" placeholder="기술 스택을 등록해주세요." onChange = {(value)=>{updatePostInfo("skills",value)}}/>
             <InputArray value = {postInfo.jobDuties} title ="주요 업무" placeholder ="주요 업무를 입력해주세요." updateValue = {(value) => {updatePostInfo("jobDuties",value)}}/>
             <InputArray value = {postInfo.requirements} title ="자격 요건" placeholder ="자격 요건을 입력해주세요." updateValue = {(value) => {updatePostInfo("requirements",value)}}/>
@@ -102,7 +114,8 @@ const Index = () => {
             <Divider/>
             <InputWithPhoto value = {postInfo.aboutCompany} updateValue = {(value) => {updatePostInfo("aboutCompany",value)}} title="기업/서비스 소개"/>
             <ButtonSection>
-            <FilledButton onClick = {() => {PostJobPost(postInfo)}} height = "40px">등록하기</FilledButton>
+              
+            <FilledButton onClick = {() => {handelPost(state ? "수정" : "등록")}} height = "40px">{state ? "수정완료" : "등록하기"}</FilledButton>
             </ButtonSection>
             
         </MainContent>

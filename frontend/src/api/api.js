@@ -70,10 +70,11 @@ export const PostJobPost = async(jobPost) => {
     jobPost = {...jobPost,aboutCompany : jobPost.aboutCompany.description}
 
     keys.forEach((key) => {
-        if(typeof jobPost[key] === "object"){
+        if(typeof jobPost[key] === "object" && key != images){
             jobPost[key] = JSON.stringify(jobPost[key])
         }
     });
+    console.log(images);
     const savedJobPost = await axios.post("http://localhost:8080/api/jobpost", jobPost)
         .then(response => response.data)
         .catch(error => {
@@ -123,8 +124,8 @@ export const GetAllJobPosts = () => {
         });
 };
 
-export const GetIdJobPost = (id) => {
-    return axios.get('http://localhost:8080/api/idjobpost',{
+export const GetIdJobPost = async(id) => {
+    const postData = await axios.get('http://localhost:8080/api/idjobpost',{
         params :{
             id : id
         }
@@ -134,6 +135,20 @@ export const GetIdJobPost = (id) => {
             console.error('Error fetching data:', error);
             throw error;
         });
+    console.log("api:" ,postData)
+    const postImage = await axios.get('http://localhost:8080/api/jobpostimage',{
+        params :{
+            id : id
+        }
+    })
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+    
+    postData.aboutCompany = {description : postData.aboutCompany , images : postImage}
+    return postData;
 };
 
 

@@ -6,7 +6,6 @@ const triangleBottomIcon = process.env.PUBLIC_URL + '/icons/triangle-bottom.png'
 const ChangeButton = ({ fontSize = 17, options, defaultValue, title = "title" }) => {
   const [value, setValue] = useState(defaultValue);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
 
@@ -71,6 +70,8 @@ const NavButton = styled.button`
 const Icon = styled.img`
   width: 16px;
   transition: transform 0.3s ease;
+  position:absolute;
+  right : -20px;
   transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
 `;
 

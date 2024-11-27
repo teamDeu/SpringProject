@@ -5,6 +5,7 @@ import com.example.Backend.model.JobPost;
 import com.example.Backend.model.JobPostImage;
 import com.example.Backend.repository.JobPostImageRepository;
 import com.example.Backend.repository.JobPostRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +31,16 @@ public class JobPostService {
     }
 
     public List<JobPost> getJobPostByCompany(String company){
-        return jobPostRepository.findByCompanyOrderByPostDateDesc(company);
+        return jobPostRepository.findByCompanyOrderByModifyDateDesc(company);
     }
 
     public void saveJobPostImage(JobPostImage jobPostImage) {
         jobPostImageRepository.save(jobPostImage);
+    }
+
+    @Transactional
+    public void deleteJobPostImage(Long id){
+        jobPostImageRepository.deleteByPostId(id);
     }
 
     public boolean deleteJobPost(Long id) {
@@ -45,5 +51,9 @@ public class JobPostService {
         } else {
             return false;
         }
+    }
+
+    public List<JobPostImage> getPostImage(Long id){
+        return jobPostImageRepository.findByPostId(id);
     }
 }

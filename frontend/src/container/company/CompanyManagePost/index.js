@@ -15,6 +15,8 @@ import { waitForSessionId } from '../../../context/SessionProvider'
 const Index = () => {
   const [postComponent,setPostComponent] = useState([]);
   const [filteredComponent,setFilteredComponent] = useState([]);
+  const [endComponent,setEndComponent] = useState([]);
+  const [ingComponent,setIngComponent] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [postData, setPostData] = useState();
   useEffect(() => {
@@ -31,23 +33,32 @@ const Index = () => {
 
   useEffect(() => {
     const fecthData = async() => {
-      
+      console.log(postData)
       const formattedData = (postData || []).map(data => ({
         postId : data.id,
         postTitle : data.title,
         postStartDate : data.postDate.split("T")[0],
         postEndDate : data.endDate.split("T")[0],
-        postUpdateDate : data.postDate.split("T")[0],
+        postUpdateDate : data.modifyDate ? data.modifyDate.split("T")[0] : "변경없음",
     postResumeInfo :{
         postCandidate : 100,
         postRead : 77,
         postUnread : 23,
         postPass : 0
     }}));
+      const date = new Date();
       setPostComponent(formattedData);
+      setIngComponent(formattedData.filter((data) => {
+        const endDate = new Date(data.postEndDate);
+        return date.getTime() <= endDate.getTime();
+      }));
+      setEndComponent(formattedData.filter((data) => {
+        const endDate = new Date(data.postEndDate);
+        console.log("date : ",date,"endDate: ", endDate);
+        return date.getTime() > endDate.getTime();
+      }))
       setFilteredComponent(formattedData);
     }
-
     fecthData();
   },[postData])
   useEffect(() => {
@@ -62,30 +73,22 @@ const Index = () => {
   },[sessionId])
   const tabOptions = [
     {
-      title : "전체",
+      title : "전체(" + postComponent.length + ")",
       onClick : () => {
         setFilteredComponent(postComponent)
       }
     },
     {
-      title : "진행중",
+      title : "진행중(" + ingComponent.length + ")",
       onClick : () => {
-        const date = new Date();
-        setFilteredComponent(postComponent.filter((data) => {
-          const endDate = new Date(data.postEndDate);
-          console.log("date : ",date,"endDate: ", endDate);
-          return date.getTime() <= endDate.getTime();
-        }))
+
+        setFilteredComponent(ingComponent)
       }
     },
     {
-      title : "마감",
+      title : "마감(" + endComponent.length +")",
       onClick : () => {
-        const date = new Date();
-        setFilteredComponent(postComponent.filter((data) => {
-          const endDate = new Date(data.postEndDate);
-          return date.getTime() > endDate.getTime();
-        }))
+        setFilteredComponent(endComponent)
       }
     }
   ];
