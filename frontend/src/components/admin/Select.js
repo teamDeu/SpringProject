@@ -128,7 +128,9 @@ const DropdownSelect = ({
     showPlusButton = false, // 기본값 false
     showDeleteButton = false, // 기본값 false
     width,
-    margin
+    margin,
+    onAddOption, // 새로운 prop 추가
+    onDeleteOption, // 새로운 prop 추가
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
@@ -172,16 +174,32 @@ const DropdownSelect = ({
         if (onChange) onChange(option);
     };
 
-    const handleAddOption = () => {
-        if (newOptionName.trim()) {
-            if (!options.includes(newOptionName.trim())) {
-                setOptions([...options, newOptionName.trim()]);
-                setSelectedOption(newOptionName.trim());
-                console.log("DropdownSelect - new option added:", newOptionName.trim()); // 디버깅용 로그
-                if (onChange) onChange(newOptionName.trim());
+    const handleAddOption = async () => {
+        const trimmedName = newOptionName.trim();
+        if (trimmedName) {
+            if (!options.includes(trimmedName)) {
+                if (onAddOption) {
+                    try {
+                        await onAddOption(trimmedName); // 부모 컴포넌트의 콜백 호출
+                        setNewOptionName('');
+                        setIsAdding(false);
+                    } catch (error) {
+                        console.error("Error adding new option:", error);
+                        // 오류 처리 (예: 사용자에게 메시지 표시)
+                        alert("새 항목을 추가하는 데 실패했습니다. 다시 시도해주세요.");
+                    }
+                } else {
+                    // 기존 동작 유지
+                    setOptions([...options, trimmedName]);
+                    setSelectedOption(trimmedName);
+                    console.log("DropdownSelect - new option added:", trimmedName); // 디버깅용 로그
+                    if (onChange) onChange(trimmedName);
+                    setNewOptionName('');
+                    setIsAdding(false);
+                }
+            } else {
+                alert("이미 존재하는 항목입니다.");
             }
-            setNewOptionName('');
-            setIsAdding(false);
         }
     };
 
@@ -190,16 +208,34 @@ const DropdownSelect = ({
         setIsAdding(false);
     };
 
-    const handleDeleteOption = (option) => {
-        setOptions((prevOptions) => prevOptions.filter((opt) => opt !== option));
-        console.log("DropdownSelect - option deleted:", option); // 디버깅용 로그
-        // 만약 삭제된 옵션이 현재 선택된 옵션이라면 선택 초기화
+    const handleDeleteOptionInternal = (option) => {
+        const confirmDelete = window.confirm("삭제하시겠습니까?");
+        if (!confirmDelete) return;
+
+        const optionIndex = options.indexOf(option);
+        if (optionIndex === -1) return;
+
+        const newOptions = options.filter(opt => opt !== option);
+
+        setOptions(newOptions);
+        console.log("DropdownSelect - option deleted:", option);
+
         if (selectedOption === option) {
-            const newSelected = options.length > 1 ? options[0] : "";
+            let newSelected = "";
+            if (newOptions.length > 0) {
+                if (optionIndex < newOptions.length) {
+                    newSelected = newOptions[optionIndex];
+                } else {
+                    newSelected = newOptions[newOptions.length - 1];
+                }
+            }
+
             setSelectedOption(newSelected);
-            console.log("DropdownSelect - selectedOption reset to:", newSelected); // 디버깅용 로그
+            console.log("DropdownSelect - selectedOption reset to:", newSelected);
             if (onChange) onChange(newSelected);
         }
+
+        if (onDeleteOption) onDeleteOption(option);
     };
 
     return (
@@ -237,7 +273,7 @@ const DropdownSelect = ({
                         {showDeleteButton && option !== "개인회원" && option !== "기업회원" && (
                             <DeleteButton onClick={(e) => {
                                 e.stopPropagation(); // 부모의 클릭 이벤트 방지
-                                handleDeleteOption(option); // 삭제 버튼 클릭 시 옵션 삭제
+                                handleDeleteOptionInternal(option); // 삭제 버튼 클릭 시 옵션 삭제
                             }}>
                                 삭제
                             </DeleteButton>

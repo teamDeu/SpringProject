@@ -350,3 +350,62 @@ export const updateUserInfo = async (userInfo) => {
         throw new Error('Failed to update user info');
     }
 };
+// 새로운 Faq 생성
+export const CreateFaq = async (faq) => {
+    try {
+        const response = await axios.post('http://localhost:8080/api/faqs', faq);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating FAQ:', error);
+        throw error;
+    }
+};
+
+// Faq 삭제
+export const DeleteFaq = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/faqs/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting FAQ:', error);
+        throw error;
+    }
+};
+
+// 새로운 GFaqs 생성 API 함수
+export const CreateGFaq = async (faqId, gfaq) => {
+    try {
+        const response = await axios.post(`http://localhost:8080/api/gfaqs/faq/${faqId}`, gfaq);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating GFaq:', error);
+        throw error;
+    }
+};
+
+//공지사항
+// g_notices 데이터를 특정 타겟으로 가져오는 API 함수
+export const GetGNoticesByTarget = async (target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/g_notices', {
+            params: {
+                target: target === "all" ? "전체" : target === "individual" ? "개인회원" : "기업회원",
+            },
+        });
+        return response.data; // 전체 GNotices 배열 반환
+    } catch (error) {
+        console.error(`Error fetching GNotices for target: ${target}`, error);
+        throw error;
+    }
+};
+
+// g_notices 데이터를 삭제하는 API 함수
+export const DeleteGNotice = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/g_notices/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting GNotice with id ${id}:`, error);
+        throw error;
+    }
+};

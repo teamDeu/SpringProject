@@ -33,7 +33,7 @@ import Job from './container/admin/job';
 import Faq from './container/admin/faq';
 import Kakaocallback from './container/log/kakaocallback';
 
-import Announcements from './container/admin/announcements';
+import Notices from './container/admin/notices';
 import Areview from './container/admin/areview';
 import Faqwrite from './container/admin/faqwrite';
 import Awrite from './container/admin/awrite';
@@ -61,7 +61,7 @@ import CompanyManageCandidate from './container/company/CompanyManageCandidate'
 import ManageCompanyInfo from './container/company/ManageCompanyInfo'
 
 import SFAQ from './container/service/sfaq';
-import SAnnouncements from './container/service/sannouncements';
+import SNotices from './container/service/snotices';
 
 function App() {
   
@@ -87,7 +87,7 @@ function App() {
             <Route path="job" element={<Job/>}/>
             <Route path="faq" element={<Faq />} />
             <Route path="amember" element={<Amember />} />
-            <Route path="announcements" element={<Announcements/>}/>
+            <Route path="notices" element={<Notices/>}/>
             <Route path="areview" element={<Areview/>}/>
             <Route path="faqwrite" element={<Faqwrite/>}/>
             <Route path="Awrite" element={<Awrite/>}/>
@@ -125,7 +125,7 @@ function App() {
             <Route path="CompanyManageCandidate" element ={<CompanyManageCandidate/>}/>
             <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
             <Route path="sfaq" element ={<SFAQ/>}/>
-            <Route path="sannouncements" element ={<SAnnouncements/>}/>
+            <Route path="snotices" element ={<SNotices/>}/>
           </Routes>
         </BrowserRouter>
         

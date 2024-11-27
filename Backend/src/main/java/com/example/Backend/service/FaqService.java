@@ -37,8 +37,11 @@ public class FaqService {
         }).orElseThrow(() -> new RuntimeException("Faq not found with id " + id));
     }
 
-    // Faq 삭제
+    // Faq 삭제 (관련 GFaqs도 함께 삭제됨)
     public void deleteFaq(Long id) {
+        if (!faqRepository.existsById(id)) {
+            throw new RuntimeException("Faq not found with id " + id);
+        }
         faqRepository.deleteById(id);
     }
 }
