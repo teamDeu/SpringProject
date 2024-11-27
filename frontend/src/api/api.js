@@ -335,3 +335,35 @@ export const updateUserInfo = async (userInfo) => {
         throw new Error('Failed to update user info');
     }
 };
+// 새로운 Faq 생성
+export const CreateFaq = async (faq) => {
+    try {
+        const response = await axios.post('http://localhost:8080/api/faqs', faq);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating FAQ:', error);
+        throw error;
+    }
+};
+
+// Faq 삭제
+export const DeleteFaq = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/faqs/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting FAQ:', error);
+        throw error;
+    }
+};
+
+// 새로운 GFaqs 생성 API 함수
+export const CreateGFaq = async (faqId, gfaq) => {
+    try {
+        const response = await axios.post(`http://localhost:8080/api/gfaqs/faq/${faqId}`, gfaq);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating GFaq:', error);
+        throw error;
+    }
+};

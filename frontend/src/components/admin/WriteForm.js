@@ -1,9 +1,10 @@
 // WriteForm.js
+
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import DropdownSelect from "../../components/admin/Select";
-import { GetFaqsByTarget } from "../../api/api"; // 수정된 API 함수 임포트
+import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq } from "../../api/api"; // CreateGFaq 함수 추가
 
 const WriteForm = ({
   cancelPath,
@@ -11,39 +12,39 @@ const WriteForm = ({
   isAnnouncementPage,
 }) => {
   const navigate = useNavigate();
-  const contentRef = useRef(null); // contentEditable 영역 참조
+  const contentRef = useRef(null);
+  const questionRef = useRef(null); // 질문 입력 필드 참조
 
   const [isTitleBold, setIsTitleBold] = useState(false);
-  const [fileList, setFileList] = useState([]); // 첨부 파일 목록
-  const [isEmptyContent, setIsEmptyContent] = useState(true); // 플레이스홀더 표시 여부
+  const [fileList, setFileList] = useState([]);
+  const [isEmptyContent, setIsEmptyContent] = useState(true);
 
-  // 새로운 상태 변수 추가
-  const [memberType, setMemberType] = useState("개인회원"); // 첫 번째 셀렉트 박스의 선택된 값
-  const [secondSelectOptions, setSecondSelectOptions] = useState([]); // 두 번째 셀렉트 박스의 옵션 목록
-  const [selectedSecondOption, setSelectedSecondOption] = useState(""); // 두 번째 셀렉트 박스의 선택된 값
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  const [memberType, setMemberType] = useState("개인회원");
+  const [secondSelectOptions, setSecondSelectOptions] = useState([]);
+  const [selectedSecondOption, setSelectedSecondOption] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // memberType 변경 시 해당하는 FAQ 타이틀 가져오기
+  const [faqs, setFaqs] = useState([]); // Faq 객체 목록 저장
+
   useEffect(() => {
-    // 회원 타입에 따라 타겟 매핑
     const targetMap = {
       "개인회원": "개인_FAQ",
       "기업회원": "기업_FAQ",
     };
 
     const target = targetMap[memberType];
-    console.log("Fetching FAQs for target:", target); // 디버깅용 로그
+    console.log("Fetching FAQs for target:", target);
 
-    // FAQ 데이터 가져오기
     const fetchFaqTitles = async () => {
       setIsLoading(true);
       try {
-        const faqs = await GetFaqsByTarget(target);
-        console.log("Fetched FAQs for target:", faqs); // 디버깅용 로그
-        const titles = faqs.map((faq) => faq.title);
-        console.log("FAQ Titles:", titles); // 디버깅용 로그
+        const faqsData = await GetFaqsByTarget(target);
+        console.log("Fetched FAQs for target:", faqsData);
+        setFaqs(faqsData); // Faq 객체 저장
+        const titles = faqsData.map((faq) => faq.title);
+        console.log("FAQ Titles:", titles);
         setSecondSelectOptions(titles);
-        setSelectedSecondOption(titles.length > 0 ? titles[0] : ""); // 기본 선택값 설정
+        setSelectedSecondOption(titles.length > 0 ? titles[0] : "");
       } catch (error) {
         console.error("Error fetching FAQ titles:", error);
         setSecondSelectOptions([]);
@@ -85,30 +86,28 @@ const WriteForm = ({
       if (sel && sel.rangeCount > 0) {
         const range = sel.getRangeAt(0);
 
-        // 범위가 write-content-textarea 내부에 있는지 확인
         if (
           contentEditableDiv.contains(range.commonAncestorContainer) ||
           range.commonAncestorContainer === contentEditableDiv
         ) {
-          range.deleteContents(); // 현재 선택된 텍스트 삭제
+          range.deleteContents();
           const tempEl = document.createElement("div");
           tempEl.innerHTML = html;
           const frag = document.createDocumentFragment();
 
           let node;
           while ((node = tempEl.firstChild)) {
-            frag.appendChild(node); // HTML을 DocumentFragment로 변환
+            frag.appendChild(node);
           }
 
-          range.insertNode(frag); // 커서 위치에 HTML 삽입
-          range.collapse(false); // 커서를 삽입한 HTML 뒤로 이동
+          range.insertNode(frag);
+          range.collapse(false);
         } else {
-          // 커서가 write-content-textarea 외부에 있는 경우, 내용 맨 끝에 추가
           contentEditableDiv.innerHTML += html;
         }
       }
     }
-    handleContentInput(); // 입력 상태 업데이트
+    handleContentInput();
   };
 
   const handleCancel = () => {
@@ -118,7 +117,7 @@ const WriteForm = ({
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const fileURL = URL.createObjectURL(file); // 파일에 대한 다운로드 URL 생성
+      const fileURL = URL.createObjectURL(file);
       setFileList((prevFiles) => [...prevFiles, { name: file.name, url: fileURL }]);
     }
   };
@@ -128,6 +127,103 @@ const WriteForm = ({
       prevFiles.filter((file) => file.name !== fileName)
     );
   };
+
+  // 새로운 FAQ 제목을 추가하고 백엔드에 저장하는 함수
+  const handleAddFaqOption = async (newTitle) => {
+    const targetMap = {
+      "개인회원": "개인_FAQ",
+      "기업회원": "기업_FAQ",
+    };
+    const target = targetMap[memberType];
+
+    try {
+      const newFaq = { title: newTitle, target };
+      const createdFaq = await CreateFaq(newFaq);
+      console.log("Created new FAQ:", createdFaq);
+
+      setSecondSelectOptions((prevOptions) => [...prevOptions, createdFaq.title]);
+      setSelectedSecondOption(createdFaq.title);
+      setFaqs((prevFaqs) => [...prevFaqs, createdFaq]); // 새 Faq 추가
+    } catch (error) {
+      console.error("Error creating new FAQ:", error);
+      alert("새 FAQ를 추가하는 데 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // 새로운 FAQ 제목을 삭제하고 백엔드에서 제거하는 함수
+  const handleDeleteFaqOption = async (title) => {
+    try {
+      const faqsData = await GetFaqsByTarget(memberType === "개인회원" ? "개인_FAQ" : "기업_FAQ");
+      const faqToDelete = faqsData.find(faq => faq.title === title);
+
+      if (!faqToDelete) {
+        alert("삭제할 FAQ를 찾을 수 없습니다.");
+        return;
+      }
+
+      await DeleteFaq(faqToDelete.id);
+      console.log(`Deleted FAQ with id: ${faqToDelete.id}`);
+
+      setSecondSelectOptions((prevOptions) => prevOptions.filter(option => option !== title));
+      setFaqs((prevFaqs) => prevFaqs.filter(faq => faq.title !== title));
+
+      if (selectedSecondOption === title) {
+        const newOptions = secondSelectOptions.filter(option => option !== title);
+        const optionIndex = secondSelectOptions.indexOf(title);
+        let newSelected = "";
+        if (newOptions.length > 0) {
+          if (optionIndex < newOptions.length) {
+            newSelected = newOptions[optionIndex];
+          } else {
+            newSelected = newOptions[newOptions.length - 1];
+          }
+        }
+        setSelectedSecondOption(newSelected);
+    }
+    
+
+      alert("FAQ가 성공적으로 삭제되었습니다.");
+    } catch (error) {
+      console.error("Error deleting FAQ:", error);
+      alert("FAQ 삭제에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // GFaqs 생성 핸들러
+  const handleSubmit = async () => {
+    const question = questionRef.current.value.trim(); // 질문 입력값
+    const answer = contentRef.current.innerHTML.trim(); // 답변 입력값
+
+    if (!question || !answer) {
+        alert("질문과 답변을 모두 입력해주세요.");
+        return;
+    }
+
+    // 선택된 Faq 제목에 해당하는 Faq 객체 찾기
+    const selectedFaq = faqs.find(faq => faq.title === selectedSecondOption);
+    if (!selectedFaq) {
+        alert("선택된 FAQ를 찾을 수 없습니다.");
+        return;
+    }
+
+    const faqId = selectedFaq.id;
+
+    // GFaqs 생성
+    try {
+        const gFaq = { question, answer };
+        await CreateGFaq(faqId, gFaq);
+        alert("FAQ가 성공적으로 등록되었습니다.");
+        // 폼 초기화
+        questionRef.current.value = "";
+        contentRef.current.innerHTML = "";
+        // faq.js 페이지로 이동
+        navigate('/faq'); // '/faq' 경로를 faq.js에 맞게 수정하세요.
+    } catch (error) {
+        console.error("Error creating GFaq:", error);
+        alert("GFaq 생성에 실패했습니다.");
+    }
+};
+
 
   return (
     <Container>
@@ -151,20 +247,25 @@ const WriteForm = ({
             console.log("Selected second option:", selectedOption);
             setSelectedSecondOption(selectedOption);
           }}
-          showPlusButton={false} // FAQ 제목은 추가하지 않도록 설정
-          showDeleteButton={false} // FAQ 제목 삭제도 비활성화
+          showPlusButton={true}
+          showDeleteButton={true}
           width="1270px"
           margin="0 0 0 32px"
+          onAddOption={handleAddFaqOption}
+          onDeleteOption={handleDeleteFaqOption}
         />
       </Header>
+      {/* 질문 입력 필드 */}
       <TitleInput
         type="text"
-        placeholder="제목을 입력해주세요."
+        placeholder="질문을 입력해주세요."
         isBold={isTitleBold}
         onChange={handleTitleChange}
+        ref={questionRef} // ref 추가
       />
 
       <ContentBox>
+        {/* 답변 입력 필드 */}
         <ContentTextarea
           ref={contentRef}
           isEmpty={isEmptyContent}
@@ -213,11 +314,10 @@ const WriteForm = ({
       )}
 
       <ButtonsContainer isAnnouncement={isAnnouncementPage}>
-        <SubmitButton>등록</SubmitButton>
+        <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
         <CancelButton onClick={handleCancel}>취소</CancelButton>
       </ButtonsContainer>
 
-      {/* 로딩 상태 표시 */}
       {isLoading && <LoadingMessage>FAQ 타이틀을 불러오는 중...</LoadingMessage>}
     </Container>
   );
@@ -225,7 +325,7 @@ const WriteForm = ({
 
 export default WriteForm;
 
-/* Styled Components */
+/* Styled Components (변경 없음) */
 
 const Container = styled.div`
   width: 1500px;
@@ -299,8 +399,8 @@ const FileAttachmentBox = styled.div`
   font-family: 'Nanum Square Neo', sans-serif;
   width: 1390px;
   height: 55px;
-  max-height: 60px; /* 특정 높이 이상일 때 스크롤 */
-  overflow-y: auto; /* 세로 스크롤 활성화 */
+  max-height: 60px;
+  overflow-y: auto;
 
   h4 {
     margin: 0;
@@ -386,7 +486,6 @@ const ButtonsContainer = styled.div`
   ${(props) =>
     props.isAnnouncement &&
     css`
-      /* 공지사항 페이지에서만 적용되는 스타일 */
       font-weight: bold;
       padding: 10px 20px;
       font-size: 14px;

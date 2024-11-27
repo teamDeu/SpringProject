@@ -43,8 +43,11 @@ public class GFaqsService {
         Faq faq = faqRepository.findById(faqId)
                 .orElseThrow(() -> new RuntimeException("Faq not found with id " + faqId));
         gFaqs.setFaq(faq);
+        gFaqs.setTitle(faq.getTitle()); // Faq의 title 설정
+        gFaqs.setTarget(faq.getTarget()); // Faq의 target 설정
         return gFaqsRepository.save(gFaqs);
     }
+
 
     // 기존 GFaqs 업데이트
     public GFaqs updateGFaqs(Long id, GFaqs updatedGFaqs) {
