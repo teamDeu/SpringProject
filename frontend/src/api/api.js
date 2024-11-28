@@ -409,3 +409,16 @@ export const DeleteGNotice = async (id) => {
         throw error;
     }
 };
+
+export const GetCandidate = async (postId) =>{
+    return await axios.get('http://localhost:8080/api/candidate',{
+        params: {
+            postId : postId
+        }
+    })
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+} 

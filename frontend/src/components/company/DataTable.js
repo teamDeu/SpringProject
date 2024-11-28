@@ -144,12 +144,12 @@ const tempData = [{
   },
 ];
 
-  const DataTable = () => {
+  const DataTable = ({data = tempData}) => {
     // 체크 상태 관리
     const [isAllChecked, setIsAllChecked] = useState(false); // 상단 체크박스 상태
     const [checkedItems, setCheckedItems] = useState(Array(tempData.length).fill(false)); // 각 행의 체크박스 상태
   
-    const keyValues = Object.keys(tempData[0]);
+    const keyValues = Object.keys(data[0]);
   
     // 상단 체크박스 클릭 이벤트 핸들러
     const handleAllCheck = () => {
@@ -192,7 +192,7 @@ const tempData = [{
         </HeaderRow>
   
         {/* Rows */}
-        {tempData.map((item, rowIndex) => (
+        {data.map((item, rowIndex) => (
           <ContentRow key={`row-${rowIndex}`}>
             <CheckboxCell>
               <ContentBox>
