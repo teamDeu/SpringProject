@@ -35,7 +35,7 @@ const ResumeForm = () => {
     const [resumeFile, setResumeFile] = useState(null);
 
     const [userInfo, setUserInfo] = useState({
-        id: "1234",
+        id: "",
         name: "",
         email: "",
         birth: "",
@@ -50,12 +50,38 @@ const ResumeForm = () => {
         locations: [],
         jobRoles: [],
         skills: [],
-        fileName: "http://localhost:8080/images/mock-profile.png",
+        fileName: "",
         summary: "",
     });
 
-    //데이터를 가져오는 함수
+
     useEffect(() => {
+
+        //현재 로그인한 사람
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/session", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // JWT 토큰 사용 시
+                    },
+                    withCredentials: true, 
+                });
+    
+                if (response.status === 200) {
+                    // 서버에서 반환된 사용자 ID를 userInfo에 설정
+                    const userId = response.data;
+                    setUserInfo((prevState) => ({
+                        ...prevState,
+                        id: userId,
+                    }));
+                }
+            } catch (error) {
+                console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+            }
+        };
+    
+        fetchUserInfo();
+
         //개발 직무 카테고리 가져옴
         const fetchJobCategories = async () => {
             try {
@@ -163,18 +189,54 @@ const ResumeForm = () => {
             
             
             await Promise.all(
-                resumeData.locations.map(location =>
-                    axios.post("http://localhost:8080/api/resume-locations", { resumeId, location })
-                )
+                desiredLocations.map((location) => {
+                    const locationData = locations.find((loc) => loc.name === location.name && loc.region === location.region);
+                    if (!locationData || !locationData.id) {
+                        console.error(`Invalid location selected: ${location.name}, ${location.region}`);
+                        throw new Error(`Invalid location selected: ${location.name}, ${location.region}`);
+                    }
+    
+                    return axios.post("http://localhost:8080/api/resume-locations", {
+                        id: {
+                            resumeId: resumeId, // 이력서 ID
+                            locationId: locationData.id, // 위치 ID
+                        },
+                        resume: {
+                            id: resumeId,
+                        },
+                        location: {
+                            id: locationData.id,
+                        },
+                    });
+                })
             );
 
             await Promise.all(
-                resumeData.jobRoles.map(jobRole =>
-                    axios.post("http://localhost:8080/api/resume-job-categories", { resumeId, jobRole })
-                )
+                jobRoles.map((roleName) => {
+                    const jobCategory = jobCategories.find((jc) => jc.name === roleName);
+                    if (!jobCategory || !jobCategory.id) {
+                        console.error(`Invalid job category selected: ${roleName}`);
+                        throw new Error(`Invalid job category selected: ${roleName}`);
+                    }
+    
+                    return axios.post("http://localhost:8080/api/resume-job-categories", {
+                        id: {
+                            resumeId: resumeId, // 이력서 ID
+                            jobCategoryId: jobCategory.id, // 직무 ID
+                        },
+                        resume: {
+                            id: resumeId,
+                        },
+                        jobCategory: {
+                            id: jobCategory.id,
+                        },
+                    });
+                })
             );
 
             alert("이력서가 성공적으로 저장되었습니다!");
+
+            window.location.reload()
         } catch (error) {
             console.error("이력서 저장 중 오류 발생:", error);
             alert("이력서 저장에 실패했습니다. 다시 시도해주세요.");

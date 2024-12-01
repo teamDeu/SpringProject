@@ -17,6 +17,12 @@ public class Skills {
     @Column(name ="id")
     private Long id;
 
+    public Skills() {}
+
+    public Skills(Long id) {
+        this.id = id;
+    }
+
     @Column(name="name")
     private String name;
 
