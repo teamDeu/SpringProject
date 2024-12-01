@@ -181,75 +181,113 @@ const JobSearch = ({ onJobSelect }) => {
 
     const [bookmarkedAds, setBookmarkedAds] = useState([]);
 
+    const [popularAdvertisements, setPopularAdvertisements] = useState([]);
+
+
+    const [latestAdvertisements, setLatestAdvertisements] = useState([]);
+
     useEffect(() => {
-        const fetchAdvertisements = async () => {
-            const data = [
-                {
-                    id: 1,
-                    title: "전기전자 H/W, F/W 설계",
-                    company: "한전 KPS",
-                    logo: "https://via.placeholder.com/50", // Placeholder for company logo
-                    region: "경기권역",
-                    experience: "신입",
-                    education: "대졸 이상",
-                    deadline: "11.23(목)"
-                },
-                {
-                    id: 2,
-                    title: "온라인 AMD 채용",
-                    company: "Parity",
-                    logo: "https://via.placeholder.com/50",
-                    region: "서울권역",
-                    experience: "1년",
-                    education: "대졸 이상",
-                    deadline: "11.29(수)"
-                },
-                {
-                    id: 3,
-                    title: "설계/CAD/CAM 전장 설계",
-                    company: "씨에이치티",
-                    logo: "https://via.placeholder.com/50",
-                    region: "강원지역",
-                    experience: "2년",
-                    education: "고졸 이상",
-                    deadline: "11.30(금)"
-                },
-                {
-                    id: 4,
-                    title: "해외파견 영업 경력직",
-                    company: "에이피솔루션",
-                    logo: "https://via.placeholder.com/50",
-                    region: "인천권역",
-                    experience: "5년",
-                    education: "대졸 이상",
-                    deadline: "D-6"
-                },
-                {
-                    id: 5,
-                    title: "시스템 및 운전 경력",
-                    company: "이노비즈테크",
-                    logo: "https://via.placeholder.com/50",
-                    region: "울산권역",
-                    experience: "2년",
-                    education: "대졸 이상",
-                    deadline: "오늘마감"
-                },
-                {
-                    id: 6,
-                    title: "기술평가 및 컨설팅 전문가",
-                    company: "NICE 평가정보",
-                    logo: "https://via.placeholder.com/50",
-                    region: "서울권역",
-                    experience: "1년 이상",
-                    education: "석사 이상",
-                    deadline: "11.17(금)"
-                },
-            ];
-            setAdvertisements(data);
+        const fetchLatestJobPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/latest-jobposts');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Latest job posts:", data);
+                setLatestAdvertisements(data);
+            } catch (error) {
+                console.error('Error fetching latest job posts:', error);
+            }
         };
-    
-        fetchAdvertisements();
+        fetchLatestJobPosts();
+
+        const fetchPopularJobPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/popular-jobposts');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Popular job posts:", data);
+                setPopularAdvertisements(data);
+            } catch (error) {
+                console.error('Error fetching popular job posts:', error);
+            }
+        };
+        fetchPopularJobPosts();
+
+        const fetchUrgentJobPosts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/urgent-jobposts');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // 회사 로고 URL을 가져오기 위한 추가 fetch 요청
+                const updatedAds = await Promise.all(
+                    data.map(async (ad) => {
+                        const companyId = ad.company; // 회사 ID 사용
+                        try {
+                            const companyResponse = await fetch(`http://localhost:8080/api/companies/${companyId}`);
+                            if (companyResponse.ok) {
+                                const companyData = await companyResponse.json();
+                                return { ...ad, logoUrl: companyData.logoUrl }; // 로고 URL 추가
+                            }
+                        } catch (err) {
+                            console.error(`Failed to fetch logo for company ID: ${companyId}`, err);
+                        }
+                        return { ...ad, logoUrl: null }; // 로고 URL 없는 경우
+                    })
+                );
+
+                setAdvertisements(updatedAds);
+            } catch (error) {
+                console.error('Error fetching urgent job posts:', error);
+            }
+        };
+
+        fetchUrgentJobPosts();
     }, []);
+   
+    // 현재 날짜와 비교하여 마감일이 가까운지 확인하는 함수
+    const isDeadlineNear = (deadline) => {
+        if (!deadline) return false; // 마감일이 없으면 false 반환
+
+        const today = new Date(); // 현재 날짜
+        const deadlineDate = new Date(deadline); // 마감일을 Date 객체로 변환
+
+        const diffInDays = (deadlineDate - today) / (1000 * 60 * 60 * 24); // 날짜 차이를 일 단위로 계산
+
+        return diffInDays <= 7; // 마감일이 7일 이내면 true 반환
+    };
+
+
+    // AdDeadline 스타일 조건을 반환하는 함수
+    const getDeadlineText = (deadline) => {
+        if (!deadline) return '마감일 정보 없음';
+
+        const today = new Date();
+        const deadlineDate = new Date(deadline);
+
+        // 마감일과 오늘의 차이 계산
+        const diffInDays = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+
+        if (diffInDays < 0) {
+            return '마감 종료';
+        } else if (diffInDays === 0) {
+            return '오늘마감';
+        } else if (diffInDays === 1) {
+            return 'D-1';
+        } else {
+            return deadlineDate.toLocaleDateString();
+        }
+    };
+
+
+
+    
     
     const toggleExperienceDropdown = () => {
         setIsExperienceDropdownOpen((prev) => !prev);
@@ -606,18 +644,19 @@ const JobSearch = ({ onJobSelect }) => {
                 <AdvertisementSection>
                     {advertisements.map((ad) => (
                         <Link 
-                        to={`/jobdetail/${ad.id}`} // JobDetail.js로 이동하며 id 전달
-                        style={{ textDecoration: 'none', color: 'inherit' }} // Link 스타일 조정
-                        key={ad.id}
+                            to={`/jobdetail/${ad.id}`} // ID를 전달
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            key={ad.id}
                         >
-                            <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
+                            <AdCard>
                                 <AdHeader>
-                                    <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
+                                    <AdLogo src={ad.logoUrl || 'https://via.placeholder.com/50'} alt={`${ad.companyName} 로고`} />
+
                                     <Bookmark
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleBookmark(ad.id);
-                                    }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleBookmark(ad.id);
+                                        }}
                                     >
                                         <img
                                             src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
@@ -627,71 +666,109 @@ const JobSearch = ({ onJobSelect }) => {
                                 </AdHeader>
                                 <AdDetails>
                                     <AdTitle>{ad.title}</AdTitle>
-                                    <AdCompany>{ad.company}</AdCompany>
+                                    <AdCompany>{ad.company || '회사 정보 없음'}</AdCompany>
                                     <AdInfoLine>
                                         <img src={Lo} alt="지역 아이콘" />
-                                        {ad.region} | {ad.experience} | {ad.education}
+                                        {ad.region || '지역 정보 없음'} | {ad.experience || '경력 정보 없음'} | {ad.education || '학력 정보 없음'}
                                     </AdInfoLine>
                                 </AdDetails>
-                                <AdDeadline>{ad.deadline}</AdDeadline>
+                                <AdDeadline
+                                    style={{
+                                        color: ['오늘마감', 'D-1'].includes(getDeadlineText(ad.deadline)) ? 'red' : 'black',
+                                    }}
+                                >
+                                    {getDeadlineText(ad.deadline)}
+                                </AdDeadline>
+
+                            </AdCard>
+                        </Link>
+                    ))}
+
+                </AdvertisementSection>
+
+                <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar} /></SecTitle>
+                <AdvertisementSection>
+                    {latestAdvertisements.map((ad) => (
+                        <Link
+                            to={`/jobdetail/${ad.id}`}
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            key={ad.id}
+                        >
+                            <AdCard>
+                                <AdHeader>
+                                    <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
+                                    <Bookmark
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleBookmark(ad.id);
+                                        }}
+                                    >
+                                        <img
+                                            src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                            alt="북마크 아이콘"
+                                        />
+                                    </Bookmark>
+                                </AdHeader>
+                                <AdDetails>
+                                    <AdTitle>{ad.title}</AdTitle>
+                                    <AdCompany>{ad.company || '회사 정보 없음'}</AdCompany>
+                                    <AdInfoLine>
+                                        <img src={Lo} alt="지역 아이콘" />
+                                        {ad.region || '지역 정보 없음'} | {ad.experience || '경력 정보 없음'} | {ad.education || '학력 정보 없음'}
+                                    </AdInfoLine>
+                                </AdDetails>
+                                <AdDeadline
+                                    style={{
+                                        color: ['오늘마감', 'D-1'].includes(getDeadlineText(ad.deadline)) ? 'red' : 'black',
+                                    }}
+                                >
+                                    {getDeadlineText(ad.deadline)}
+                                </AdDeadline>
                             </AdCard>
                         </Link>
                     ))}
                 </AdvertisementSection>
 
-                <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar}/> </SecTitle>
-                <AdvertisementSection>
-                    {advertisements.map((ad) => (
-                        <AdCard key={ad.id}>
-                            <AdHeader>
-                                <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
-                                <Bookmark
-                                    onClick={() => toggleBookmark(ad.id)}
-                                >
-                                    <img
-                                        src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
-                                        alt="북마크 아이콘"
-                                    />
-                                </Bookmark>
-                            </AdHeader>
-                            <AdDetails>
-                                <AdTitle>{ad.title}</AdTitle>
-                                <AdCompany>{ad.company}</AdCompany>
-                                <AdInfoLine>
-                                    <img src={Lo} alt="지역 아이콘" />
-                                    {ad.region} | {ad.experience} | {ad.education}
-                                </AdInfoLine>
-                            </AdDetails>
-                            <AdDeadline>{ad.deadline}</AdDeadline>
-                        </AdCard>
-                    ))}
-                </AdvertisementSection>
-
                 <SecTitle>지금 눈여겨볼 공고<img src={Eye}/> </SecTitle>
                 <AdvertisementSection>
-                    {advertisements.map((ad) => (
-                        <AdCard key={ad.id}>
-                            <AdHeader>
-                                <AdLogo src={ad.logo} alt={`${ad.company} 로고`} />
-                                <Bookmark
-                                    onClick={() => toggleBookmark(ad.id)}
+                    {popularAdvertisements.map((ad) => (
+                        <Link
+                            to={`/jobdetail/${ad.id}`}
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            key={ad.id}
+                        >
+                            <AdCard>
+                                <AdHeader>
+                                    <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
+                                    <Bookmark
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleBookmark(ad.id);
+                                        }}
+                                    >
+                                        <img
+                                            src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
+                                            alt="북마크 아이콘"
+                                        />
+                                    </Bookmark>
+                                </AdHeader>
+                                <AdDetails>
+                                    <AdTitle>{ad.title}</AdTitle>
+                                    <AdCompany>{ad.company || '회사 정보 없음'}</AdCompany>
+                                    <AdInfoLine>
+                                        <img src={Lo} alt="지역 아이콘" />
+                                        {ad.region || '지역 정보 없음'} | {ad.experience || '경력 정보 없음'} | {ad.education || '학력 정보 없음'}
+                                    </AdInfoLine>
+                                </AdDetails>
+                                <AdDeadline
+                                    style={{
+                                        color: ['오늘마감', 'D-1'].includes(getDeadlineText(ad.deadline)) ? 'red' : 'black',
+                                    }}
                                 >
-                                    <img
-                                        src={bookmarkedAds.includes(ad.id) ? Heart : Nonheart}
-                                        alt="북마크 아이콘"
-                                    />
-                                </Bookmark>
-                            </AdHeader>
-                            <AdDetails>
-                                <AdTitle>{ad.title}</AdTitle>
-                                <AdCompany>{ad.company}</AdCompany>
-                                <AdInfoLine>
-                                    <img src={Lo} alt="지역 아이콘" />
-                                    {ad.region}  |  {ad.experience}  |  {ad.education}
-                                </AdInfoLine>
-                            </AdDetails>
-                            <AdDeadline>{ad.deadline}</AdDeadline>
-                        </AdCard>
+                                    {getDeadlineText(ad.deadline)}
+                                </AdDeadline>
+                            </AdCard>
+                        </Link>
                     ))}
                 </AdvertisementSection>
             </Container>

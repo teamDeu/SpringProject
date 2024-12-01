@@ -6,18 +6,29 @@ import com.example.Backend.model.JobPost;
 import com.example.Backend.model.JobPostImage;
 import com.example.Backend.service.JobPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @Controller
+@RequestMapping("/api")
 public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
+
+    public JobPostController(JobPostService jobPostService) {
+        this.jobPostService = jobPostService;
+    }
 
     @PostMapping("/api/jobpost")
     public ResponseEntity<JobPost> saveJobPost(@RequestBody JobPost jobPost)
@@ -30,11 +41,103 @@ public class JobPostController {
         return ResponseEntity.ok(savedJobPost);
     }
 
-    @GetMapping("/api/jobpost")
-    public ResponseEntity<List<JobPost>> getAllJobPosts(){
-        System.out.println(jobPostService.getAllJobPost());
-        return ResponseEntity.ok(jobPostService.getAllJobPost());
+
+
+    //이 공고 놓치지 마세요
+    @GetMapping("/urgent-jobposts")
+    public ResponseEntity<List<Map<String, Object>>> getTop9UrgentJobPosts() {
+        List<JobPost> jobPosts = jobPostService.getTop9JobPostsByDeadline();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> response = jobPosts.stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("title", post.getTitle());
+            map.put("company", post.getCompanyName());
+            map.put("region", post.getLocation());
+            map.put("experience", post.getExperience());
+            map.put("education", post.getEducation());
+
+            // Date를 LocalDateTime으로 변환 후 포맷
+            if (post.getEndDate() != null) {
+                LocalDateTime endDate = post.getEndDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                map.put("deadline", endDate.format(formatter));
+            } else {
+                map.put("deadline", null);
+            }
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
     }
+
+    //지금 눈 여겨볼 공고
+    @GetMapping("/popular-jobposts")
+    public ResponseEntity<List<Map<String, Object>>> getTop9PopularJobPosts() {
+        List<JobPost> jobPosts = jobPostService.getTop9JobPostsByViews();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> response = jobPosts.stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("title", post.getTitle());
+            map.put("company", post.getCompanyName());
+            map.put("region", post.getLocation());
+            map.put("experience", post.getExperience());
+            map.put("education", post.getEducation());
+            map.put("views", post.getViews());
+
+            if (post.getEndDate() != null) {
+                LocalDateTime endDate = post.getEndDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                map.put("deadline", endDate.format(formatter));
+            } else {
+                map.put("deadline", null);
+            }
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    //회원님만을 위한 오늘의 공고
+    @GetMapping("/latest-jobposts")
+    public ResponseEntity<List<Map<String, Object>>> getTop9LatestJobPosts() {
+        List<JobPost> jobPosts = jobPostService.getTop9LatestJobPosts();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> response = jobPosts.stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("title", post.getTitle());
+            map.put("company", post.getCompanyName());
+            map.put("region", post.getLocation());
+            map.put("experience", post.getExperience());
+            map.put("education", post.getEducation());
+            map.put("postDate", post.getPostDate().toString());
+
+            if (post.getEndDate() != null) {
+                LocalDateTime endDate = post.getEndDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                map.put("deadline", endDate.format(formatter));
+            } else {
+                map.put("deadline", null);
+            }
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
     @GetMapping("/api/companyjobpost")
     public ResponseEntity<List<JobPost>> getJobPosts(@RequestParam String company){
         System.out.println(jobPostService.getJobPostByCompany(company));
