@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Barrow2 from './img/barrow2.png';
 import Garrow from './img/garrow.png';
@@ -151,10 +152,12 @@ const regions = [
     }
 ];
 
-const JobSearch = ({ onJobSelect }) => {
+const JobSearch = () => {
     const handleCardClick = (id) => {
-        onJobSelect(id); 
+        navigate(`/jobdetail/${id}`); // navigate로 이동
     };
+
+    const navigate = useNavigate();
 
     const [isJobDropdownOpen, setIsJobDropdownOpen] = useState(false);
     const [isExperienceDropdownOpen, setIsExperienceDropdownOpen] = useState(false);
@@ -643,12 +646,8 @@ const JobSearch = ({ onJobSelect }) => {
                 <SecTitle>이 공고, 놓치지 마세요<img src={Highlight}/> </SecTitle>
                 <AdvertisementSection>
                     {advertisements.map((ad) => (
-                        <Link 
-                            to={`/jobdetail/${ad.id}`} // ID를 전달
-                            style={{ textDecoration: 'none', color: 'inherit' }}
-                            key={ad.id}
-                        >
-                            <AdCard>
+                        
+                        <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
                                 <AdHeader>
                                     <AdLogo src={ad.logoUrl || 'https://via.placeholder.com/50'} alt={`${ad.companyName} 로고`} />
 
@@ -681,7 +680,7 @@ const JobSearch = ({ onJobSelect }) => {
                                 </AdDeadline>
 
                             </AdCard>
-                        </Link>
+
                     ))}
 
                 </AdvertisementSection>
@@ -689,12 +688,7 @@ const JobSearch = ({ onJobSelect }) => {
                 <SecTitle>회원님만을 위한 오늘의 공고<img src={Gstar} /></SecTitle>
                 <AdvertisementSection>
                     {latestAdvertisements.map((ad) => (
-                        <Link
-                            to={`/jobdetail/${ad.id}`}
-                            style={{ textDecoration: 'none', color: 'inherit' }}
-                            key={ad.id}
-                        >
-                            <AdCard>
+                        <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
                                 <AdHeader>
                                     <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
                                     <Bookmark
@@ -725,19 +719,14 @@ const JobSearch = ({ onJobSelect }) => {
                                     {getDeadlineText(ad.deadline)}
                                 </AdDeadline>
                             </AdCard>
-                        </Link>
+
                     ))}
                 </AdvertisementSection>
 
                 <SecTitle>지금 눈여겨볼 공고<img src={Eye}/> </SecTitle>
                 <AdvertisementSection>
                     {popularAdvertisements.map((ad) => (
-                        <Link
-                            to={`/jobdetail/${ad.id}`}
-                            style={{ textDecoration: 'none', color: 'inherit' }}
-                            key={ad.id}
-                        >
-                            <AdCard>
+                        <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
                                 <AdHeader>
                                     <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
                                     <Bookmark
@@ -768,7 +757,7 @@ const JobSearch = ({ onJobSelect }) => {
                                     {getDeadlineText(ad.deadline)}
                                 </AdDeadline>
                             </AdCard>
-                        </Link>
+                        
                     ))}
                 </AdvertisementSection>
             </Container>

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import JobTopBar from '../../components/JobTopBar';
@@ -9,104 +10,20 @@ import Aa2 from './img/aa2.png';
 import Co from './img/co.jpg';
 
 function PersonalMain() {
-    const [currentIndex, setCurrentIndex] = useState(0); 
+    const [companies, setCompanies] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
 
-    const companies = [
-        {
-            id: 1, 
-            name: '현대자동차(주)',
-            logo: Hlogo,
-            description: '전문가와 미래를 새로 쓰다',
-            views: '25만+',
-        },
-        {
-            id: 2,
-            name: '삼성전자(주)',
-            logo: Hlogo,
-            description: '최고를 향한 도전',
-            views: '30만+',
-        },
-        {
-            id: 3,
-            name: 'LG전자(주)',
-            logo: Hlogo,
-            description: '기술과 삶의 혁신',
-            views: '20만+',
-        },
-        {
-            id: 4, 
-            name: '현대자동차(주)',
-            logo: Hlogo,
-            description: '전문가와 미래를 새로 쓰다',
-            views: '25만+',
-        },
-        {
-            id: 5,
-            name: '삼성전자(주)',
-            logo: Hlogo,
-            description: '최고를 향한 도전',
-            views: '30만+',
-        },
-        {
-            id: 6,
-            name: 'LG전자(주)',
-            logo: Hlogo,
-            description: '기술과 삶의 혁신',
-            views: '20만+',
-        },
-    ];
-
-    const jobPostings = [
-        {
-            id: 1,
-            companyName: '키움증권',
-            jobTitle: '2024년 하반기 대졸 신입사원 공개채용',
-            logo: Co,
-            photo: Aa2,
-            deadline: 'D-4',
-        },
-        {
-            id: 2,
-            companyName: '캐치테이블',
-            jobTitle: '2024년 커리어팀 정직원 적극 채용',
-            logo: Co,
-            photo: Aa,
-            deadline: '11.20(화)',
-        },
-        {
-            id: 3,
-            companyName: '현대 글로비스',
-            jobTitle: '2024년 하반기 현대글로비스 신입채용',
-            logo: Co,
-            photo: Aa2,
-            deadline: '오늘마감',
-        },
-        {
-            id: 4,
-            companyName: '키움증권',
-            jobTitle: '2024년 하반기 대졸 신입사원 공개채용',
-            logo: Co,
-            photo: Aa2,
-            deadline: 'D-4',
-        },
-        {
-            id: 5,
-            companyName: '캐치테이블',
-            jobTitle: '2024년 커리어팀 정직원 적극 채용',
-            logo: Co,
-            photo: Aa2,
-            deadline: '11.20(화)',
-        },
-        {
-            id: 6,
-            companyName: '현대 글로비스',
-            jobTitle: '2024년 하반기 현대글로비스 신입채용',
-            logo: Co,
-            photo: Aa2,
-            deadline: '오늘마감',
-        },
-    ];
+    useEffect(() => {
+        axios
+            .get('http://localhost:8080/api/featured-companies') // 백엔드 API 경로
+            .then((response) => {
+                setCompanies(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching featured companies:', error);
+            });
+    }, []);
 
     const handlePrevImage = () => {
         if (currentIndex > 0) {
@@ -142,10 +59,10 @@ function PersonalMain() {
                         <CompanyCarousel>
                             {companies.slice(currentIndex, currentIndex + 5).map((company, index) => (
                                 <CompanyCard key={index} onClick={() => handleCompanyClick(company.id)}>
-                                    <Logo src={company.logo} alt={`${company.name} 로고`} />
-                                    <CompanyName>{company.name}</CompanyName>
+                                    <Logo src={company.logo} alt={`${company.companyName} 로고`} />
+                                    <CompanyName>{company.companyName}</CompanyName>
                                     <Description>{company.description}</Description>
-                                    <Views>{company.views}</Views>
+                                    <Views>{company.views} views</Views>
                                 </CompanyCard>
                             ))}
                         </CompanyCarousel>
@@ -159,29 +76,14 @@ function PersonalMain() {
                     조회수 높은 기업의 채용 공고
                 </ViewContainer>
                 <JobPostingsContainer>
-                    {jobPostings.map((posting, index) => (
-                        <JobPostingCard key={index} onClick={() => handleJobPostingClick(posting.id)}>                        
-                            <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
-                            <JobTitle>{posting.jobTitle}</JobTitle>
-                            <JobDeadline>{posting.deadline}</JobDeadline>
-                            <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
-                        </JobPostingCard>
-                    ))}
+                    
                 </JobPostingsContainer>
 
                 <DeadlineContainer>
                     마감 임박한 채용 공고          
                 </DeadlineContainer>
                 <JobPostingsContainer>
-                    {jobPostings.map((posting, index) => (
-                        <JobPostingCard key={index} onClick={() => handleJobPostingClick(posting.id)}>
-                            
-                            <JobLogo src={posting.logo} alt={`${posting.companyName} 로고`} />
-                            <JobTitle>{posting.jobTitle}</JobTitle>
-                            <JobDeadline>{posting.deadline}</JobDeadline>
-                            <JobImage src={posting.photo} alt={`${posting.companyName} 사진`} />
-                        </JobPostingCard>
-                    ))}
+                    
                 </JobPostingsContainer>
 
 

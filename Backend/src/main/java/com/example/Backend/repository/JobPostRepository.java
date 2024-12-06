@@ -27,6 +27,9 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
     List<JobPost> findTop9ByOrderByPostDateDesc(Pageable pageable);
 
 
+    //많은 회원들이 눈 여겨 볼 공고
+    @Query("SELECT j FROM JobPost j WHERE j.isFeatured = TRUE ORDER BY j.views DESC")
+    List<JobPost> findTop10ByIsFeaturedTrueOrderByViewsDesc(Pageable pageable);
 
 
 }

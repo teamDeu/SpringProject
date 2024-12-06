@@ -83,7 +83,11 @@ public class JobPostService {
         return jobPostRepository.findTop9ByOrderByPostDateDesc(pageable);
     }
 
-
+    //많은 회원들이 눈 여결 볼 공고
+    public List<JobPost> getTop10FeaturedCompanies() {
+        Pageable pageable = PageRequest.of(0, 10);
+        return jobPostRepository.findTop10ByIsFeaturedTrueOrderByViewsDesc(pageable);
+    }
 
 
 }
