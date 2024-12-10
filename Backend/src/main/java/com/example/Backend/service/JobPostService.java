@@ -11,6 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,6 +91,29 @@ public class JobPostService {
         Pageable pageable = PageRequest.of(0, 10);
         return jobPostRepository.findTop10ByIsFeaturedTrueOrderByViewsDesc(pageable);
     }
+
+    //조회수가 높은 공고
+    public List<JobPost> getTopJobPostsByViews(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return jobPostRepository.findTopJobPostsByViews(pageable);
+    }
+
+    LocalDate currentDate = LocalDate.now();
+    LocalDate oneWeekLater = currentDate.plusDays(7);
+
+    //마감이 얼마 남지 않은 공고
+    public List<JobPost> getJobPostsEndingSoon(int limit) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate oneWeekLater = currentDate.plusDays(7);
+
+        Date startDate = Date.from(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(oneWeekLater.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Pageable pageable = PageRequest.of(0, limit);
+        return jobPostRepository.findJobPostsEndingBetween(startDate, endDate, pageable);
+    }
+
+
 
 
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Barrow2 from './img/barrow2.png';
@@ -22,7 +22,7 @@ import Eye from './img/eye.png';
 import Gstar from './img/gstar.png';
 import Skill from './img/skill.png';
 import JobTopBar from '../../components/JobTopBar';
-import { jobRoles, skillStacks } from './job';
+
 
 const regions = [
     {
@@ -185,9 +185,83 @@ const JobSearch = () => {
     const [bookmarkedAds, setBookmarkedAds] = useState([]);
 
     const [popularAdvertisements, setPopularAdvertisements] = useState([]);
-
+    const [userInfo, setUserInfo] = useState({});
 
     const [latestAdvertisements, setLatestAdvertisements] = useState([]);
+
+    const [jobCategories, setJobCategories] = useState([]);
+    const [skills, setSkills] = useState([]);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/session", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // JWT 토큰 사용
+                    },
+                    withCredentials: true, 
+                });
+    
+                if (response.status === 200) {
+                    const userId = response.data; // 서버에서 반환된 사용자 ID
+                    setUserInfo((prevState) => ({
+                        ...prevState,
+                        id: userId,
+                    }));
+                }
+            } catch (error) {
+                console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+            }
+        };
+    
+        fetchUserInfo();
+    }, []);
+
+    useEffect(() => {
+        const fetchJobCategories = async () => {
+          try {
+            const response = await axios.get("http://localhost:8080/api/job-categories");
+            if (response.status === 200) {
+              setJobCategories(response.data); // 데이터 저장
+            }
+          } catch (err) {
+            console.error("Error fetching job categories:", err);
+          }
+        };
+    
+        fetchJobCategories();
+
+        const fetchSkills = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/skills");
+                if (response.status === 200) {
+                    setSkills(response.data); // 스킬 데이터를 상태로 저장
+                }
+            } catch (error) {
+                console.error("스킬 데이터를 가져오는 중 오류 발생:", error);
+            }
+        };
+    
+        fetchSkills();
+      }, []);
+
+    useEffect(() => {
+        const fetchUserFavorites = async () => {
+            if (!userInfo?.id) return;
+    
+            try {
+                const response = await axios.get(`http://localhost:8080/api/favorites/${userInfo.id}`);
+                if (response.status === 200) {
+                    setBookmarkedAds(response.data); // 즐겨찾기한 게시물 ID 리스트 저장
+                }
+            } catch (error) {
+                console.error("즐겨찾기 데이터를 가져오는 중 오류 발생:", error);
+            }
+        };
+    
+        fetchUserFavorites();
+    }, [userInfo]);
+    
 
     useEffect(() => {
         const fetchLatestJobPosts = async () => {
@@ -308,11 +382,40 @@ const JobSearch = () => {
         setIsJobDropdownOpen((prev) => !prev); 
     };
 
-    const toggleBookmark = (adId) => {
-        setBookmarkedAds((prev) =>
-            prev.includes(adId) ? prev.filter((id) => id !== adId) : [...prev, adId]
-        );
+    const toggleBookmark = async (adId) => {
+        try {
+            const isBookmarked = bookmarkedAds.includes(adId);
+    
+            if (isBookmarked) {
+                // Heart -> NonHeart 전환: 즐겨찾기 삭제
+                await axios.delete(`http://localhost:8080/api/favorites/${adId}`, {
+                    params: { userId: userInfo.id }, // userId를 쿼리 파라미터로 전달
+                });
+                console.log(`즐겨찾기 삭제 성공: jobPostId ${adId}`);
+            } else {
+                // NonHeart -> Heart 전환: 즐겨찾기 추가
+                await axios.post("http://localhost:8080/api/favorites", {
+                    userId: userInfo.id,
+                    jobPostId: adId,
+                });
+                console.log(`즐겨찾기 추가 성공: jobPostId ${adId}`);
+            }
+    
+            // 상태 업데이트
+            const updatedBookmarks = isBookmarked
+                ? bookmarkedAds.filter((id) => id !== adId) // 삭제
+                : [...bookmarkedAds, adId]; // 추가
+    
+            setBookmarkedAds(updatedBookmarks);
+        } catch (error) {
+            console.error("즐겨찾기 상태 변경 중 오류 발생:", error);
+        }
     };
+    
+    
+    
+    
+    
 
     const handleRegionClick = (region) => {
         setSelectedRegion(region);
@@ -321,6 +424,8 @@ const JobSearch = () => {
             [region.name]: prev[region.name] || [] 
         }));
     };
+
+    
     
     
 
@@ -527,13 +632,14 @@ const JobSearch = () => {
                             <SmallBox>
                                 <SectionTitle>직무 & 직업 선택</SectionTitle>
                                 <JobGrid>
-                                    {jobRoles.map((job, index) => (
+                                    {jobCategories.map((category) => (
                                         <JobGridItem
-                                            key={index}
-                                            isSelected={selectedJobs.includes(job)}
-                                            onClick={() => handleJobClick(job)}
+                                            key={category.id}
+                                            value={category.id}
+                                            isSelected={selectedJobs.includes(category.name)}
+                                            onClick={() => handleJobClick(category.name)}
                                         >
-                                            {job}
+                                            {category.name}
                                         </JobGridItem>
                                     ))}
                                 </JobGrid>
@@ -541,13 +647,13 @@ const JobSearch = () => {
                             <SkillSmallBox>
                                 <SectionTitle>스킬 선택</SectionTitle>
                                 <SkillGrid>
-                                    {skillStacks.map((skill, index) => (
+                                    {skills.map((skill) => (
                                         <SkillGridItem
-                                            key={index}
-                                            isSelected={selectedSkills.includes(skill)}
-                                            onClick={() => handleSkillClick(skill)}
+                                            key={skill.id}
+                                            isSelected={selectedSkills.includes(skill.name)}
+                                            onClick={() => handleSkillClick(skill.name)}
                                         >
-                                            {skill}
+                                            {skill.name}
                                         </SkillGridItem>
                                     ))}
                                 </SkillGrid>

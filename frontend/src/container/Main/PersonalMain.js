@@ -11,6 +11,8 @@ import Co from './img/co.jpg';
 
 function PersonalMain() {
     const [companies, setCompanies] = useState([]);
+    const [popularJobPosts, setPopularJobPosts] = useState([]);
+    const [urgentJobPosts, setUrgentJobPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
 
@@ -22,6 +24,28 @@ function PersonalMain() {
             })
             .catch((error) => {
                 console.error('Error fetching featured companies:', error);
+            });
+    }, []);
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:8080/api/popular-jobposts2') // 백엔드 API 경로
+            .then((response) => {
+                setPopularJobPosts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching popular job posts:', error);
+            });
+    }, []);
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:8080/api/urgent-jobposts2') // 백엔드 API 경로
+            .then((response) => {
+                setUrgentJobPosts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching urgent job posts:', error);
             });
     }, []);
 
@@ -61,7 +85,7 @@ function PersonalMain() {
                                 <CompanyCard key={index} onClick={() => handleCompanyClick(company.id)}>
                                     <Logo src={company.logo} alt={`${company.companyName} 로고`} />
                                     <CompanyName>{company.companyName}</CompanyName>
-                                    <Description>{company.description}</Description>
+                                    <Description>{company.title}</Description>
                                     <Views>{company.views} views</Views>
                                 </CompanyCard>
                             ))}
@@ -72,18 +96,35 @@ function PersonalMain() {
                     </CarouselWrapper>
                 </Section>
 
+
                 <ViewContainer>
                     조회수 높은 기업의 채용 공고
                 </ViewContainer>
                 <JobPostingsContainer>
-                    
+                    {popularJobPosts.map((job, index) => (
+                        <JobPostingCard key={index} onClick={() => handleJobPostingClick(job.id)}>
+                            <JobLogo src={job.logo || Co} alt={`${job.company} 로고`} />
+                            <JobTitle>{job.title}</JobTitle>
+                            <p>{job.company}</p>
+                            <p>{job.salary || '연봉 정보 없음'}</p>
+                            <JobDeadline>{job.deadline || '없음'}</JobDeadline>
+                        </JobPostingCard>
+                    ))}
                 </JobPostingsContainer>
 
                 <DeadlineContainer>
                     마감 임박한 채용 공고          
                 </DeadlineContainer>
                 <JobPostingsContainer>
-                    
+                    {urgentJobPosts.map((job, index) => (
+                        <JobPostingCard key={index} onClick={() => handleJobPostingClick(job.id)}>
+                            <JobLogo src={job.logo || Co} alt={`${job.company} 로고`} />
+                            <JobTitle>{job.title}</JobTitle>
+                            <p>{job.company}</p>
+                            <p>{job.salary || '연봉 정보 없음'}</p>
+                            <JobDeadline>{job.deadline || '없음'}</JobDeadline>
+                        </JobPostingCard>
+                    ))}
                 </JobPostingsContainer>
 
 
@@ -235,6 +276,10 @@ const JobPostingCard = styled.div`
     align-items: center;
     height: 320px;
     overflow: hidden;
+
+    p {
+        margin-top: 8px;
+    }
 `;
 
 const JobImage = styled.img`
@@ -265,6 +310,7 @@ const JobTitle = styled.h3`
 const JobDeadline = styled.p`
     font-size: 14px;
     color: #ff0000;
+    margin-top: 5px;
 `;
 
 

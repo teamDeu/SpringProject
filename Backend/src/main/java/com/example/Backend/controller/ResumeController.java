@@ -12,9 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/resumes")
@@ -39,6 +38,18 @@ public class ResumeController {
         if (resumes.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+
+        // 필요 정보만 반환하도록 수정 (createdAt과 updatedAt 확인)
+        List<Map<String, String>> response = resumes.stream().map(resume -> {
+            Map<String, String> resumeData = new HashMap<>();
+            resumeData.put("id", resume.getId().toString());
+            resumeData.put("title", resume.getTitle());
+            resumeData.put("lastUpdated", resume.getUpdatedAt() != null
+                    ? resume.getUpdatedAt().toString()
+                    : resume.getCreatedAt().toString());
+            return resumeData;
+        }).collect(Collectors.toList());
+
         return ResponseEntity.ok(resumes);
     }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Blocation from './img/blocation.png';
 import Aress from './img/aress.png';
@@ -13,32 +14,62 @@ import Trash from './img/trash.png';
 import JobTopBar from '../../components/JobTopBar';
 
 const JobDetail = () => {
-
+    const navigate = useNavigate();
     const { jobId } = useParams();
     const [job, setJob] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFavorited, setIsFavorited] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [userId, setUserId] = useState(null);
+    const [resumes, setResumes] = useState([]);
 
     useEffect(() => {
-        const fetchJobDetails = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/idjobpost?id=${jobId}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setJob(data);
+                // 현재 로그인한 사용자 ID 가져오기
+                const sessionResponse = await axios.get("http://localhost:8080/api/session", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    withCredentials: true,
+                });
+
+                const userId = sessionResponse.data;
+                setUserId(userId);
+
+                // 사용자 정보 가져오기
+                const userResponse = await axios.get(`http://localhost:8080/api/user-details`, {
+                    params: { userId },
+                });
+
+                setUserInfo(userResponse.data); // 사용자 정보 저장
+
+                // 이력서 정보 가져오기
+                const resumesResponse = await axios.get(`http://localhost:8080/api/resumes/user/${userId}`);
+                console.log("Resumes:", resumesResponse.data);
+                setResumes(resumesResponse.data);
+
+                // 현재 job 정보를 가져옴
+                const jobResponse = await axios.get(`http://localhost:8080/api/idjobpost?id=${jobId}`);
+                setJob(jobResponse.data);
+
+                // 즐겨찾기 상태 확인
+                const favoriteResponse = await axios.get("http://localhost:8080/api/favorites/check", {
+                    params: { userId, jobPostId: jobId },
+                });
+
+                setIsFavorited(favoriteResponse.data); 
             } catch (error) {
-                console.error("Error fetching job details:", error);
+                console.error("Error fetching data:", error);
             } finally {
-                setIsLoading(false); // 로딩 상태 해제
+                setIsLoading(false);
             }
         };
 
-        fetchJobDetails();
+        fetchData();
     }, [jobId]);
 
     if (isLoading) {
@@ -49,6 +80,35 @@ const JobDetail = () => {
         return <Container>Job details not found.</Container>;
     }
 
+    const toggleFavorite = async () => {
+        try {
+            if (isFavorited) {
+                // 즐겨찾기 삭제
+                await axios.delete(`http://localhost:8080/api/favorites/${jobId}`, {
+                    params: { userId },
+                });
+                console.log("즐겨찾기 삭제 성공");
+            } else {
+                // 즐겨찾기 추가
+                await axios.post("http://localhost:8080/api/favorites", {
+                    userId,
+                    jobPostId: jobId,
+                });
+                console.log("즐겨찾기 추가 성공");
+            }
+            setIsFavorited(!isFavorited); // 상태 업데이트
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
+    };
+    
+    const handleEditClick = () => {
+        navigate("/mp1"); 
+    };
+
+    const handleResumeEdit = (id) => {
+        navigate(`/editresume/${id}`);
+    };
 
     const handleCopyAddress = () => {
         navigator.clipboard.writeText(job.location);
@@ -72,9 +132,6 @@ const JobDetail = () => {
         );
     };
 
-    const toggleFavorite = () => {
-        setIsFavorited((prev) => !prev); 
-    };
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -126,32 +183,46 @@ const JobDetail = () => {
                                 <AccountInfo>
                                     <AccountHeader>
                                         <h4>계정 정보</h4>
-                                        <EditIcon src={Edit} alt="Edit" />
+                                        <EditIcon
+                                            src={Edit}
+                                            alt="Edit"
+                                            onClick={handleEditClick} // 클릭 이벤트 추가
+                                        />
                                     </AccountHeader>
                                     <BorderedBox>
                                         <AccountDetails>
                                         <p>이름</p>
-                                        <p>김지원</p>
+                                        <p>{userInfo?.name || "정보 없음"}</p>
                                         <p>이메일</p>
-                                        <p>tpdud66770@naver.com</p>
+                                        <p>{userInfo?.email || "정보 없음"}</p>
                                         <p>연락처</p>
-                                        <p>010-1234-1234</p>
+                                        <p>{userInfo?.phone || "정보 없음"}</p>
                                         <p>출생년도</p>
-                                        <p>2001</p>
+                                        <p>{userInfo?.birthDate || "정보 없음"}</p>
                                         </AccountDetails>
                                     </BorderedBox>
                                 </AccountInfo>
 
                                 <ResumeSection>
                                     <h4>지원 이력서</h4>
-                                    <ResumeBox >
-                                        <input type="radio" id="resume" name="resume" />
-                                        <label htmlFor="resume">김지원_이력서_제목</label>
-                                        <ResumeRow>
-                                            <p>2024.11.03 등록</p>
-                                            <ResumeEditIcon src={Edit} alt="Edit" />
-                                        </ResumeRow>
-                                    </ResumeBox >
+                                    {resumes.length > 0 ? (
+                                        resumes.map((resume) => (
+                                            <ResumeBox key={resume.id}>
+                                                <input type="radio" id={`resume-${resume.id}`} name="resume" />
+                                                <label htmlFor={`resume-${resume.id}`}>{resume.title}</label>
+                                                <ResumeRow>
+                                                    <p>
+                                                        {resume.updatedAt
+                                                            ? `수정: ${new Date(resume.updatedAt).toLocaleDateString()}`
+                                                            : `등록: ${new Date(resume.createdAt).toLocaleDateString()}`}
+                                                    </p>
+                                                    <ResumeEditIcon src={Edit} alt="Edit"  onClick={() => handleResumeEdit(resume.id)} />
+                                                </ResumeRow>
+                                            </ResumeBox>
+                                        ))
+                                    ) : (
+                                        <p>등록된 이력서가 없습니다.</p>
+                                    )}
                                 </ResumeSection>
 
                                 <AttachmentSection>

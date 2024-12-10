@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000") // 특정 출처 허용
+
 public class UserController {
 
     @Autowired
@@ -31,6 +32,7 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AdminRepository adminRepository;
 
@@ -439,6 +441,16 @@ public class UserController {
         user.setPassword(newPassword); // 새 비밀번호 설정
         userRepository.save(user);
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
+    @GetMapping("/api/user-details")
+    public ResponseEntity<?> getUserDetails(@RequestParam String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 
 

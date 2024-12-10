@@ -148,12 +148,67 @@ public class JobPostController {
             map.put("companyName", post.getCompanyName());
             map.put("logo", post.getCompany()); // 로고 URL
             map.put("description", post.getAboutCompany());
+            map.put("title",post.getTitle());
             map.put("views", post.getViews());
             return map;
         }).toList();
 
         return ResponseEntity.ok(response);
     }
+
+    //조회수가 높은 공고
+    @GetMapping("/popular-jobposts2")
+    public ResponseEntity<List<Map<String, Object>>> getTopJobPostsByViews() {
+        List<JobPost> jobPosts = jobPostService.getTopJobPostsByViews(9); // 조회수 높은 9개의 공고
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> response = jobPosts.stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("title", post.getTitle());
+            map.put("company", post.getCompanyName());
+            map.put("region", post.getLocation());
+            map.put("views", post.getViews());
+            map.put("salary", post.getSalary());
+
+            if (post.getEndDate() != null) {
+                LocalDateTime endDate = post.getEndDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                map.put("deadline", endDate.format(formatter));
+            } else {
+                map.put("deadline", null);
+            }
+
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    //마감이 얼마 남지 않은 공고
+    @GetMapping("/urgent-jobposts2")
+    public ResponseEntity<List<Map<String, Object>>> getUrgentJobPosts() {
+        List<JobPost> jobPosts = jobPostService.getJobPostsEndingSoon(9);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> response = jobPosts.stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("title", post.getTitle());
+            map.put("company", post.getCompanyName());
+            map.put("region", post.getLocation());
+            map.put("salary", post.getSalary());
+            map.put("deadline", post.getEndDate() != null
+                    ? post.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(formatter)
+                    : null);
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
 
 
 
