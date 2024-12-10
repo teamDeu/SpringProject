@@ -409,3 +409,41 @@ export const DeleteGNotice = async (id) => {
         throw error;
     }
 };
+// 특정 사용자의 관심기업 목록 가져오기
+export const GetFavoritesByUserId = async (userId) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/favorites', {
+            params: { userId }, // userId를 쿼리 파라미터로 전달
+        });
+        console.log("Favorites fetched:", response.data); // 디버깅 로그
+        return response.data; // 관심기업 데이터 반환
+    } catch (error) {
+        console.error('Error fetching favorite companies:', error);
+        throw error;
+    }
+};
+
+// 특정 관심기업 삭제
+export const DeleteFavoriteById = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/favorites/${id}`);
+        console.log(`Favorite with ID ${id} deleted`); // 삭제 확인 로그
+        return response.data; // 삭제 성공 메시지 반환
+    } catch (error) {
+        console.error(`Error deleting favorite with ID ${id}:`, error);
+        throw error;
+    }
+};
+
+//스크랩
+export const GetUserScrapPosts = async (userId) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/user/scrap-posts', {
+            params: { userId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching scrap posts:', error);
+        throw error;
+    }
+};

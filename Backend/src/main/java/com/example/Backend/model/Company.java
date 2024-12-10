@@ -51,3 +51,4 @@ public class Company {
     @Column(name ="logo_url")
     private String logoUrl;
 }
+
