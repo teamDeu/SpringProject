@@ -409,6 +409,7 @@ export const DeleteGNotice = async (id) => {
         throw error;
     }
 };
+
 // 특정 사용자의 관심기업 목록 가져오기
 export const GetFavoritesByUserId = async (userId) => {
     try {
@@ -447,3 +448,18 @@ export const GetUserScrapPosts = async (userId) => {
         throw error;
     }
 };
+
+
+export const GetCandidate = async (postId) =>{
+    return await axios.get('http://localhost:8080/api/candidate',{
+        params: {
+            postId : postId
+        }
+    })
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+} 
+

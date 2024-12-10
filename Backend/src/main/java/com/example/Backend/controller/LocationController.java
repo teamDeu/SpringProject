@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/locations")
@@ -17,6 +19,15 @@ public class LocationController {
     @GetMapping
     public List<Location> getAllLocations() {
         return locationService.findAll();
+    }
+
+    @GetMapping("/grouped")
+    public Map<String, List<String>> getGroupedLocations() {
+        List<Location> locations = locationService.findAll();
+        return locations.stream().collect(Collectors.groupingBy(
+                Location::getRegion,
+                Collectors.mapping(Location::getName, Collectors.toList())
+        ));
     }
 
     @PostMapping

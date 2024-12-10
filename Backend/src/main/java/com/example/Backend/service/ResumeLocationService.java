@@ -26,4 +26,14 @@ public class ResumeLocationService {
         ResumeLocationId id = new ResumeLocationId(resumeId, locationId);
         resumeLocationRepository.deleteById(id);
     }
+
+    public List<ResumeLocation> findByResumeId(Integer resumeId) {
+        return resumeLocationRepository.findById_ResumeId(resumeId);
+    }
+
+    public void deleteByResumeId(Integer resumeId) {
+        List<ResumeLocation> locations = resumeLocationRepository.findById_ResumeId(resumeId);
+        resumeLocationRepository.deleteAll(locations);
+    }
+
 }

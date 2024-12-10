@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import styled from 'styled-components';
 import Png from './img/png.png';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,20 +13,30 @@ import JobTopBar from '../../components/JobTopBar';
 const MyResume = ({ onAddResumeClick }) => {
     const [showMenu, setShowMenu] = useState(null); 
     const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [resumes, setResumes] = useState([
-        { id: 1, title: "김세영_이력서1", description: "첫번째 이력서 수정중입니다!", date: "2024.11.04 등록" },
-    ]); 
+    const [resumes, setResumes] = useState([]); 
     const navigate = useNavigate();
 
     
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/resumes') 
-            .then((response) => response.json())
-            .then((data) => {
-                setResumes(data);
-            })
-            .catch((error) => console.error('Error fetching resumes:', error));
+        const fetchResumes = async () => {
+            try {
+                // 현재 로그인한 사용자의 ID 가져오기
+                const sessionResponse = await axios.get("http://localhost:8080/api/session", {
+                    withCredentials: true, // 세션 쿠키 포함
+                });
+
+                const userId = sessionResponse.data;
+
+                // 로그인한 사용자의 이력서 가져오기
+                const resumeResponse = await axios.get(`http://localhost:8080/api/resumes/user/${userId}`);
+                setResumes(resumeResponse.data);
+            } catch (error) {
+                console.error("Error fetching resumes:", error);
+            }
+        };
+
+        fetchResumes();
     }, []);
 
     const handleResumeEdit = (id) => {
@@ -52,18 +63,24 @@ const MyResume = ({ onAddResumeClick }) => {
         );
     };
 
-    const handleResumeDelete = (id) => {
-        fetch(`http://localhost:8080/api/resumes/${id}`, { 
-            method: 'DELETE' 
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete resume');
-                }
+    const handleResumeDelete = async (id) => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/resumes/${id}`, {
+                withCredentials: true, // 세션 쿠키 포함
+            });
+    
+            if (response.status === 204) {
+                // 성공적으로 삭제된 경우, 로컬 상태에서도 해당 이력서 제거
                 setResumes((prevResumes) => prevResumes.filter((resume) => resume.id !== id));
                 setShowMenu(null); // 메뉴 닫기
-            })
-            .catch((error) => console.error('Error deleting resume:', error));
+                alert("이력서가 성공적으로 삭제되었습니다.");
+            } else {
+                throw new Error(`Failed to delete resume. Status code: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Error deleting resume:", error);
+            alert("이력서 삭제에 실패했습니다. 다시 시도해주세요.");
+        }
     };
 
     const handleDownloadPDF = async (resume) => {
@@ -114,7 +131,11 @@ const MyResume = ({ onAddResumeClick }) => {
                                 <ResumeDescription>{resume.description}</ResumeDescription>
                                 <Actions>
                                     <Date>
-                                        {resume.createdAt ? new window.Date(resume.createdAt).toLocaleDateString() : 'N/A'}
+                                        {resume.updatedAt 
+                                            ? "수정   :  " + new window.Date(resume.updatedAt).toLocaleDateString() 
+                                            : resume.createdAt 
+                                                ? new window.Date(resume.createdAt).toLocaleDateString() 
+                                                : 'N/A'}
                                     </Date>
 
                                 </Actions>

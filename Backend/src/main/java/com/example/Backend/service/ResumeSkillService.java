@@ -25,4 +25,9 @@ public class ResumeSkillService {
     public void deleteById(Integer resumeId, Long  skillId) {
         resumeSkillRepository.deleteById(new ResumeSkillId(resumeId, skillId));
     }
+
+    public List<ResumeSkill> findByResumeId(Integer resumeId) {
+        return resumeSkillRepository.findByResumeId(resumeId);
+    }
+
 }

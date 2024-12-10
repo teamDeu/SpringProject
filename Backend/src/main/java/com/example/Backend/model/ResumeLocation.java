@@ -21,6 +21,5 @@ public class ResumeLocation {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+
 }

@@ -73,4 +73,23 @@ public class EuserController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Euser> updateEuser(@PathVariable String id, @RequestBody Euser updatedEuser) {
+        Euser existingEuser = euserService.findById(id);
+        if (existingEuser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // 기존 사용자 정보 업데이트
+        existingEuser.setName(updatedEuser.getName());
+        existingEuser.setEmail(updatedEuser.getEmail());
+        existingEuser.setBirth(updatedEuser.getBirth());
+        existingEuser.setPhone(updatedEuser.getPhone());
+        existingEuser.setProfileImg(updatedEuser.getProfileImg());
+
+        Euser savedEuser = euserService.save(existingEuser);
+        return ResponseEntity.ok(savedEuser);
+    }
+
+
 }

@@ -28,6 +28,12 @@ public class Resume {
     private LocalDate createdAt;
     private LocalDate  updatedAt;
 
+    public Resume() {}
+
+    public Resume(Integer id) {
+        this.id = id;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {

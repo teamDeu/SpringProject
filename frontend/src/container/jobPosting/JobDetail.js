@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Blocation from './img/blocation.png';
 import Aress from './img/aress.png';
@@ -13,178 +14,101 @@ import Trash from './img/trash.png';
 import JobTopBar from '../../components/JobTopBar';
 
 const JobDetail = () => {
-
-    const jobData = {
-        1: {
-            title: "전기전자 H/W, F/W 설계",
-            company: "한전 KPS",
-            logo: "https://via.placeholder.com/50",
-            region: "경기권역",
-            experience: "신입",
-            education: "대졸 이상",
-            deadline: "11.23(목)",
-            location: "서울 서초구 방배로27길 3 3층",
-            description: "Python, MySQL, AWS를 사용한 백엔드 설계 및 개발...",
-            skills: ["Python", "REST API", "AWS", "Python", "REST API", "Python", "REST API", "Python", "REST API"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-
-                images : [Acompany, Acompany2, Acompany, Acompany2],
-
-                description: [
-                    "[GNA COMPANY]\n지엔에이컴퍼니는 게인사의 니즈에 최적화된 마케팅을 제공하는 게이머 전용 플랫폼  ‘플레이오’라는 안드로이드 앱을 서비스하고 있습니다. 게임을 사랑하는 유저들에게 최고의 혜택을 제공하는 플랫폼 서비스로써, 다양한 게임 엔터테인먼트 경험에 가치를 더하고자 합니다. 한국을 시작으로 미국, 일본에 서비스하고 있으며, 대만 진출을 준비하고 있습니다.",
-                    "[플레이오 PlayIo]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.Best Value for Gamers Nexon, Moon Active 등 200여 개의 파트너사들과 협업, 8,000,000 이상의 게임, 약 3,000,000명이 플레이오를 다운 받았으며, 3,000개 이상의 게임이 입점해 있습니다.",
-                ],
-            },
-        
-        },
-        2: {
-            title: "온라인 AMD 채용",
-            company: "Parity",
-            logo: "https://via.placeholder.com/50",
-            region: "서울권역",
-            experience: "1년",
-            education: "대졸 이상",
-            deadline: "11.29(수)",
-            location: "서울 중구 을지로1가 100",
-            description: "AMD와 관련된 업무...",
-            skills: ["JavaScript", "React", "CSS"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-                images: [
-                    "https://via.placeholder.com/600x400?text=GNA+Company",
-                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
-                ],
-                description: [
-                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
-                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
-                ],
-            },
-        
-        },
-        3: {
-            title: "온라인 AMD 채용",
-            company: "Parity",
-            logo: "https://via.placeholder.com/50",
-            region: "서울권역",
-            experience: "1년",
-            education: "대졸 이상",
-            deadline: "11.29(수)",
-            location: "서울 중구 을지로1가 100",
-            description: "AMD와 관련된 업무...",
-            skills: ["JavaScript", "React", "CSS"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-                images: [
-                    "https://via.placeholder.com/600x400?text=GNA+Company",
-                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
-                ],
-                description: [
-                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
-                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
-                ],
-            },
-        
-        },
-        4: {
-            title: "온라인 AMD 채용",
-            company: "Parity",
-            logo: "https://via.placeholder.com/50",
-            region: "서울권역",
-            experience: "1년",
-            education: "대졸 이상",
-            deadline: "11.29(수)",
-            location: "서울 중구 을지로1가 100",
-            description: "AMD와 관련된 업무...",
-            skills: ["JavaScript", "React", "CSS"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-                images: [
-                    "https://via.placeholder.com/600x400?text=GNA+Company",
-                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
-                ],
-                description: [
-                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
-                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
-                ],
-            },
-        
-        },
-        5: {
-            title: "온라인 AMD 채용",
-            company: "Parity",
-            logo: "https://via.placeholder.com/50",
-            region: "서울권역",
-            experience: "1년",
-            education: "대졸 이상",
-            deadline: "11.29(수)",
-            location: "서울 중구 을지로1가 100",
-            description: "AMD와 관련된 업무...",
-            skills: ["JavaScript", "React", "CSS"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-                images: [
-                    "https://via.placeholder.com/600x400?text=GNA+Company",
-                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
-                ],
-                description: [
-                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
-                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
-                ],
-            },
-        
-        },
-        6: {
-            title: "온라인 AMD 채용",
-            company: "Parity",
-            logo: "https://via.placeholder.com/50",
-            region: "서울권역",
-            experience: "1년",
-            education: "대졸 이상",
-            deadline: "11.29(수)",
-            location: "서울 중구 을지로1가 100",
-            description: "AMD와 관련된 업무...",
-            skills: ["JavaScript", "React", "CSS"],
-            tasks: ["플레이오 서비스 백엔드 개발 ", "데이터 처리(수집, 가공) Batch 개발 / 관리 (Python, MySQL, AWS S3)","API 개발 / 관리 (Python)"],
-            requirements: ["Web에 대한 이해 - http 프로토콜, 헤더, 캐시, 웹소켓, 전반적인 동작과정", "RDB, MySQL, MongoDB 사용 경험", "Cloud 환경(AWS, Azure 등) 경험이 있으신 분"],
-            preferences: ["서비스 개발 프로세스 및 API기반 서비스에 대한 폭넓은 이해", "Swagger 등 OpenAPI 기반 RESTful 서비스 개발 유경험자", "Python Pandas 라이브러리를 사용해보신 분", "클린코드를 만들기 위해 지속적으로 고민하고 리팩토링하시는 분"],
-            benefits: ["Slack, Notion, Jira 등 다양한 업무용 도구(SaaS)를 적극적으로 사용합니다.", "27” 4K 모니터를 기본으로 사용하고 필요시 듀얼 모니터도 지원합니다.", "몸과 마음의 건강을 위해 건강검진과 심리상담을 지원합니다.", " 주 1회 재택 근무를 합니다.", "생일선물과 경조사, 명절선물을 챙겨드립니다."],
-            companyDescription: {
-                images: [
-                    "https://via.placeholder.com/600x400?text=GNA+Company",
-                    "https://via.placeholder.com/600x400?text=PlayIo+Service",
-                ],
-                description: [
-                    "[GNA COMPANY]\n저희 회사는 게임사와 네크워크 최적화를 제공하는 게이머 중심 플랫폼으로 '플레이오'라는 안드로이드 앱 서비스를 제공합니다.",
-                    "[PlayIo 서비스]\nBest Value for Gamers! Nexon, Moon Active 등 글로벌 파트너사들과 협력합니다.",
-                ],
-            },
-        
-        },
-    };
-
+    const navigate = useNavigate();
     const { jobId } = useParams();
-    const job = jobData[jobId];
-    
+    const [job, setJob] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isFavorited, setIsFavorited] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [userId, setUserId] = useState(null);
+    const [resumes, setResumes] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // 현재 로그인한 사용자 ID 가져오기
+                const sessionResponse = await axios.get("http://localhost:8080/api/session", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    withCredentials: true,
+                });
+
+                const userId = sessionResponse.data;
+                setUserId(userId);
+
+                // 사용자 정보 가져오기
+                const userResponse = await axios.get(`http://localhost:8080/api/user-details`, {
+                    params: { userId },
+                });
+
+                setUserInfo(userResponse.data); // 사용자 정보 저장
+
+                // 이력서 정보 가져오기
+                const resumesResponse = await axios.get(`http://localhost:8080/api/resumes/user/${userId}`);
+                console.log("Resumes:", resumesResponse.data);
+                setResumes(resumesResponse.data);
+
+                // 현재 job 정보를 가져옴
+                const jobResponse = await axios.get(`http://localhost:8080/api/idjobpost?id=${jobId}`);
+                setJob(jobResponse.data);
+
+                // 즐겨찾기 상태 확인
+                const favoriteResponse = await axios.get("http://localhost:8080/api/favorites/check", {
+                    params: { userId, jobPostId: jobId },
+                });
+
+                setIsFavorited(favoriteResponse.data); 
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [jobId]);
+
+    if (isLoading) {
+        return <Container>Loading...</Container>;
+    }
+
+    if (!job) {
+        return <Container>Job details not found.</Container>;
+    }
+
+    const toggleFavorite = async () => {
+        try {
+            if (isFavorited) {
+                // 즐겨찾기 삭제
+                await axios.delete(`http://localhost:8080/api/favorites/${jobId}`, {
+                    params: { userId },
+                });
+                console.log("즐겨찾기 삭제 성공");
+            } else {
+                // 즐겨찾기 추가
+                await axios.post("http://localhost:8080/api/favorites", {
+                    userId,
+                    jobPostId: jobId,
+                });
+                console.log("즐겨찾기 추가 성공");
+            }
+            setIsFavorited(!isFavorited); // 상태 업데이트
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
+    };
+    
+    const handleEditClick = () => {
+        navigate("/mp1"); 
+    };
+
+    const handleResumeEdit = (id) => {
+        navigate(`/editresume/${id}`);
+    };
 
     const handleCopyAddress = () => {
         navigator.clipboard.writeText(job.location);
@@ -208,9 +132,6 @@ const JobDetail = () => {
         );
     };
 
-    const toggleFavorite = () => {
-        setIsFavorited((prev) => !prev); 
-    };
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -244,7 +165,7 @@ const JobDetail = () => {
                     </HeaderRight>
 
                 </Header>
-                <Company>{job.company}</Company>
+                <Company>{job.companyName}</Company>
                 <Divider />
                 {showModal && (
                     <ModalOverlay onClick={toggleModal}>
@@ -262,32 +183,46 @@ const JobDetail = () => {
                                 <AccountInfo>
                                     <AccountHeader>
                                         <h4>계정 정보</h4>
-                                        <EditIcon src={Edit} alt="Edit" />
+                                        <EditIcon
+                                            src={Edit}
+                                            alt="Edit"
+                                            onClick={handleEditClick} // 클릭 이벤트 추가
+                                        />
                                     </AccountHeader>
                                     <BorderedBox>
                                         <AccountDetails>
                                         <p>이름</p>
-                                        <p>김지원</p>
+                                        <p>{userInfo?.name || "정보 없음"}</p>
                                         <p>이메일</p>
-                                        <p>tpdud66770@naver.com</p>
+                                        <p>{userInfo?.email || "정보 없음"}</p>
                                         <p>연락처</p>
-                                        <p>010-1234-1234</p>
+                                        <p>{userInfo?.phone || "정보 없음"}</p>
                                         <p>출생년도</p>
-                                        <p>2001</p>
+                                        <p>{userInfo?.birthDate || "정보 없음"}</p>
                                         </AccountDetails>
                                     </BorderedBox>
                                 </AccountInfo>
 
                                 <ResumeSection>
                                     <h4>지원 이력서</h4>
-                                    <ResumeBox >
-                                        <input type="radio" id="resume" name="resume" />
-                                        <label htmlFor="resume">김지원_이력서_제목</label>
-                                        <ResumeRow>
-                                            <p>2024.11.03 등록</p>
-                                            <ResumeEditIcon src={Edit} alt="Edit" />
-                                        </ResumeRow>
-                                    </ResumeBox >
+                                    {resumes.length > 0 ? (
+                                        resumes.map((resume) => (
+                                            <ResumeBox key={resume.id}>
+                                                <input type="radio" id={`resume-${resume.id}`} name="resume" />
+                                                <label htmlFor={`resume-${resume.id}`}>{resume.title}</label>
+                                                <ResumeRow>
+                                                    <p>
+                                                        {resume.updatedAt
+                                                            ? `수정: ${new Date(resume.updatedAt).toLocaleDateString()}`
+                                                            : `등록: ${new Date(resume.createdAt).toLocaleDateString()}`}
+                                                    </p>
+                                                    <ResumeEditIcon src={Edit} alt="Edit"  onClick={() => handleResumeEdit(resume.id)} />
+                                                </ResumeRow>
+                                            </ResumeBox>
+                                        ))
+                                    ) : (
+                                        <p>등록된 이력서가 없습니다.</p>
+                                    )}
                                 </ResumeSection>
 
                                 <AttachmentSection>
@@ -333,18 +268,18 @@ const JobDetail = () => {
                     <InfoContainer>
                         <InfoBlock>
                             <InfoItem>
-                                <strong>경력</strong> {job.experience}
+                                <strong>경력</strong> {job.experience || "정보 없음"}
                             </InfoItem>
                             <InfoItem>
-                                <strong>학력</strong> {job.education}
+                                <strong>학력</strong> {job.education || "정보 없음"}
                             </InfoItem>
                             <InfoItem>
-                                <strong>마감일</strong> {job.deadline}
+                                <strong>마감일</strong> {job.endDate || "정보 없음"}
                             </InfoItem>
                             <InfoItem>
                                 <strong>근무지역</strong>
                                 <AddressContainer>
-                                    {job.location}
+                                    {job.location || "정보 없음"}
                                     <IconWrapper>
                                         <Icon src={Blocation} onClick={handleOpenMap} /> 지도보기
                                         <Icon src={Aress} onClick={handleCopyAddress} />
@@ -359,13 +294,13 @@ const JobDetail = () => {
                     <InfoContainer>
                         <InfoBlock>
                             <InfoItem>
-                                <strong>근무형태</strong> 정규직 수습기간 3개월
+                                <strong>근무형태</strong> {job.employmentType || "정보 없음"}
                             </InfoItem>
                             <InfoItem>
-                                <strong>급여</strong> 면접 후 결정
+                                <strong>급여</strong> {job.salary || "정보 없음"}
                             </InfoItem>
                             <InfoItem>
-                                <strong>출퇴근 시간</strong> 08:00 ~ 17:00
+                                <strong>출퇴근 시간</strong> {job.commuteTime || "정보 없음"}
                             </InfoItem>
                         </InfoBlock>
                     </InfoContainer>
@@ -374,64 +309,96 @@ const JobDetail = () => {
                 <Skills>
                     <h3>기술 스택</h3>
                     <SkillList>
-                        {job.skills.map((skill, index) => (
-                            <SkillItem key={index}>{skill}</SkillItem>
-                        ))}
+                        {Array.isArray(job.skills) ? (
+                            job.skills.map((skill, index) => (
+                                <SkillItem key={index}>{skill.name}</SkillItem>
+                            ))
+                        ) : (
+                            <SkillItem>No skills available</SkillItem>
+                        )}
                     </SkillList>
+
+
                 </Skills>
+
+
+                
                 <Section>
                     <SectionTitle>주요 업무</SectionTitle>
                     <ul>
-                        {job.tasks.map((task, index) => (
-                            <li key={index}>{task}</li>
-                        ))}
+                        {Array.isArray(job.jobDuties) ? (
+                            job.jobDuties.map((duty, index) => (
+                                <li key={index}>{duty.value}</li>
+                            ))
+                        ) : (
+                            <li>주요 업무 정보가 없습니다.</li>
+                        )}
                     </ul>
                 </Section>
                 <Section>
                     <SectionTitle>자격 요건</SectionTitle>
                     <ul>
-                        {job.requirements.map((req, index) => (
-                            <li key={index}>{req}</li>
-                        ))}
+                        {Array.isArray(job.requirements) ? (
+                            job.requirements.map((requirement, index) => (
+                                <li key={index}>{requirement.value}</li>
+                            ))
+                        ) : (
+                            <li>자격 요건 정보가 없습니다.</li>
+                        )}
                     </ul>
                 </Section>
                 <Section>
                     <SectionTitle>우대 사항</SectionTitle>
                     <ul>
-                        {job.preferences.map((pref, index) => (
-                            <li key={index}>{pref}</li>
-                        ))}
+                        {Array.isArray(job.additionalPreferences) ? (
+                            job.additionalPreferences.map((preference, index) => (
+                                <li key={index}>{preference.value}</li>
+                            ))
+                        ) : (
+                            <li>우대 사항 정보가 없습니다.</li>
+                        )}
                     </ul>
                 </Section>
                 <Section>
                     <SectionTitle>복지 및 혜택</SectionTitle>
-                    <HighlightText>
-                        개인의 성장이 팀의 성장이라고 믿습니다. 개인의 성장을 위해 다양한 지원을 아끼지 않습니다.
-                    </HighlightText>
+                    {job.mainBenefit ? (
+                        <HighlightText>{job.mainBenefit.value}</HighlightText>
+                    ) : (
+                        <HighlightText>메인 복지 정보가 없습니다.</HighlightText>
+                    )}
                     <ul>
-                        {job.benefits.map((benefit, index) => (
-                            <li key={index}>{benefit}</li>
-                        ))}
+                        {Array.isArray(job.employeeBenefits) ? (
+                            job.employeeBenefits.map((benefit, index) => (
+                                <li key={index}>{benefit.value}</li>
+                            ))
+                        ) : (
+                            <li>복지 및 혜택 정보가 없습니다.</li>
+                        )}
                     </ul>
                 </Section>
                 <Divider />
                 <CompanySection>
                     <SectionTitle>기업/서비스 소개</SectionTitle>
                     <ImageCarousel>
-                        <Arrow onClick={handlePrevImage}>&lt;</Arrow>
-                        <ImageWrapper>
-                            <img
-                                src={job.companyDescription.images[currentImageIndex]}
-                                alt={`기업 소개 이미지 ${currentImageIndex + 1}`}
-                            />
-                        </ImageWrapper>
-                        <Arrow onClick={handleNextImage}>&gt;</Arrow>
+                        {job.companyDescription && job.companyDescription.images ? (
+                            <>
+                                <Arrow onClick={handlePrevImage}>&lt;</Arrow>
+                                <ImageWrapper>
+                                    <img
+                                        src={job.companyDescription.images[currentImageIndex]}
+                                        alt={`기업 소개 이미지 ${currentImageIndex + 1}`}
+                                    />
+                                </ImageWrapper>
+                                <Arrow onClick={handleNextImage}>&gt;</Arrow>
+                            </>
+                        ) : (
+                            <p>이미지를 불러올 수 없습니다.</p>
+                        )}
                     </ImageCarousel>
-                    <CompanyDescriptions>
-                        {job.companyDescription.description.map((desc, index) => (
-                            <DescriptionText key={index}>{desc}</DescriptionText>
-                        ))}
-                    </CompanyDescriptions>
+
+                    <DescriptionText>
+                        {job.aboutCompany || "기업 소개글이 없습니다."}
+                    </DescriptionText>
                 </CompanySection>        
 
             </Container>
@@ -691,6 +658,7 @@ const CompanyDescriptions = styled.div`
 const DescriptionText = styled.p`
     font-size: 14px;
     line-height: 1.6;
+    margin-left: 30px;
     margin-top: 40px;
     white-space: pre-wrap;
     margin-bottom: 20px;

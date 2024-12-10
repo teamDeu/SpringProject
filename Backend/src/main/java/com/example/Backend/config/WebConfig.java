@@ -30,9 +30,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(true);
 
-        registry.addMapping("/uploads/**") // 해당 URL 경로
-                .allowedOrigins("http://localhost:3000") // React 앱 주소 (포트 번호 포함)
-                .allowedMethods("GET"); // GET 요청만 허용
+        registry.addMapping("/uploads/**")
+                .allowedOrigins("http://localhost:3000") // React 앱 주소
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // 필요한 HTTP 메서드 추가
+                .allowCredentials(true) // 자격 증명 허용
+                .exposedHeaders("Content-Disposition", "Content-Type") // 필요한 헤더 노출
+                .maxAge(3600); // CORS 캐시 기간 (초 단위)
     }
 
 }

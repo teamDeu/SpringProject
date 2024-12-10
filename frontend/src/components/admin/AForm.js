@@ -71,7 +71,7 @@ const AnnouncementItem = styled.div`
 `;
 
 const ItemCheckbox = styled.input`
-  margin-left:-25px;
+  margin-left: -25px;
   margin-right: 20px;
   width: 17px;
   height: 17px;
@@ -101,7 +101,7 @@ const DateStyled = styled.div`
   color: gray;
 `;
 
-const AForm = ({ 
+const AForm = ({
   selectedType,
   selectedCategory = "전체",
   searchTerm = "",
@@ -115,7 +115,7 @@ const AForm = ({
   const [announcements, setAnnouncements] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true); // 로딩 상태 기본값을 true로 설정
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +124,6 @@ const AForm = ({
         const data = await GetGNoticesByTarget(selectedType);
         console.log('GNotices Data:', data); // API 응답 데이터 확인
         setAnnouncements(data || []);
-        onTotalItemsChange(data ? data.length : 0);
       } catch (error) {
         console.error("Error fetching GNotices:", error);
         alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
@@ -133,7 +132,7 @@ const AForm = ({
     };
 
     fetchData();
-  }, [selectedType, onTotalItemsChange]);
+  }, [selectedType]);
 
   useEffect(() => {
     if (resetSelections) {
@@ -206,15 +205,14 @@ const AForm = ({
     return matchesType && matchesCategory && matchesSearch;
   });
 
+  // 페이지네이션 처리
   useEffect(() => {
-    onTotalItemsChange(filteredAnnouncements.length);
+    onTotalItemsChange(filteredAnnouncements.length); // filteredAnnouncements의 길이를 페이지 처리에 반영
   }, [filteredAnnouncements.length, onTotalItemsChange]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAnnouncements = filteredAnnouncements.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedAnnouncements = filteredAnnouncements.slice(startIndex, endIndex);
 
   return (
     <AFormContainer>
@@ -234,25 +232,29 @@ const AForm = ({
         </ActionContainer>
       )}
 
-      {!loading && paginatedAnnouncements.length > 0 && (
-        <AnnouncementList>
-          {paginatedAnnouncements.map((item) => (
-            <AnnouncementItem key={item.id}>
-              {!hideActions && (
-                <ItemCheckbox
-                  type="checkbox"
-                  checked={selectedItems.includes(item.id)}
-                  onChange={() => handleItemCheckbox(item.id)}
-                />
-              )}
-              <ContentContainer>
-                <Title>[{item.title}]</Title> {/* 제목에 대괄호 추가 */}
-                <Question>{item.question}</Question> {/* 스타일 변경된 질문 */}
-              </ContentContainer>
-              <DateStyled>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}</DateStyled>
-            </AnnouncementItem>
-          ))}
-        </AnnouncementList>
+      {loading ? (
+        <div></div>
+      ) : (
+        paginatedAnnouncements.length > 0 && (
+          <AnnouncementList>
+            {paginatedAnnouncements.map((item) => (
+              <AnnouncementItem key={item.id}>
+                {!hideActions && (
+                  <ItemCheckbox
+                    type="checkbox"
+                    checked={selectedItems.includes(item.id)}
+                    onChange={() => handleItemCheckbox(item.id)}
+                  />
+                )}
+                <ContentContainer>
+                  <Title>[{item.title}]</Title>
+                  <Question>{item.question}</Question>
+                </ContentContainer>
+                <DateStyled>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}</DateStyled>
+              </AnnouncementItem>
+            ))}
+          </AnnouncementList>
+        )
       )}
     </AFormContainer>
   );

@@ -12,6 +12,13 @@ public class JobCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; // Primary Key
 
+    public JobCategory() {}
+
+
+    public JobCategory(Integer id) {
+        this.id = id;
+    }
+
     @Column(name = "name", nullable = false, length = 255)
     private String name; // Job category name
 

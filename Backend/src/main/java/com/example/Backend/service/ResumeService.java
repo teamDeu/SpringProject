@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ResumeService {
@@ -15,6 +16,14 @@ public class ResumeService {
 
     public List<Resume> findAll() {
         return resumeRepository.findAll();
+    }
+
+    public List<Resume> findByUserId(String userId) {
+        return resumeRepository.findByUserId(userId);
+    }
+
+    public Optional<Resume> findById(Integer id) {
+        return resumeRepository.findById(id);
     }
 
     public Resume save(Resume resume) {
