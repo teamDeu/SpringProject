@@ -455,13 +455,12 @@ export const GetUserFavoriteCompanies = async (userId) => {
         const response = await axios.get('http://localhost:8080/api/user/favorite-companies', {
             params: { userId },
         });
-<<<<<<< HEAD
         return response.data;
     } catch (error) {
         console.error("Error fetching favorite companies:", error);
         throw error;
     }
-=======
+
 } 
 export const PostCandidate = (candidate) => {
     console.log("Sending candidate:", candidate); // 요청 데이터 확인용 로그
@@ -471,7 +470,7 @@ export const PostCandidate = (candidate) => {
             console.error('Error posting candidate:', error);
             throw error;
         });
->>>>>>> 1e750d08de94c3e9226534a3d92ef2fecd6bd962
+
 };
 
 export const GetCompanyInfo = async(companyId) => {
