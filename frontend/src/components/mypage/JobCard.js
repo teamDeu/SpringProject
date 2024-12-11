@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const JobCard = ({ company, title, experience, education, location, deadline }) => {
+    console.log("Deadline received by JobCard:", deadline);
     return (
         <Wrapper>
             <CardContainer>
@@ -12,11 +13,11 @@ const JobCard = ({ company, title, experience, education, location, deadline }) 
                     <Company>{company}</Company>
                     <Title>{title}</Title>
                     <Details>
-                        경력 | {experience} &nbsp; 학력 | {education} &nbsp; 근무지역 | {location}
+                        경력 | {experience || "무관"} &nbsp; 학력 | {education || "무관"} &nbsp; 근무지역 | {location || "미정"}
                     </Details>
                 </ContentContainer>
                 <ActionContainer>
-                    <Deadline>마감일 {deadline}</Deadline>
+                    <Deadline>마감일 {deadline || "미정"}</Deadline>
                     <ApplyButton>지원하기</ApplyButton>
                 </ActionContainer>
             </CardContainer>

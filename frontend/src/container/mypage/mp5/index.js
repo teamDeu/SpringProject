@@ -1,83 +1,46 @@
-// index.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import JobTopBar from '../../../components/JobTopBar';
 import JobCard from '../../../components/mypage/JobCard';
-import CompanyCard from '../../../components/mypage/CompanyCard';
+import { GetUserScrapPosts, getUserInfo } from '../../../api/api'; // API 함수 가져오기
 
 const Index = () => {
     const [activeTab, setActiveTab] = useState("스크랩"); // 탭 상태 관리
-    const [selectedCompany, setSelectedCompany] = useState(null); // 선택된 기업 상태
+    const [scrapList, setScrapList] = useState([]); // 스크랩 데이터 상태
+    const [userId, setUserId] = useState(null); // 사용자 ID 상태
+
+    // 세션에서 사용자 ID 가져오기
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const userInfo = await getUserInfo(); // 사용자 정보 가져오기 API 호출
+                setUserId(userInfo.id); // 사용자 ID 설정
+            } catch (error) {
+                console.error("Failed to fetch user info:", error);
+                alert("로그인이 필요합니다.");
+                // 로그인이 필요하면 로그인 페이지로 이동
+                window.location.href = "/login";
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
+    // 스크랩 데이터 가져오기
+    useEffect(() => {
+        if (!userId || activeTab !== "스크랩") return;
+
+        GetUserScrapPosts(userId)
+            .then((data) => {
+                setScrapList(data); // 스크랩 데이터 상태 업데이트
+            })
+            .catch((error) => {
+                console.error("스크랩 데이터 가져오기 실패:", error);
+            });
+    }, [userId, activeTab]);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
-        setSelectedCompany(null); // 탭 전환 시 선택 초기화
-    };
-
-    const handleCompanyClick = (companyName) => {
-        setSelectedCompany(companyName); // 선택된 기업 업데이트
-    };
-
-    // 스크랩된 채용 정보
-    const scrapList = [
-        {
-            company: "지엔에이컴퍼니",
-            title: "[플레이오] Python 백엔드 개발",
-            experience: "2 ~ 6년",
-            education: "무관",
-            location: "서울",
-            deadline: "2024-11-13",
-        },
-        {
-            company: "지엔에이컴퍼니",
-            title: "[플레이오] Node.js 개발자",
-            experience: "1 ~ 3년",
-            education: "무관",
-            location: "부산",
-            deadline: "2024-12-01",
-        },
-    ];
-
-    // 관심기업 목록
-    const companyList = [
-        { logo: "https://via.placeholder.com/50", name: "(주)네오아이티피", jobs: 4 },
-        { logo: "https://via.placeholder.com/50", name: "(주)패러티", jobs: 4 },
-        { logo: "https://via.placeholder.com/50", name: "(주)에스에이엠", jobs: 0 },
-        { logo: "https://via.placeholder.com/50", name: "인터링크(주)", jobs: 3 },
-        { logo: "https://via.placeholder.com/50", name: "(주)지엔에이컴퍼니", jobs: 3 },
-        { logo: "https://via.placeholder.com/50", name: "효성그룹", jobs: 4 },
-    ];
-
-    // 각 기업별 채용 정보
-    const jobList = {
-        "(주)네오아이티피": [
-            {
-                company: "(주)네오아이티피",
-                title: "[네오아이티피] Java 백엔드 개발자",
-                experience: "3 ~ 5년",
-                education: "학사 이상",
-                location: "서울",
-                deadline: "2024-11-20",
-            },
-        ],
-        "(주)지엔에이컴퍼니": [
-            {
-                company: "(주)지엔에이컴퍼니",
-                title: "[플레이오] Python 백엔드 개발",
-                experience: "2 ~ 6년",
-                education: "무관",
-                location: "서울",
-                deadline: "2024-11-13",
-            },
-            {
-                company: "(주)지엔에이컴퍼니",
-                title: "[플레이오] Node.js 개발자",
-                experience: "1 ~ 3년",
-                education: "무관",
-                location: "부산",
-                deadline: "2024-12-01",
-            },
-        ],
     };
 
     return (
@@ -93,56 +56,24 @@ const Index = () => {
                     >
                         스크랩
                     </Tab>
-                    <Tab
-                        active={activeTab === "관심기업"}
-                        onClick={() => handleTabClick("관심기업")}
-                    >
-                        관심기업
-                    </Tab>
                 </Tabs>
 
                 {/* 스크랩 탭 */}
                 {activeTab === "스크랩" && (
                     <Content>
-                        <ControlRow>
-                            <Checkbox type="checkbox" />
-                            <DeleteText>삭제</DeleteText>
-                        </ControlRow>
                         <JobList>
                             {scrapList.map((job, index) => (
-                                <JobCard key={index} {...job} />
-                            ))}
-                        </JobList>
-                    </Content>
-                )}
-
-                {/* 관심기업 탭 */}
-                {activeTab === "관심기업" && (
-                    <Content>
-                        <CompanyList>
-                            {companyList.map((company, index) => (
-                                <CompanyCard
+                                <JobCard
                                     key={index}
-                                    logo={company.logo}
-                                    companyName={company.name}
-                                    jobCount={company.jobs}
-                                    onClick={() => handleCompanyClick(company.name)}
+                                    company={job.company_name}
+                                    title={job.title}
+                                    experience={job.experience || "무관"}
+                                    education={job.education || "무관"}
+                                    location={job.location}
+                                    deadline={job.end_date}
                                 />
                             ))}
-                        </CompanyList>
-                        {selectedCompany && (
-                            <JobSection>
-                                <JobSectionTitle>
-                                    {selectedCompany} | 채용중{" "}
-                                    {jobList[selectedCompany]?.length || 0}건
-                                </JobSectionTitle>
-                                <JobList>
-                                    {jobList[selectedCompany]?.map((job, index) => (
-                                        <JobCard key={index} {...job} />
-                                    )) || <p>등록된 채용 정보가 없습니다.</p>}
-                                </JobList>
-                            </JobSection>
-                        )}
+                        </JobList>
                     </Content>
                 )}
             </PageContent>
@@ -183,10 +114,6 @@ const Tab = styled.div`
     cursor: pointer;
     color: ${(props) => (props.active ? "#000" : "#aaa")};
     border-bottom: ${(props) => (props.active ? "2px solid #00257A" : "none")};
-
-    &:hover {
-        color: #000;
-    }
 `;
 
 const Content = styled.div`
@@ -195,47 +122,8 @@ const Content = styled.div`
     gap: 20px;
 `;
 
-const ControlRow = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const Checkbox = styled.input`
-    width: 16px;
-    height: 16px;
-`;
-
-const DeleteText = styled.span`
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
 const JobList = styled.div`
     display: flex;
     flex-direction: column;
     gap: 15px;
 `;
-
-const CompanyList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-`;
-
-const JobSection = styled.div`
-    margin-top: 40px;
-`;
-
-const JobSectionTitle = styled.h3`
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-`;
-    
