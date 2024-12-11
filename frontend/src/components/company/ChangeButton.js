@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { PostCandidate } from '../../api/api';
 
 const triangleBottomIcon = process.env.PUBLIC_URL + '/icons/triangle-bottom.png';
 
-const ChangeButton = ({ fontSize = 17, options, defaultValue, title = "title" }) => {
+const ChangeButton = ({ fontSize = 17, options, defaultValue, title = "title" , data}) => {
   const [value, setValue] = useState(defaultValue);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
-
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
   return (
     <Container>
       <NavButton
@@ -26,7 +29,14 @@ const ChangeButton = ({ fontSize = 17, options, defaultValue, title = "title" })
             <DropdownButton
               key={option.title}
               onClick={() => {
-                setValue(option);
+                const check= confirm(`${option.title}으로 변경하시겠습니까?`) // eslint-disable-line no-restricted-globals
+                if(check){
+                  setValue(option);
+                  data.passType = option.title;
+                  console.log(data);
+                  PostCandidate(data);
+                  alert("변경이 완료되었습니다.")
+                }
                 closeDropdown();
               }}
               fontSize={fontSize}
