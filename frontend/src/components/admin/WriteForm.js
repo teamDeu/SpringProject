@@ -1,5 +1,3 @@
-// WriteForm.js
-
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
@@ -7,9 +5,13 @@ import DropdownSelect from "../../components/admin/Select";
 import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq } from "../../api/api"; // CreateGFaq 함수 추가
 
 const WriteForm = ({
+  firstSelectOptions, // 첫 번째 드롭다운 옵션 추가
+  secondSelectOptions: initialSecondSelectOptions, // 변경: 두 번째 드롭다운 옵션 이름 변경
   cancelPath,
   showImageFileButtons,
   isAnnouncementPage,
+  defaultOption,
+  
 }) => {
   const navigate = useNavigate();
   const contentRef = useRef(null);
@@ -19,8 +21,8 @@ const WriteForm = ({
   const [fileList, setFileList] = useState([]);
   const [isEmptyContent, setIsEmptyContent] = useState(true);
 
-  const [memberType, setMemberType] = useState("개인회원");
-  const [secondSelectOptions, setSecondSelectOptions] = useState([]);
+  const [memberType, setMemberType] = useState(defaultOption || "개인회원"); // 기본값 사용
+  const [secondSelectOptions, setSecondSelectOptions] = useState(initialSecondSelectOptions); // 수정된 부분
   const [selectedSecondOption, setSelectedSecondOption] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -230,7 +232,7 @@ const WriteForm = ({
       <Header>
         {/* 첫 번째 DropdownSelect: 회원 타입 선택 */}
         <DropdownSelect
-          initialOptions={["개인회원", "기업회원"]}
+          initialOptions={firstSelectOptions}
           defaultOption={memberType}
           onChange={(selectedOption) => {
             console.log("Selected member type:", selectedOption);
@@ -251,8 +253,8 @@ const WriteForm = ({
           showDeleteButton={true}
           width="1270px"
           margin="0 0 0 32px"
-          onAddOption={handleAddFaqOption}
-          onDeleteOption={handleDeleteFaqOption}
+          onAddOption={handleAddFaqOption} // 새 FAQ 추가
+          onDeleteOption={handleDeleteFaqOption} // FAQ 삭제
         />
       </Header>
       {/* 질문 입력 필드 */}
