@@ -436,7 +436,7 @@ export const DeleteFavoriteById = async (id) => {
     }
 };
 
-//스크랩
+// 스크랩 데이터 가져오기
 export const GetUserScrapPosts = async (userId) => {
     try {
         const response = await axios.get('http://localhost:8080/api/user/scrap-posts', {
@@ -444,23 +444,24 @@ export const GetUserScrapPosts = async (userId) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching scrap posts:', error);
+        console.error("Error fetching scrap posts:", error);
         throw error;
     }
 };
 
-
-export const GetCandidate = async (postId) =>{
-    return await axios.get('http://localhost:8080/api/candidate',{
-        params: {
-            postId : postId
-        }
-    })
-        .then(response => response.data)
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            throw error;
+// 관심기업 데이터 가져오기
+export const GetUserFavoriteCompanies = async (userId) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/user/favorite-companies', {
+            params: { userId },
         });
+<<<<<<< HEAD
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching favorite companies:", error);
+        throw error;
+    }
+=======
 } 
 export const PostCandidate = (candidate) => {
     console.log("Sending candidate:", candidate); // 요청 데이터 확인용 로그
@@ -470,6 +471,7 @@ export const PostCandidate = (candidate) => {
             console.error('Error posting candidate:', error);
             throw error;
         });
+>>>>>>> 1e750d08de94c3e9226534a3d92ef2fecd6bd962
 };
 
 export const GetCompanyInfo = async(companyId) => {
