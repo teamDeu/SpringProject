@@ -10,7 +10,7 @@ const JobApplicationStatus = ({ company, title, location, deadline, status, stat
                     <Title>{title}</Title>
                     <Details>
                         <Detail>근무지역 {location}</Detail>
-                        <Detail>접수일 {deadline}</Detail>
+                        <Detail>마감일 {deadline}</Detail>
                     </Details>
                 </Info>
                 <StatusWrapper>
