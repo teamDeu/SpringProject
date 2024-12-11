@@ -67,6 +67,10 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getAllCompany());
     }
 
+    @GetMapping("/api/company")
+    public ResponseEntity<Company> getCompany(@RequestParam String id) {
+        return ResponseEntity.ok(companyService.getCompanyById(id).get());
+    }
     // 회사 정보 저장
     @PostMapping("/api/company")
     public ResponseEntity<Company> saveCompany(@RequestBody Company company) {

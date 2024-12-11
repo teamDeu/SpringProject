@@ -471,3 +471,15 @@ export const PostCandidate = (candidate) => {
             throw error;
         });
 };
+
+export const GetCompanyInfo = async(companyId) => {
+    
+    return await axios.get('http://localhost:8080/api/company',{
+        params: {
+            id : companyId
+        }
+    }).then(response => response.data).catch(error => {
+        console.error("Error fetching companyInfo :", error);
+        throw error;
+    })
+}
