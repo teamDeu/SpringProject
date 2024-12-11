@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class CandidateResponse {
+    private int id;
     private int resumeId;
     private String name;
     private String experienceLevel;
@@ -16,10 +17,12 @@ public class CandidateResponse {
     private String educationStatus;
     private Date createAt;
     private String extraFile;
+    private String passType;
 
     // 생성자
-    public CandidateResponse(int resumeId, String name, String experienceLevel, String educationLevel,
-                             String educationStatus, Date createAt, String extraFile) {
+    public CandidateResponse(int id,int resumeId, String name, String experienceLevel, String educationLevel,
+                             String educationStatus, Date createAt, String extraFile , String passType) {
+        this.id = id;
         this.resumeId = resumeId;
         this.name = name;
         this.experienceLevel = experienceLevel;
@@ -27,6 +30,7 @@ public class CandidateResponse {
         this.educationStatus = educationStatus;
         this.createAt = createAt;
         this.extraFile = extraFile;
+        this.passType = passType;
     }
 
     // Getter와 Setter

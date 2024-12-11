@@ -36,4 +36,7 @@ public class Candidate {
     @Column(name = "create_at")
     @CurrentTimestamp
     private LocalDateTime createAt;
+
+    @Column(name = "pass_type")
+    private String passType;
 }

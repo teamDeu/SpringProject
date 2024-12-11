@@ -10,20 +10,7 @@ import ChangeButton from '../../../components/company/ChangeButton'
 import { useLocation } from 'react-router'
 import { GetCandidate } from '../../../api/api'
 const triangleRightIcon = process.env.PUBLIC_URL + '/icons/triangle-right.png';
-const options = [
-    {
-        title : "전체",
-        onClick : () =>{}
-    },
-    {
-        title : "서류합격",
-        onClick : () =>{}
-    },
-    {
-        title : "최종합격",
-        onClick : () =>{}
-    },
-]
+
 const Container = styled.div``
 
 const TitleSection = styled.section`
@@ -76,39 +63,28 @@ const ButtonArticle = styled.div`
     width : 100%;
     height : 100%;
 `
-const tempData = [{
-    지원자명: '김세영',
-    경력: '신입',
-    최종학력: '대학교(4년제) 졸업',
-    지원일: '2024-11-02',
-    평가내용 : <ButtonArticle>
-        <ChangeButton title = "합격 여부" defaultValue = {{title : "서류 합격" , color : "blue"}} options ={[
-          {title : "서류 합격" , color : "blue"},{title : "최종 합격" , color : "red"}
-        ]}/>
-        <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
-        <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
-    </ButtonArticle>
-  },
-  {
-    지원자명: '김세영',
-    경력: '경력 2년',
-    최종학력: '대학교(4년제) 졸업',
-    지원일: '2024-11-02',
-    평가내용 : <ButtonArticle>
-        <ChangeButton title = "합격 여부" defaultValue = {{title : "서류 합격" , color : "blue"}} options ={[
-          {title : "서류 합격" , color : "blue"},{title : "최종 합격" , color : "red"}
-        ]}/>
-        <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
-        <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
-    </ButtonArticle>
-  },
-];
 
-const CandidateManageButtons = () => {
+const AlertText = styled.div`
+    width : 100%;
+    text-align : center;
+    padding : 30px;
+    font-size : 30px;
+`
+
+
+const CandidateManageButtons = ({value = "심사중" , data}) => {
+    const buttonColor = {
+        심사중 : "black",
+        "서류 합격" : "blue",
+        "최종 합격" : "green",
+        "불합격" : "red",
+    }
+    console.log("여기서확인중",value);
+    const color = buttonColor[value] || "black"; // 기본값을 "black"으로 설정
     return (
         <ButtonArticle>
-        <ChangeButton title = "합격 여부" defaultValue = {{title : "서류 합격" , color : "blue"}} options ={[
-          {title : "서류 합격" , color : "blue"},{title : "최종 합격" , color : "red"}
+        <ChangeButton data = {data} title = "합격 여부" defaultValue = {{title : value , color : color}} options ={[
+          {title :"심사중", color : buttonColor["심사중"]},{title : "서류 합격" , color : buttonColor["서류 합격"]},{title : "최종 합격" , color : buttonColor["최종 합격"]},{title : "불합격" , color :buttonColor["불합격"]}
         ]}/>
         <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
         <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
@@ -117,15 +93,54 @@ const CandidateManageButtons = () => {
 }
 const Index = () => {
     const [candidateData , setCandidateData] = useState([])
-    const [formattedData , setFormattedData] = useState([
+    const [formattedData , setFormattedData] = useState([])
+    const setFormattedDataItems = (items) => {
+        setFormattedData(items.map((item) => {
+            return {
+                지원자명 : item.name,
+                경력 : item.experienceLevel,
+                최종학력 : item.educationLevel + " " + item.educationStatus,
+                지원일 : item.createAt,
+                평가내용 : <CandidateManageButtons data= {item} value = {item.passType}/>
+            }
+        }))
+    }
+    const options = [
         {
-            지원자명 : "데이터가",
-            경력 :"존재하지",
-            최종학력 : "않습니다.",
-            지원일 : "",
-            평가내용 : "",
+            title: "전체(" + candidateData.length + ")",
+            onClick: () => {
+                if (candidateData.length) {
+                    setFormattedDataItems(candidateData);  // 전체 데이터를 표시
+                    console.log(candidateData);  // 상태 확인
+                }
+            }
+        },
+        {
+            title: "서류 합격(" + candidateData.filter(item => item.passType === "서류 합격").length + ")",
+            onClick: () => {
+                const filteredData = candidateData.filter(item => item.passType === "서류 합격");
+                if (filteredData.length) {
+                    setFormattedDataItems(filteredData);
+                } else {
+                    setFormattedData([]);  // 빈 배열로 초기화
+                }
+                console.log(filteredData);  // 상태 확인
+            }
+        },
+        {
+            title: "최종 합격(" + candidateData.filter(item => item.passType === "최종 합격").length + ")",
+            onClick: () => {
+                const filteredData = candidateData.filter(item => item.passType === "최종 합격");
+                if (filteredData.length) {
+                    setFormattedDataItems(filteredData);
+                } else {
+                    setFormattedData([]);  // 빈 배열로 초기화
+                }
+                console.log(filteredData);  // 상태 확인
+            }
         }
-    ])
+    ];
+    
     const {state} = useLocation();
     console.log(state);
     useEffect(()=>{
@@ -141,15 +156,7 @@ const Index = () => {
 
     useEffect(() => {
         if(candidateData.length > 0){
-            setFormattedData(candidateData.map((item) => {
-                return {
-                    지원자명 : item.name,
-                    경력 : item.experienceLevel,
-                    최종학력 : item.educationLevel + " " + item.educationStatus,
-                    지원일 : item.createAt,
-                    평가내용 : <CandidateManageButtons/>
-                }
-            }))
+            setFormattedDataItems(candidateData)
         }
         
     },[candidateData])
@@ -167,7 +174,7 @@ const Index = () => {
                 <FilledButton height = "40px">삭제</FilledButton>
             </ButtonSection>
             <TableSection>
-                <DataTable data ={formattedData}/>
+                {formattedData.length ? <DataTable data ={formattedData}/> : <AlertText>지원자가 없습니다.</AlertText>}
             </TableSection>
         </MainContent>
     </Container>

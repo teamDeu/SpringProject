@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate,Long> {
-    @Query(value = "SELECT c.resume_id AS resumeId, u.name, u.experience_level AS experienceLevel, u.education_level AS educationLevel, " +
-            "u.education_status AS educationStatus, c.create_at AS createAt, c.extra_file AS extraFile " +
+    @Query(value = "SELECT c.id AS id, c.resume_id AS resumeId, u.name, u.experience_level AS experienceLevel, u.education_level AS educationLevel, " +
+            "u.education_status AS educationStatus, c.create_at AS createAt, c.extra_file AS extraFile, c.pass_type AS passType " +
             "FROM candidate c " +
             "JOIN e_resumes r ON c.resume_id = r.id " +
             "JOIN m_users u ON r.user_id = u.id " +

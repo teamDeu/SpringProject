@@ -65,6 +65,9 @@ const Index = () => {
     }
     fecthData();
   },[])
+  useEffect(() => {
+    window.scrollTo(0, 0); // 페이지 로드시 스크롤을 상단으로 설정
+  }, []);
 
   const updatePostInfo = (type,value) =>{
     if(postInfo[type] != value){

@@ -462,4 +462,12 @@ export const GetCandidate = async (postId) =>{
             throw error;
         });
 } 
-
+export const PostCandidate = (candidate) => {
+    console.log("Sending candidate:", candidate); // 요청 데이터 확인용 로그
+    return axios.post('http://localhost:8080/api/candidate', candidate)
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error posting candidate:', error);
+            throw error;
+        });
+};
