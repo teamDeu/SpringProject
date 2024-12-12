@@ -36,6 +36,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true) // 자격 증명 허용
                 .exposedHeaders("Content-Disposition", "Content-Type") // 필요한 헤더 노출
                 .maxAge(3600); // CORS 캐시 기간 (초 단위)
+
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 
 }

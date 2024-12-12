@@ -6,12 +6,11 @@ import Blocation from './img/blocation.png';
 import Aress from './img/aress.png';
 import Nonheart from './img/nonheart.png';
 import Heart from './img/heart.png';
-import Acompany from './img/acompany.png';
-import Acompany2 from './img/acompany2.png';
 import Edit from './img/edit.png';
 import Plus from './img/plus.png';
 import Trash from './img/trash.png';
 import JobTopBar from '../../components/JobTopBar';
+
 
 const JobDetail = () => {
     const navigate = useNavigate();
@@ -25,6 +24,8 @@ const JobDetail = () => {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [userId, setUserId] = useState(null);
     const [resumes, setResumes] = useState([]);
+    const [selectedResumeId, setSelectedResumeId] = useState(null);
+   
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,6 +56,7 @@ const JobDetail = () => {
                 // 현재 job 정보를 가져옴
                 const jobResponse = await axios.get(`http://localhost:8080/api/idjobpost?id=${jobId}`);
                 setJob(jobResponse.data);
+                
 
                 // 즐겨찾기 상태 확인
                 const favoriteResponse = await axios.get("http://localhost:8080/api/favorites/check", {
@@ -101,6 +103,48 @@ const JobDetail = () => {
             console.error("Error toggling favorite:", error);
         }
     };
+
+    const handleResumeSelect = (event) => {
+        setSelectedResumeId(Number(event.target.value)); // 선택된 이력서 ID 설정
+    };
+    
+    const handleApplyForJob = async () => {
+        if (!selectedResumeId) {
+            alert("이력서를 선택해주세요.");
+            return;
+        }
+    
+        try {
+            // postId를 숫자로 변환
+            const numericPostId = Number(jobId);
+    
+            if (isNaN(numericPostId)) {
+                alert("유효한 채용 공고 ID가 아닙니다.");
+                return;
+            }
+    
+            const requestData = {
+                postId: numericPostId, // 숫자로 변환된 postId
+                resumeId: selectedResumeId,
+            };
+    
+            console.log("Request Data:", requestData);
+    
+            const response = await axios.post("http://localhost:8080/api/candidate/apply", requestData);
+    
+            if (response.status === 200) {
+                alert("지원이 완료되었습니다!");
+                toggleModal();
+            } else {
+                alert("지원 중 오류가 발생했습니다.");
+            }
+        } catch (error) {
+            console.error("Error applying for job:", error);
+            alert("지원 중 오류가 발생했습니다.");
+        }
+    };
+    
+    
     
     const handleEditClick = () => {
         navigate("/mp1"); 
@@ -177,7 +221,7 @@ const JobDetail = () => {
                             <ModalContent>
                                 <JobSummaryHeader>
                                     <h3>{job.title}</h3>
-                                    <JobApplyButton>지원하기</JobApplyButton>
+                                    <JobApplyButton type="button" onClick={handleApplyForJob}>지원하기</JobApplyButton>
                                 </JobSummaryHeader>
                                 <h4>{job.company}</h4>
                                 <AccountInfo>
@@ -208,7 +252,13 @@ const JobDetail = () => {
                                     {resumes.length > 0 ? (
                                         resumes.map((resume) => (
                                             <ResumeBox key={resume.id}>
-                                                <input type="radio" id={`resume-${resume.id}`} name="resume" />
+                                                <input
+                                                    type="radio"
+                                                    id={`resume-${resume.id}`}
+                                                    name="resume"
+                                                    value={resume.id}
+                                                    onChange={handleResumeSelect}
+                                                />
                                                 <label htmlFor={`resume-${resume.id}`}>{resume.title}</label>
                                                 <ResumeRow>
                                                     <p>
@@ -308,13 +358,16 @@ const JobDetail = () => {
                 <Divider />
                 <Skills>
                     <h3>기술 스택</h3>
+
+                    
                     <SkillList>
-                        {Array.isArray(job.skills) ? (
-                            job.skills.map((skill, index) => (
-                                <SkillItem key={index}>{skill.name}</SkillItem>
+                        {job.skills ? (
+                            // JSON 문자열을 객체로 변환하여 name 값만 추출
+                            JSON.parse(job.skills).map((skill, index) => (
+                                <SkillItem key={index}>{skill.name || "알 수 없는 기술"}</SkillItem>
                             ))
                         ) : (
-                            <SkillItem>No skills available</SkillItem>
+                            <SkillItem>기술 스택 정보가 없습니다.</SkillItem>
                         )}
                     </SkillList>
 
@@ -326,9 +379,10 @@ const JobDetail = () => {
                 <Section>
                     <SectionTitle>주요 업무</SectionTitle>
                     <ul>
-                        {Array.isArray(job.jobDuties) ? (
-                            job.jobDuties.map((duty, index) => (
-                                <li key={index}>{duty.value}</li>
+                        {job.jobDuties ? (
+                            // JSON 문자열을 객체로 변환하여 value 값만 추출
+                            JSON.parse(job.jobDuties).map((duty, index) => (
+                                <li key={index}>{duty.value || "알 수 없는 업무"}</li>
                             ))
                         ) : (
                             <li>주요 업무 정보가 없습니다.</li>
@@ -338,9 +392,10 @@ const JobDetail = () => {
                 <Section>
                     <SectionTitle>자격 요건</SectionTitle>
                     <ul>
-                        {Array.isArray(job.requirements) ? (
-                            job.requirements.map((requirement, index) => (
-                                <li key={index}>{requirement.value}</li>
+                        {job.requirements ? (
+                            // JSON 문자열을 객체로 변환하여 value 값만 추출
+                            JSON.parse(job.requirements).map((requirement, index) => (
+                                <li key={index}>{requirement.value || "알 수 없는 자격 요건"}</li>
                             ))
                         ) : (
                             <li>자격 요건 정보가 없습니다.</li>
@@ -350,9 +405,10 @@ const JobDetail = () => {
                 <Section>
                     <SectionTitle>우대 사항</SectionTitle>
                     <ul>
-                        {Array.isArray(job.additionalPreferences) ? (
-                            job.additionalPreferences.map((preference, index) => (
-                                <li key={index}>{preference.value}</li>
+                        {job.additionalPreferences ? (
+                            // JSON 문자열을 객체로 변환하여 value 값만 추출
+                            JSON.parse(job.additionalPreferences).map((preference, index) => (
+                                <li key={index}>{preference.value || "알 수 없는 우대 사항"}</li>
                             ))
                         ) : (
                             <li>우대 사항 정보가 없습니다.</li>
@@ -361,20 +417,36 @@ const JobDetail = () => {
                 </Section>
                 <Section>
                     <SectionTitle>복지 및 혜택</SectionTitle>
-                    {job.mainBenefit ? (
-                        <HighlightText>{job.mainBenefit.value}</HighlightText>
-                    ) : (
-                        <HighlightText>메인 복지 정보가 없습니다.</HighlightText>
-                    )}
-                    <ul>
-                        {Array.isArray(job.employeeBenefits) ? (
-                            job.employeeBenefits.map((benefit, index) => (
-                                <li key={index}>{benefit.value}</li>
-                            ))
+                        {job.employeeBenefits ? (
+                            (() => {
+                                const benefits = JSON.parse(job.employeeBenefits);
+                                const mainBenefits = benefits.filter((benefit) => benefit.type === "main");
+                                const otherBenefits = benefits.filter((benefit) => benefit.type !== "main");
+
+                                return (
+                                    <>
+                                        <HighlightText>
+                                            {mainBenefits.length > 0
+                                                ? mainBenefits.map((benefit, index) => (
+                                                    <span key={index}>{benefit.value}</span>
+                                                ))
+                                                : "메인 복지 정보가 없습니다."}
+                                        </HighlightText>
+                                        <ul>
+                                            {otherBenefits.length > 0 ? (
+                                                otherBenefits.map((benefit, index) => (
+                                                    <li key={index}>{benefit.value || "알 수 없는 복지"}</li>
+                                                ))
+                                            ) : (
+                                                <li>복지 및 혜택 정보가 없습니다.</li>
+                                            )}
+                                        </ul>
+                                    </>
+                                );
+                            })()
                         ) : (
-                            <li>복지 및 혜택 정보가 없습니다.</li>
+                            <p>복지 및 혜택 정보가 없습니다.</p>
                         )}
-                    </ul>
                 </Section>
                 <Divider />
                 <CompanySection>
