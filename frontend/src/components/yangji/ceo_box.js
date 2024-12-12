@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { waitForSessionId } from "../../context/SessionProvider";
+import axios from "axios"; // axios import 추가
 
 const Container = styled.div`
     height: 143px;
     box-sizing: border-box;
     display: flex;
-    font-family: 'Nanum Square Neo', sans-serif;
+    font-family: "Nanum Square Neo", sans-serif;
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -117,41 +119,127 @@ const InterestIcon = styled.img`
     object-fit: cover;
 `;
 
-const CeoBox = ({ companyImage, companyName, hiringCount, viewCount, heartCount }) => {
-    const [isFavorite, setIsFavorite] = useState(false);
-    const [currentHeartCount, setCurrentHeartCount] = useState(heartCount);
+const CeoBox = ({ data }) => {
+    const [favorites, setFavorites] = useState({}); // 각 회사의 관심 상태를 저장
+    const [sessionId, setSessionId] = useState(null); // 세션 ID 상태 추가
+    const BACKEND_URL = "http://localhost:8080/uploads";
 
-    const toggleFavorite = () => {
-        setIsFavorite((prev) => !prev);
-        setCurrentHeartCount((prev) => (isFavorite ? prev - 1 : prev + 1));
+    // 초기 좋아요 상태 가져오기
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                if (!sessionId) return;
+
+                const updatedFavorites = {};
+                for (const item of data) {
+                    const response = await axios.get("http://localhost:8080/api/favorites/is-favorite", {
+                        params: { userId: sessionId, companyId: item.id },
+                    });
+                    updatedFavorites[item.id] = response.data; // true or false 반환
+                }
+                setFavorites(updatedFavorites);
+            } catch (error) {
+                console.error("Failed to fetch favorite statuses:", error);
+            }
+        };
+
+        fetchFavorites();
+    }, [data, sessionId]);
+
+    // 좋아요 상태 토글 및 UI 즉시 업데이트
+    const toggleFavorite = async (companyId, currentFavoriteCount, index) => {
+        if (!sessionId) {
+            alert("로그인 상태를 확인하세요.");
+            return;
+        }
+
+        if (!companyId) {
+            alert("회사 정보를 확인하세요.");
+            return;
+        }
+
+        try {
+            const isFavorite = favorites[companyId];
+
+            // 상태 업데이트 (UI에서 임시로 +1/-1 반영)
+            setFavorites((prev) => ({
+                ...prev,
+                [companyId]: !isFavorite,
+            }));
+
+            data[index].favoriteCount = isFavorite
+                ? currentFavoriteCount - 1 // 좋아요 제거 -> -1
+                : currentFavoriteCount + 1; // 좋아요 추가 -> +1
+
+            if (!isFavorite) {
+                // 좋아요 추가
+                await axios.post("http://localhost:8080/api/favorites", {
+                    userId: String(sessionId),
+                    companyId: String(companyId),
+                });
+            } else {
+                // 좋아요 제거
+                await axios.delete("http://localhost:8080/api/favorites", {
+                    params: {
+                        userId: String(sessionId),
+                        companyId: String(companyId),
+                    },
+                });
+            }
+        } catch (error) {
+            console.error("관심 상태 업데이트 실패:", error.response || error.message);
+            alert("오류가 발생했습니다.");
+        }
     };
 
+    // 세션 ID 가져오기
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId); // 상태에 저장
+                console.log("Fetched sessionId:", sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
+
     return (
-        <Container>
-            <Image src={companyImage} alt="No Image" />
-            <InfoContainer>
-                <CompanyName>{companyName}</CompanyName>
-                <HiringInfo>현재 채용중 {hiringCount}건</HiringInfo>
-            </InfoContainer>
-            <RightContainer>
-                <EyeIconContainer1>
-                    <EyeIcon1 src="/img/heart-filled.png" alt="heart Icon" />
-                    <ViewCount1>{currentHeartCount}</ViewCount1>
-                </EyeIconContainer1>
-                <InterestButtonContainer onClick={toggleFavorite}>
-                    <InterestBackground />
-                    <InterestText>관심기업</InterestText>
-                    <InterestIcon
-                        src={
-                            isFavorite
-                                ? "/img/heart-filled.png"
-                                : "/img/heart-empty.png"
-                        }
-                        alt="Favorite Icon"
-                    />
-                </InterestButtonContainer>
-            </RightContainer>
-        </Container>
+        <>
+            {data.map((item, index) => (
+                <Container key={item.id}>
+                    <Image src={`${BACKEND_URL}/${item.logoUrl}`} alt="No Image" />
+                    <InfoContainer>
+                        <CompanyName>{item.companyName}</CompanyName>
+                        <HiringInfo>현재 채용중 {item.jobPostCount || 0}건</HiringInfo>
+                    </InfoContainer>
+                    <RightContainer>
+                        <EyeIconContainer1>
+                            <EyeIcon1 src="/img/heart-filled.png" alt="heart Icon" />
+                            <ViewCount1>{item.favoriteCount || 0}</ViewCount1>
+                        </EyeIconContainer1>
+                        <InterestButtonContainer
+                            onClick={() =>
+                                toggleFavorite(item.id, item.favoriteCount || 0, index)
+                            }
+                        >
+                            <InterestBackground />
+                            <InterestText>관심기업</InterestText>
+                            <InterestIcon
+                                src={
+                                    favorites[item.id]
+                                        ? "/img/heart-filled.png" // 좋아요 상태
+                                        : "/img/heart-empty.png" // 좋아요 없음 상태
+                                }
+                                alt="Favorite Icon"
+                            />
+                        </InterestButtonContainer>
+                    </RightContainer>
+                </Container>
+            ))}
+        </>
     );
 };
 

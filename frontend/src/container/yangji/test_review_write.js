@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import ReviewButton from '../../components/yangji/review_button';
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
@@ -9,6 +9,9 @@ import Selectbox from '../../components/yangji/selectbox';
 import InputBox from '../../components/yangji1/inputbox';
 import FontControlBox from '../../components/yangji1/text';
 import FileUploadComponent from '../../components/yangji1/picture';
+import { waitForSessionId } from '../../context/SessionProvider';
+import axios from "axios";
+import { Link } from 'react-router-dom';
 
 
 const Container = styled.div`
@@ -127,12 +130,25 @@ const Write1 = () => {
     const [selectedExperience, setSelectedExperience] = useState(null); // 신입/경력
     const [selectedInterviewType, setSelectedInterviewType] = useState(null); // 직무 유형
     const [selectedInterviewStyle, setSelectedInterviewStyle] = useState(null); // 면접 스타일
+    const [sessionId, setSessionId] = useState(null);
 
-    const handleButtonClick = () => {
-        if (fileUploaderRef.current) {
-            fileUploaderRef.current.upload(); // FileUploadComponent의 handleUpload 실행
-        }
-        
+    useEffect(() => {
+        const fetchSession = async () => {
+          try {
+            const sessionId = await waitForSessionId();
+            setSessionId(sessionId); // 상태에 저장
+          } catch (error) {
+            console.error("Failed to fetch session:", error);
+          }
+        };
+        fetchSession();
+      }, []);
+
+    const handleButtonClick = async () => {
+        const feedbackOptions = ['긍정적', '보통', '부정적'];
+        const difficultyOptions = ['쉬움', '보통', '어려움'];
+        const resultOptions = ['합격', '대기중', '불합격'];
+
         if (
             companyName1.trim() === '' ||
             companyName2.trim() === '' ||
@@ -153,15 +169,50 @@ const Write1 = () => {
             return;
         }
 
-        const feedbackOptions = ['긍정적', '보통', '부정적'];
-        const difficultyOptions = ['쉬움', '보통', '어려움'];
-        const resultOptions = ['합격', '대기중', '불합격'];
+        let uploadedFileName = "없음";
 
-        alert(
-            `등록 요청됨:\n전반적 평가: ${feedbackOptions[selectedFeedback]}\n난이도: ${difficultyOptions[selectedDifficulty]}\n합격 여부: ${resultOptions[selectedResult]}\n경력 상태: ${selectedExperience}\n면접 유형: ${selectedInterviewType}\n면접 스타일: ${selectedInterviewStyle}\n면접 일자: ${selectedYear}년 ${selectedMonth}월\n기업명: ${companyName1}\n직무직업: ${companyName2}\n면접질문1: ${companyName3}\n면접질문2: ${companyName4}\n면접질문3: ${companyName5}\n면접tip: ${companyName6}`
-        );
-        // TODO: 데이터베이스 저장 로직 추가
+        if (fileUploaderRef.current) {
+            const response = await fileUploaderRef.current.upload();
+            if (response && response.data) {
+                try {
+                    // 파일 경로에서 파일명만 추출
+                    const filePath = response.data.includes(': ') 
+                        ? response.data.split(': ')[1] 
+                        : response.data;
+                    uploadedFileName = filePath ? filePath.split('\\').pop() : "없음"; // '\\'로 분리해 파일명만 추출
+                } catch (error) {
+                    console.error("파일명 처리 오류:", error);
+                    uploadedFileName = "없음";
+                }
+            }
+        }
+
+        const requestData = {
+            companyName: companyName1,
+            jobCategoryName: companyName2,
+            experience: selectedExperience,
+            interviewDate: `${selectedYear}년${selectedMonth}월`,
+            interviewEvaluation: feedbackOptions[selectedFeedback],
+            interviewDifficulty: difficultyOptions[selectedDifficulty],
+            interviewPassed: resultOptions[selectedResult],
+            interviewType: selectedInterviewType,
+            interviewNumtype: selectedInterviewStyle,
+            interviewQuestion: `${companyName3}.${companyName4}.${companyName5}`,
+            interviewDetail: companyName6,
+            verifyFile: uploadedFileName,
+            userId: sessionId
+        };
+
+        try {
+            const response = await axios.post("http://localhost:8080/api/interview-reviews/save", requestData);
+            alert(response.data); // 성공 메시지
+        } catch (error) {
+            console.error("Error saving interview review:", error);
+            alert("저장 실패: " + error.message);
+        }
     };
+    
+    
 
     return (
         <>
@@ -262,7 +313,7 @@ const Write1 = () => {
                 <WowTitle top="1130px" left="0px">기본 정보 입력</WowTitle>
                 <Nemo top="1160px" left="0px" width="300px" height="500px"></Nemo>
                 <LineContainer top="1160px" left="0px"><HorizontalLine /></LineContainer>
-                <WowTitle top="1232px" left="90px">면접 질문</WowTitle>
+                <WowTitle top="1232px" left="90px">면접 질문(문장의 끝에는 .)</WowTitle>
                 <InputBox top="1172px"left="320px"width="500px"height="40px"placeholder="Q   ex)경력 사항에 대한 상세한 질문"placeholderColor="#1A28F4"
                     value={companyName3} onChange={(value) => setCompanyName3(value)}
                 />
@@ -293,7 +344,9 @@ const Write1 = () => {
                 <FileUploadComponent top="1620px" left="320px" ref={fileUploaderRef} />
                 <LineContainer top="1660px" left="0px"><HorizontalLine /></LineContainer>
                 <ButtonContainer>
+                    <Link to="/test_review_home1">
                     <ReviewButton text="등록 요청" onClick={handleButtonClick} />
+                    </Link>
                 </ButtonContainer>
             </Container>
         </>

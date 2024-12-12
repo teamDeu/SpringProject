@@ -10,6 +10,7 @@ import ResumeForm from './container/Resume/ResumeForm';
 import EditResume from './container/Resume/EditResume';
 import Main from './container/Main';
 import PersonalMain from './container/Main/PersonalMain';
+import CompanyDetail from "./container/yangji/ceo_review_show";
 
 import Home from './container';
 import Test from './container/test';
@@ -53,7 +54,7 @@ import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 import A from './components/yangji/hiddenbox'
 
-import InputCompanyInfo from './container/company/InputCompanyInfo'
+import InputCompanyInfo from './container/company/inputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'
@@ -126,6 +127,8 @@ function App() {
             <Route path="ManageCompanyInfo" element ={<ManageCompanyInfo/>}/>
             <Route path="sfaq" element ={<SFAQ/>}/>
             <Route path="snotices" element ={<SNotices/>}/>
+            <Route path="/" element={<Ceo_Review_Home />} /> {/* 메인 페이지 */}
+            <Route path="/company-detail" element={<CompanyDetail />} /> {/* 상세 페이지 */}
           </Routes>
         </BrowserRouter>
         

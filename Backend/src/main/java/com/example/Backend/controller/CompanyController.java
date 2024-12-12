@@ -166,4 +166,14 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로그인 실패: " + e.getMessage());
         }
     }
+    @GetMapping("/api/companies-with-ceo-reviews")
+    public ResponseEntity<List<Map<String, Object>>> getCompaniesWithCeoReviews() {
+        try {
+            List<Map<String, Object>> companyData = companyService.getCompanyFavoriteCounts();
+            return ResponseEntity.ok(companyData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 }

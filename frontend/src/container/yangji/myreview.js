@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChangeButton from '../../components/yangji/myreview/changebutton';
 import MyReviewTest from "./myreview_test"; // 면접후기 컨테이너 컴포넌트
 import MyReviewCEO from "./myreview_ceo"; // 기업리뷰 컨테이너 컴포넌트
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
+import { waitForSessionId } from '../../context/SessionProvider';
 
 const Container = styled.div`
     position: relative;
@@ -31,26 +32,40 @@ const Title = styled.h2`
 
 function Main() {
   const [selectedComponent, setSelectedComponent] = useState("면접후기"); // 현재 선택된 컴포넌트 상태
+  const [sessionId, setSessionId] = useState(null); // sessionId 상태 추가
+
   const handleButtonClick = (buttonType) => {
     setSelectedComponent(buttonType);
   };
 
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const sessionId = await waitForSessionId();
+        setSessionId(sessionId); // 상태에 저장
+      } catch (error) {
+        console.error("Failed to fetch session:", error);
+      }
+    };
+    fetchSession();
+  }, []);
+
   return (
     <>
-        <JobTopBar />
-        <Container>
-            <Title>My 리뷰</Title>
-            <div style={{ textAlign: "center"}}>
-            <ChangeButton onButtonClick={handleButtonClick} />
+      <JobTopBar />
+      <Container>
+        <Title>My 리뷰</Title>
+        <div style={{ textAlign: "center" }}>
+          <ChangeButton onButtonClick={handleButtonClick} />
 
-            {/* 아래에 선택된 컴포넌트를 렌더링 */}
-            <div style={{ marginTop: "20px" }}>
-                {selectedComponent === "면접후기" && <MyReviewTest />}
-                {selectedComponent === "기업리뷰" && <MyReviewCEO />}
-            </div>
-            </div>
-        </Container>
-        </>
+          {/* 아래에 선택된 컴포넌트를 렌더링 */}
+          <div style={{ marginTop: "20px" }}>
+            {selectedComponent === "면접후기" && <MyReviewTest />}
+            {selectedComponent === "기업리뷰" && <MyReviewCEO />}
+          </div>
+        </div>
+      </Container>
+    </>
   );
 }
 

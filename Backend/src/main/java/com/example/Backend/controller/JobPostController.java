@@ -43,7 +43,11 @@ public class JobPostController {
         return ResponseEntity.ok(savedJobPost);
     }
 
-
+    @GetMapping("/jobpost")
+    public ResponseEntity<List<JobPost>> getAllJobPosts(){
+        System.out.println(jobPostService.getAllJobPost());
+        return ResponseEntity.ok(jobPostService.getAllJobPost());
+    }
 
     //이 공고 놓치지 마세요(공고 마감이 가까운 순)
     @GetMapping("/urgent-jobposts")
@@ -287,5 +291,16 @@ public class JobPostController {
     @GetMapping("/jobpostimage")
     public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
         return ResponseEntity.ok(jobPostService.getPostImage(id));
+    }
+    @GetMapping("/jobpost/count")
+    public ResponseEntity<List<Map<String, Object>>> getAllJobPostCounts() {
+        List<Map<String, Object>> jobPostCounts = jobPostService.getAllJobPostCounts();
+        return ResponseEntity.ok(jobPostCounts);
+    }
+
+    @GetMapping("/jobpost/images")
+    public ResponseEntity<List<Map<String, Object>>> getJobPostWithImages() {
+        List<Map<String, Object>> jobPostWithImages = jobPostService.getJobPostWithImages(null); // null 전달
+        return ResponseEntity.ok(jobPostWithImages);
     }
 }

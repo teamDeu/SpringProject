@@ -1,6 +1,7 @@
 import React from 'react';
 import HiddenBox from '../hiddenbox';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Container = styled.div`
     position: relative;
@@ -89,6 +90,20 @@ const StatusImage = styled.img`
 `;
 
 const TestBox = ({ data, onDelete }) => {
+    const handleDeleteClick = async (id) => {
+        try {
+            // 백엔드 삭제 요청
+            await axios.delete(`http://localhost:8080/api/interview-reviews/${id}`);
+            // 삭제 성공 시 부모 컴포넌트로 알림
+            onDelete(id);
+            alert('삭제되었습니다.');
+        } catch (error) {
+            console.error('삭제 중 오류 발생:', error);
+            alert('삭제하는 데 실패했습니다.');
+        }
+    };
+    
+
     return (
         <Container>
             {data.map((item) => (
@@ -106,7 +121,7 @@ const TestBox = ({ data, onDelete }) => {
                     <StatusImage
                         src="/img/trashcan.png"
                         alt="Delete Icon"
-                        onClick={() => onDelete(item.id)} // 해당 ID로 삭제
+                        onClick={() => handleDeleteClick(item.id)} // 수정된 삭제 핸들러
                     />
                     <RegistrationStatus status={item.status}>{item.status}</RegistrationStatus>
                     <HiddenBox
@@ -124,5 +139,7 @@ const TestBox = ({ data, onDelete }) => {
         </Container>
     );
 };
+
+
 
 export default TestBox;
