@@ -13,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class JobPostService {
@@ -114,6 +111,13 @@ public class JobPostService {
     }
 
 
+    public Long getJobPostCountByCompanyId(String companyId) {
+        return jobPostRepository.countJobPostsByCompanyId(companyId);
+    }
+
+    public List<Map<String, Object>> getAllJobPostCounts() {
+        return jobPostRepository.getJobPostCounts();
+    }
 
 
 }

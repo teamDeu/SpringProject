@@ -22,31 +22,33 @@ const FileUploadComponent = forwardRef(({ top, left }, ref) => {
     const handleUpload = async () => {
         if (!selectedFile) {
             alert('파일을 선택하세요!');
-            return;
+            return null; // 실패 시 null 반환
         }
-
+    
         const formData = new FormData();
         formData.append('file', selectedFile);
-
+    
         try {
-            const response = await axios.post('http://localhost:5000/upload', formData, {
+            const response = await axios.post('http://localhost:8080/api/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-
-            alert(`파일 업로드 성공! 저장 경로: ${response.data.filePath}`);
+    
+            return response; // 업로드 성공 시 response 반환
         } catch (error) {
-            console.error(error);
+            console.error("파일 업로드 에러:", error);
             alert('파일 업로드 실패!');
+            return null; // 실패 시 null 반환
         }
     };
-
+    
     useImperativeHandle(ref, () => ({
         upload: handleUpload,
     }));
+    
 
     return (
         <FileUploadContainer top={top} left={left}>
-            <input type="file" onChange={handleFileChange} ref={ref}/>
+            <input type="file" onChange={handleFileChange} />
         </FileUploadContainer>
     );
 });

@@ -16,13 +16,12 @@ import java.util.List;
 @Setter
 @Data
 @Table(name = "c_job_posts")
-public class JobPost {
+public class JobPost2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
 
     @Column(name = "company_id")
     private String company;
@@ -73,16 +72,16 @@ public class JobPost {
     private String aboutCompany;
 
     @Column(name = "post_date")
+    @CurrentTimestamp
     private Date postDate;
 
     @Column(name = "is_featured")
     private Boolean isFeatured;
 
-    @Column(name = "modify_date")
-    @CurrentTimestamp
-    private Date modifyDate;
-
     @Column(name = "views")
     private Long views;
 
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<JobPostImage2> images;
 }
