@@ -4,6 +4,7 @@ import com.example.Backend.DTO.CandidateResponse;
 import com.example.Backend.model.Candidate;
 import com.example.Backend.model.Company;
 import com.example.Backend.repository.CandidateRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,10 @@ public class CandidateService {
     public Optional<Candidate> getCandidateById(Long id){
         return candidateRepository.findById(id);
     }
+
+    @Transactional
     public Candidate saveCandidate(Candidate candidate) {
         return candidateRepository.save(candidate);
     }
+
 }

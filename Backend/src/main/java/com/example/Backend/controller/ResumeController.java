@@ -93,7 +93,7 @@ public class ResumeController {
             file.transferTo(uploadFile);
 
             // 파일 경로 반환
-            return ResponseEntity.ok("/uploads/" + fileName);
+            return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }

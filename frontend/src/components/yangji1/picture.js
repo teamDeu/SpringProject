@@ -46,7 +46,7 @@ const FileUploadComponent = forwardRef(({ top, left }, ref) => {
 
     return (
         <FileUploadContainer top={top} left={left}>
-            <input type="file" onChange={handleFileChange} />
+            <input type="file" onChange={handleFileChange} ref={ref}/>
         </FileUploadContainer>
     );
 });

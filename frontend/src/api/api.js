@@ -490,7 +490,7 @@ export const PostCandidate = (candidate) => {
 
 export const GetCompanyInfo = async(companyId) => {
     
-    return await axios.get('http://localhost:8080/api/company',{
+    const data = await axios.get('http://localhost:8080/api/company',{
         params: {
             id : companyId
         }
@@ -498,6 +498,8 @@ export const GetCompanyInfo = async(companyId) => {
         console.error("Error fetching companyInfo :", error);
         throw error;
     })
+    console.log(data);
+    return data;
 }
 
 export const GetCandidate = async (postId) =>{
@@ -512,3 +514,12 @@ export const GetCandidate = async (postId) =>{
             throw error;
         });
 } 
+
+export const GetAllResumes = async() => {
+    return await axios.get('http://localhost:8080/api/resumes')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+}

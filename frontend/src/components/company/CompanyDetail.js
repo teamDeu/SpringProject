@@ -8,6 +8,7 @@ import MainContent from '../../components/common/MainContent';
 import { useLocation, useNavigate } from 'react-router';
 import PhotoInput from './PhotoInput';
 import { GetCompanyInfo, PostCompany } from '../../api/api';
+import PhotoInput2 from './PhthoInput2';
 
 const InputArray = [
     { 
@@ -52,43 +53,14 @@ const InputArray = [
     },
 ]
 
-const CompanyDetail = ({id}) => {
+const CompanyDetail = ({companyInfo,setCompanyInfo}) => {
     const navigate = useNavigate();
-    
-    const [companyInfo, setCompanyInfo] = useState({ 
-        id: id || undefined,
-        pwd: "",
-        companyName: "Test",
-        industry: "",
-        location: "",
-        businessNumber: "",
-        since: 0,
-        employees: 0,
-        managerName: "",
-        managerPhone: "",
-        logoUrl: "",
-    });
-
     // 로고 이미지 업데이트
     const updateImage = (value) => {
-        setCompanyInfo((prev) => ({ ...prev, logoUrl: value }));
-    }
-
-    // 데이터 가져오기
-    useEffect(() => {
-        const fetchData = async () => {
-            if (id) {
-                try {
-                    const data = await GetCompanyInfo(id);  // GetCompanyInfo 호출하여 companyInfo 가져오기
-                    setCompanyInfo(data);
-                } catch (error) {
-                    console.error("Error fetching company info:", error);
-                }
-            }
-        };
-        fetchData();
-    }, [id]);  // id 값이 변경될 때마다 실행
-
+        if (JSON.stringify(companyInfo.logoUrl) !== JSON.stringify(value)) {
+          setCompanyInfo((prev) => ({ ...prev, logoUrl: value }));
+        }
+    };
     // 기업 정보 제출 버튼
     function regCompanyInfoButton() {
         const keys = Object.keys(companyInfo);
@@ -103,7 +75,6 @@ const CompanyDetail = ({id}) => {
                 return;
             }
         }
-
         // PostCompany로 데이터 전송
         PostCompany(companyInfo).then(() => {
             console.log("입력 성공");
@@ -134,19 +105,21 @@ const CompanyDetail = ({id}) => {
                         type={typeof companyInfo[input.type]}
                         value={companyInfo[input.type]}
                         onChange={(e) => handleInputChange(input.type, e.target.value)}
+                        
                     />
                 ))}
             </InputSection>
             <FileSection>
-                <InputTitle>기업 로고 등록</InputTitle>
-                <PhotoInputSection>
-                    <PhotoInput 
-                        imageLength={1} 
-                        updateImage={updateImage} 
-                        justifyContent={"center"}
-                    />
-                </PhotoInputSection>
-            </FileSection>
+            <InputTitle>기업 로고 등록</InputTitle>
+            <PhotoInputSection>
+            <PhotoInput
+                imageLength={1}
+                value={[companyInfo.logoUrl]} // 기존 logoUrl 상태를 그대로 전달
+                updateImage={(value) => updateImage(value)} // 변경된 값만 반영
+                justifyContent="center"
+                />
+            </PhotoInputSection>
+        </FileSection>
         </Container>
     );
 };

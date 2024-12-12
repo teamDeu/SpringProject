@@ -9,7 +9,7 @@ import IDWithSocialLogin from '../../components/mypage/IDWithSocialLogin';
 import MainContent from '../common/MainContent';
 import PasswordInput from '../mypage/PasswordInput';
 
-const CompanyInfo = () => {
+const CompanyInfo = ({companyInfo,setCompanyInfo}) => {
     const handleDeleteAccount = () => {
         alert("회원탈퇴 버튼이 클릭되었습니다.");
         // 회원탈퇴 로직을 여기에 추가
@@ -23,16 +23,16 @@ const CompanyInfo = () => {
                             <EditButton>수정</EditButton>
                         </SectionTitleWrapper>
                         <Row>
-                            <IDInput label="아이디" value="1234" />
+                            <IDInput label="아이디" value={companyInfo.id} />
                         </Row>
                         <Row>
-                            <PasswordInput label="비밀번호" value="010-8013-1233" />
+                            <PasswordInput label="비밀번호" value={companyInfo.pwd} />
                         </Row>
                         <Row>
-                            <IDInput label="이름" value = "박은효" />
+                            <IDInput label="이름" value = {companyInfo.managerName} />
                         </Row>
                         <Row>
-                            <IDInput label="전화번호" value="1234@naver.com" />
+                            <IDInput label="전화번호" value={companyInfo.managerPhone}/>
                         </Row>
                         <DeleteAccountWrapper>
                             <DeleteAccountButton onClick={handleDeleteAccount}>회원탈퇴</DeleteAccountButton>
