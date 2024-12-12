@@ -43,9 +43,9 @@ const UserComponents = ({image,data}) => {
             <UserInfo>
                 {data.userName}({data.userGender},{data.userAge}세)
             </UserInfo>
-            <InfoWithIcon icon ={locationIcon} info ={data.userLocation}/>
-            <InfoWithIcon icon ={categoryIcon} info ={data.userCategory}/>
-            <InfoWithIcon icon ={skillsIcon} info ={data.userSkills}/>
+            <InfoWithIcon type = {"userLocation"} icon ={locationIcon} info ={data.userLocation}/>
+            <InfoWithIcon type = {"userCategory"} icon ={categoryIcon} info ={data.userCategory}/>
+            <InfoWithIcon type = {"userSkills"} icon ={skillsIcon} info ={data.userSkills}/>
         </InfoSection>
         <DateSection>
             {updateTime.days === 0 ? updateTime.hours === 0 ? updateTime.minutes + "분 전 수정" : `${updateTime.hours}시간 전 수정` : updateTime.days + "일 전 수정"}

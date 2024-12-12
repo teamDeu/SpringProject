@@ -508,3 +508,12 @@ export const GetAllResumes = async() => {
             throw error;
         });
 }
+
+export const GetAllUserSearch = async() => {
+    return await axios.get('http://localhost:8080/api/resumes/usersearch')
+        .then(response => response.data)
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            throw error;
+        });
+}
