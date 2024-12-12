@@ -17,8 +17,8 @@ public class FavoriteJobController {
     private FavoriteJobService service;
 
     @GetMapping("/api/user/scrap-posts")
-    public ResponseEntity<List<JobPost>> getFavoriteJobPosts(@RequestParam String userId) {
-        List<JobPost> favoriteJobs = service.getFavoriteJobPostsByUserId(userId);
-        return ResponseEntity.ok(favoriteJobs);
+        public ResponseEntity<List<JobPost>> getFavoriteJobPosts(@RequestParam String userId) {
+            List<JobPost> favoriteJobs = service.getFavoriteJobPostsByUserId(userId);
+            return ResponseEntity.ok(favoriteJobs);
     }
 }

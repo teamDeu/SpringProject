@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import JobTopBar from '../../../components/JobTopBar';
 import JobCard from '../../../components/mypage/JobCard';
 import { GetUserScrapPosts, getUserInfo } from '../../../api/api'; // API 함수 가져오기
+import axios from 'axios';
 
 const Index = () => {
     const [activeTab, setActiveTab] = useState("스크랩"); // 탭 상태 관리
     const [scrapList, setScrapList] = useState([]); // 스크랩 데이터 상태
     const [userId, setUserId] = useState(null); // 사용자 ID 상태
+    const [selectedJobs, setSelectedJobs] = useState([]); // 선택된 공고 ID 상태
 
     // 세션에서 사용자 ID 가져오기
     useEffect(() => {
@@ -18,7 +20,6 @@ const Index = () => {
             } catch (error) {
                 console.error("Failed to fetch user info:", error);
                 alert("로그인이 필요합니다.");
-                // 로그인이 필요하면 로그인 페이지로 이동
                 window.location.href = "/login";
             }
         };
@@ -43,6 +44,35 @@ const Index = () => {
         setActiveTab(tab);
     };
 
+    const handleSelectJob = (jobId, isSelected) => {
+        if (isSelected) {
+            setSelectedJobs((prev) => [...prev, jobId]); // 선택된 공고 추가
+        } else {
+            setSelectedJobs((prev) => prev.filter((id) => id !== jobId)); // 선택 해제
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        try {
+            // 서버에 삭제 요청
+            await Promise.all(
+                selectedJobs.map((jobId) =>
+                    axios.delete(`http://localhost:8080/api/favorites/${jobId}`, {
+                        params: { userId },
+                    })
+                )
+            );
+
+            // UI에서 삭제된 데이터 제거
+            const updatedScrapList = scrapList.filter((job) => !selectedJobs.includes(job.id));
+            setScrapList(updatedScrapList); // UI 상태 업데이트
+            setSelectedJobs([]); // 선택 상태 초기화
+        } catch (error) {
+            console.error("Error deleting selected jobs:", error);
+            alert("삭제 중 오류가 발생했습니다.");
+        }
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -61,16 +91,24 @@ const Index = () => {
                 {/* 스크랩 탭 */}
                 {activeTab === "스크랩" && (
                     <Content>
+                        <DeleteButton
+                            onClick={handleDeleteSelected}
+                            disabled={selectedJobs.length === 0}
+                        >
+                            삭제
+                        </DeleteButton>
                         <JobList>
                             {scrapList.map((job, index) => (
                                 <JobCard
                                     key={index}
+                                    jobId={job.id} // 공고 ID 전달
                                     company={job.company_name}
                                     title={job.title}
                                     experience={job.experience || "무관"}
                                     education={job.education || "무관"}
                                     location={job.location}
-                                    deadline={job.end_date}
+                                    deadline={job.endDate}
+                                    onSelect={handleSelectJob} // 선택 상태 전달
                                 />
                             ))}
                         </JobList>
@@ -126,4 +164,19 @@ const JobList = styled.div`
     display: flex;
     flex-direction: column;
     gap: 15px;
+`;
+
+const DeleteButton = styled.button`
+    align-self: flex-end;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 `;

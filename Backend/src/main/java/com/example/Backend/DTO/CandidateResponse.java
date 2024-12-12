@@ -33,5 +33,10 @@ public class CandidateResponse {
         this.passType = passType;
     }
 
+    public CandidateResponse(Long id, String 회사명_없음, String 직무_없음, String 위치_없음, Date date, String passType) {
+    }
+
+
+
     // Getter와 Setter
 }

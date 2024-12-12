@@ -513,22 +513,16 @@ export const GetCandidate = async (postId) =>{
             console.error('Error fetching data:', error);
             throw error;
         });
-} 
-
-export const GetAllResumes = async() => {
-    return await axios.get('http://localhost:8080/api/resumes')
-        .then(response => response.data)
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            throw error;
-        });
 }
 
-export const GetAllUserSearch = async() => {
-    return await axios.get('http://localhost:8080/api/resumes/usersearch')
-        .then(response => response.data)
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            throw error;
+export const GetCandidate2 = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/candidate2`, {
+            params: { userId }, // Query Parameter 수정
         });
-}
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        throw error;
+    }
+};

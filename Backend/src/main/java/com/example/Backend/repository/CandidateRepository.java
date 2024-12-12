@@ -19,4 +19,7 @@ public interface CandidateRepository extends JpaRepository<Candidate,Long> {
             "WHERE c.post_id = :postId",
             nativeQuery = true)
     public List<Object[]> findCandidateDetailsNative(@Param("postId") Long postId);
+
+    @Query("SELECT c FROM Candidate c WHERE c.resumeId = :resumeId")
+    List<Candidate> findByResumeId(@Param("resumeId") String resumeId);
 }
