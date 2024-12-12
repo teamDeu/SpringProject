@@ -11,7 +11,7 @@ import FontControlBox from '../../components/yangji1/text';
 import FileUploadComponent from '../../components/yangji1/picture';
 import { waitForSessionId } from '../../context/SessionProvider';
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // 추가
 
 
 const Container = styled.div`
@@ -113,6 +113,7 @@ const SelectboxContainer = styled.div`
 `;
 
 const Write1 = () => {
+    const navigate = useNavigate();
     const fileUploaderRef = useRef(null);
     const dropdownOptions1 = Array.from({ length: 2024 - 2015 + 1 }, (_, i) => (2015 + i).toString());
     const dropdownOptions2 = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
@@ -144,11 +145,11 @@ const Write1 = () => {
         fetchSession();
       }, []);
 
-    const handleButtonClick = async () => {
+      const handleButtonClick = async () => {
         const feedbackOptions = ['긍정적', '보통', '부정적'];
         const difficultyOptions = ['쉬움', '보통', '어려움'];
         const resultOptions = ['합격', '대기중', '불합격'];
-
+    
         if (
             companyName1.trim() === '' ||
             companyName2.trim() === '' ||
@@ -162,31 +163,30 @@ const Write1 = () => {
             selectedExperience === null ||
             selectedInterviewType === null ||
             selectedInterviewStyle === null ||
-            selectedYear === "연도 선택" ||
-            selectedMonth === "월 선택"
+            selectedYear === '연도 선택' ||
+            selectedMonth === '월 선택'
         ) {
             alert('모든 항목을 선택해주세요.');
             return;
         }
-
-        let uploadedFileName = "없음";
-
+    
+        let uploadedFileName = '없음';
+    
         if (fileUploaderRef.current) {
             const response = await fileUploaderRef.current.upload();
             if (response && response.data) {
                 try {
-                    // 파일 경로에서 파일명만 추출
-                    const filePath = response.data.includes(': ') 
-                        ? response.data.split(': ')[1] 
+                    const filePath = response.data.includes(': ')
+                        ? response.data.split(': ')[1]
                         : response.data;
-                    uploadedFileName = filePath ? filePath.split('\\').pop() : "없음"; // '\\'로 분리해 파일명만 추출
+                    uploadedFileName = filePath ? filePath.split('\\').pop() : '없음';
                 } catch (error) {
-                    console.error("파일명 처리 오류:", error);
-                    uploadedFileName = "없음";
+                    console.error('파일명 처리 오류:', error);
+                    uploadedFileName = '없음';
                 }
             }
         }
-
+    
         const requestData = {
             companyName: companyName1,
             jobCategoryName: companyName2,
@@ -200,17 +200,19 @@ const Write1 = () => {
             interviewQuestion: `${companyName3}.${companyName4}.${companyName5}`,
             interviewDetail: companyName6,
             verifyFile: uploadedFileName,
-            userId: sessionId
+            userId: sessionId,
         };
-
+    
         try {
-            const response = await axios.post("http://localhost:8080/api/interview-reviews/save", requestData);
-            alert(response.data); // 성공 메시지
+            const response = await axios.post('http://localhost:8080/api/interview-reviews/save', requestData);
+            alert(response.data); // 성공 메시지 알림
+            navigate('/test_review_home1'); // 알림 확인 후 페이지 이동
         } catch (error) {
-            console.error("Error saving interview review:", error);
-            alert("저장 실패: " + error.message);
+            console.error('Error saving interview review:', error);
+            alert('저장 실패: ' + error.message);
         }
     };
+    
     
     
 
@@ -313,7 +315,7 @@ const Write1 = () => {
                 <WowTitle top="1130px" left="0px">기본 정보 입력</WowTitle>
                 <Nemo top="1160px" left="0px" width="300px" height="500px"></Nemo>
                 <LineContainer top="1160px" left="0px"><HorizontalLine /></LineContainer>
-                <WowTitle top="1232px" left="90px">면접 질문(문장의 끝에는 .)</WowTitle>
+                <WowTitle top="1232px" left="90px">면접 질문</WowTitle>
                 <InputBox top="1172px"left="320px"width="500px"height="40px"placeholder="Q   ex)경력 사항에 대한 상세한 질문"placeholderColor="#1A28F4"
                     value={companyName3} onChange={(value) => setCompanyName3(value)}
                 />
@@ -344,9 +346,7 @@ const Write1 = () => {
                 <FileUploadComponent top="1620px" left="320px" ref={fileUploaderRef} />
                 <LineContainer top="1660px" left="0px"><HorizontalLine /></LineContainer>
                 <ButtonContainer>
-                    <Link to="/test_review_home1">
                     <ReviewButton text="등록 요청" onClick={handleButtonClick} />
-                    </Link>
                 </ButtonContainer>
             </Container>
         </>
