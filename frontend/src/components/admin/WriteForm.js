@@ -412,8 +412,10 @@ const handleDeleteNoticeOption = async (title) => {
           </FileAttachmentBox>
         )}
       </ContentBox>
+      <BottomDiv>
 
-      {showImageFileButtons && (
+      
+      {showImageFileButtons ? (
         <ImageFileButtons>
           <ImageButton>
             <Icon src="/icons/picture.png" alt="사진" />
@@ -430,12 +432,13 @@ const handleDeleteNoticeOption = async (title) => {
             <HiddenInput type="file" onChange={handleFileUpload} />
           </FileButton>
         </ImageFileButtons>
-      )}
+      ): <div></div>}
 
       <ButtonsContainer isAnnouncement={isAnnouncementPage}>
         <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
         <CancelButton onClick={handleCancel}>취소</CancelButton>
       </ButtonsContainer>
+      </BottomDiv>
 
       {isLoadingFaq && <LoadingMessage>FAQ 타이틀을 불러오는 중...</LoadingMessage>}
       {isLoadingNotice && <LoadingMessage>공지사항 타이틀을 불러오는 중...</LoadingMessage>}
@@ -566,6 +569,7 @@ const ImageFileButtons = styled.div`
   gap: 10px;
   margin-left: 30px;
   height: 40px;
+
 `;
 
 const ButtonStyles = css`
@@ -650,3 +654,8 @@ const LoadingMessage = styled.p`
   color: #555555;
   margin-left: 30px;
 `;
+
+const BottomDiv = styled.div`
+    display:flex;
+    justify-content : space-between;
+`

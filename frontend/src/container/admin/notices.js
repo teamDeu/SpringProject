@@ -24,7 +24,7 @@ const Content = styled.div`
   border: 1px solid #b5b5b5;
   margin-left: 20px;
   width: 1400px;
-  height:800px;
+  height:770px;
 `;
 
 const ButtonCh = styled.div`
