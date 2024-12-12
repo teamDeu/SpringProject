@@ -1,10 +1,10 @@
 package com.example.Backend.service;
 
-import com.example.Backend.model.Company;
-import com.example.Backend.model.JobPost;
-import com.example.Backend.model.JobPostImage;
+import com.example.Backend.model.*;
 import com.example.Backend.repository.JobPostImageRepository;
+import com.example.Backend.repository.JobPostImageRepository2;
 import com.example.Backend.repository.JobPostRepository;
+import com.example.Backend.repository.JobPostRepository2;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +20,16 @@ public class JobPostService {
     @Autowired
     private JobPostRepository jobPostRepository;
 
+    @Autowired
+    private JobPostRepository2 jobPostRepository2;
+
+
     public JobPostService(JobPostRepository jobPostRepository) {
         this.jobPostRepository = jobPostRepository;
     }
+
+    @Autowired
+    private JobPostImageRepository2 jobPostImageRepository2;
 
     @Autowired
     private JobPostImageRepository jobPostImageRepository;
@@ -69,9 +76,9 @@ public class JobPostService {
 
 
 
-    public Optional<JobPost> findByIdWithImages(Long id) {
-        return jobPostRepository.findById(id).map(jobPost -> {
-            List<JobPostImage> images = jobPostImageRepository.findByPostId(id);
+    public Optional<JobPost2> findByIdWithImages(Long id) {
+        return jobPostRepository2.findById(id).map(jobPost -> {
+            List<JobPostImage2> images = jobPostImageRepository2.findByJobPost_Id(id);
             jobPost.setImages(images);
             return jobPost;
         });
@@ -79,14 +86,14 @@ public class JobPostService {
 
 
 
-    public JobPost saveJobPostWithImages(JobPost jobPost, List<JobPostImage> images) {
+    public JobPost2 saveJobPostWithImages(JobPost2 jobPost, List<JobPostImage2> images) {
         if (images != null) {
-            for (JobPostImage image : images) {
+            for (JobPostImage2 image : images) {
                 image.setJobPost(jobPost);
             }
             jobPost.setImages(images);
         }
-        return jobPostRepository.save(jobPost);
+        return jobPostRepository2.save(jobPost);
     }
 
     public List<JobPostImage> getPostImage(Long postId) {

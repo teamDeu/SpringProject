@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import DropdownSelect from "../../components/admin/Select";
-import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq, GetNoticesByTarget, CreateNotice, DeleteNotice, CreateGNotice,GetNoticeIdByTitleAndTarget   } from "../../api/api"; // CreateGFaq 함수 추가
+import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq, GetNoticesByTarget, CreateNotice, DeleteNotice, CreateGNotice, GetNoticeIdByTitleAndTarget   } from "../../api/api"; // CreateGFaq 함수 추가
 
 const WriteForm = ({
   type,

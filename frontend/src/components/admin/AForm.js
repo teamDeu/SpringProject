@@ -119,27 +119,29 @@ const AForm = ({
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true); // 로딩 상태 기본값을 true로 설정
   const [selectedNotice, setSelectedNotice] = useState(null);
-  
+  const [filteredAnnouncements,setFilteredAnnouncements] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // 로딩 시작
-      try {
-        const data = await GetGNoticesByTarget(selectedType);
-        console.log('GNotices Data:', data); // API 응답 데이터 확인
-  
-        // 데이터를 id 기준으로 내림차순 정렬
-        const sortedData = (data || []).sort((a, b) => b.id - a.id);
-  
-        setAnnouncements(sortedData);
-      } catch (error) {
-        console.error("Error fetching GNotices:", error);
-        alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-      }
-      setLoading(false); // 로딩 종료
+        setLoading(true); // Start loading
+        try {
+            const data = await GetGNoticesByTarget(selectedType || "all"); // Default to "all"
+            console.log("Fetched Data:", data);
+
+            // Sort data by ID (descending order)
+            const sortedData = (data || []).sort((a, b) => b.id - a.id);
+            setAnnouncements(sortedData);
+        } catch (error) {
+            console.error("Error fetching GNotices:", error);
+            alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+        }
+        setLoading(false); // Stop loading
     };
-  
+
     fetchData();
-  }, [selectedType]);
+}, [selectedType]); // 의존성으로 selectedType 유지
+
+  
+
   
 
   useEffect(() => {
@@ -223,12 +225,23 @@ const AForm = ({
   };
   const targetType = typeMapping[selectedType] || "전체";
 
-  const filteredAnnouncements = (announcements || []).filter((item) => {
-    const matchesType = selectedType === "all" ? item.target === "전체" : item.target === targetType;
-    const matchesCategory = selectedCategory === "전체" || (item.notice && item.notice.title === selectedCategory);
-    const matchesSearch = (item.title || "").toLowerCase().includes((searchTerm || "").toLowerCase());
-    return matchesType && matchesCategory && matchesSearch;
-  });
+  useEffect(() => {
+    setFilteredAnnouncements(
+        (announcements || []).filter((item) => {
+            const matchesType =
+                selectedType === "all" || item.target === typeMapping[selectedType];
+            const matchesCategory =
+                selectedCategory === "전체" || item.title.includes(selectedCategory);
+            const matchesSearch =
+                searchTerm === "" ||
+                (item.title || "").toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesType && matchesCategory && matchesSearch;
+        })
+    );
+}, [announcements, selectedType, selectedCategory, searchTerm]); // selectedType 포함
+
+  
+  
 
   // 페이지네이션 처리
   useEffect(() => {

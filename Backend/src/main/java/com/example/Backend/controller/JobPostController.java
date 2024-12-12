@@ -1,9 +1,7 @@
 package com.example.Backend.controller;
 
 import com.example.Backend.Util.Util;
-import com.example.Backend.model.Company;
-import com.example.Backend.model.JobPost;
-import com.example.Backend.model.JobPostImage;
+import com.example.Backend.model.*;
 import com.example.Backend.service.CompanyService;
 import com.example.Backend.service.JobPostService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,12 +26,9 @@ public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
-<<<<<<< HEAD
     @Autowired
     private CompanyService companyService;
 
-=======
->>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
     public JobPostController(JobPostService jobPostService) {
         this.jobPostService = jobPostService;
     }
@@ -49,7 +44,6 @@ public class JobPostController {
         return ResponseEntity.ok(savedJobPost);
     }
 
-<<<<<<< HEAD
     @PutMapping("/jobpost/{id}/increment-views")
     public ResponseEntity<Void> incrementViews(@PathVariable Long id) {
         try {
@@ -61,13 +55,12 @@ public class JobPostController {
         }
     }
 
-=======
+
     @PostMapping("/jobpost/end")
     public ResponseEntity<JobPost> endJobPost(@RequestParam Integer id)
     {
         Date today = new Date();
         System.out.println("현재 날짜: " + today);
->>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
 
         // Calendar 인스턴스 생성
         Calendar calendar = Calendar.getInstance();
@@ -275,14 +268,14 @@ public class JobPostController {
 
 
     @GetMapping("/idjobpost")
-    public ResponseEntity<JobPost> getJobPost(@RequestParam Long id) {
-        Optional<JobPost> jobPostOpt = jobPostService.findByIdWithImages(id);
+    public ResponseEntity<JobPost2> getJobPost(@RequestParam Long id) {
+        Optional<JobPost2> jobPostOpt = jobPostService.findByIdWithImages(id);
         if (jobPostOpt.isPresent()) {
-            JobPost jobPost = jobPostOpt.get();
+            JobPost2 jobPost = jobPostOpt.get();
 
             // 이미지를 하나로 제한
             if (jobPost.getImages() != null && !jobPost.getImages().isEmpty()) {
-                List<JobPostImage> singleImageList = jobPost.getImages().subList(0, 1);
+                List<JobPostImage2> singleImageList = jobPost.getImages().subList(0, 1);
                 jobPost.setImages(singleImageList);
             }
 
@@ -360,11 +353,6 @@ public class JobPostController {
     public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
         return ResponseEntity.ok(jobPostService.getPostImage(id));
     }
-
-
-<<<<<<< HEAD
 }
-=======
 
-}
->>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
+

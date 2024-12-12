@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import JobTopBar from '../../components/JobTopBar';
 import ChangeButton2 from "../../components/admin/ChangeButton2";
@@ -7,6 +7,7 @@ import AForm from "../../components/admin/AForm";
 import Pagination from "../../components/admin/Pagination";
 import SelectBox from '../../components/eunhyo/SelectBox';
 import NoticeDetails from "../../components/admin/NoticeDetails";
+import { GetGNoticesByTarget } from '../../api/api';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -110,17 +111,48 @@ const SAnnouncements = () => {
   const itemsPerPage = 8;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
-
+  const [titles,setTitles] = useState([]);
+  const [options,setOptions] = useState([]);
   const handleButtonClick = (type) => {
     if (type === "전체") setSelectedType("all");
     else if (type === "개인회원") setSelectedType("individual");
     else if (type === "기업회원") setSelectedType("corporate");
     setCurrentPage(1);
   };
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const data = await GetGNoticesByTarget(selectedType);
+          console.log('GNotices Data:', data); // API 응답 데이터 확인
+    
+          // 데이터를 id 기준으로 내림차순 정렬
+          let type = "all";
+          if (selectedType === "all") type = "전체"
+          else if (selectedType === "individual") type = "개인회원"
+          else if (selectedType === "corporate") type = "기업회원";
+          const filteredData = data.filter((item) => item.target === type)
+          const titleData = filteredData.map((item) => item.title);
+          console.log("titleData",titleData,selectedType);
+          setTitles(titleData)
+        } catch (error) {
+          console.error("Error fetching GNotices:", error);
+          alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+        }
+      };
+    
+      fetchData();
+    }, [selectedType]);
 
+    
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  useEffect(() =>{
+    const optionData = ["전체", ...titles.filter((item, index) => { 
+      return titles.findIndex((e) => e === item) === index;
+    })];
+        setOptions(optionData)
+  },[titles])
 
   const updateTotalPages = (totalItems) => {
     const calculatedPages = Math.ceil(totalItems / itemsPerPage);
@@ -164,7 +196,7 @@ const SAnnouncements = () => {
               <SearchBarWrapper>
                 <SelectBoxWrapper>
                   <SelectBox
-                    options={["전체", "이벤트", "안내", "공지"]}
+                    options={options}
                     onChange={handleSelectCategory}
                     defaultValue="전체"
                   />

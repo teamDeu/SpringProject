@@ -79,6 +79,9 @@ const Notices = () => {
     if (type === "전체") setSelectedType("all");
     else if (type === "개인회원") setSelectedType("individual");
     else if (type === "기업회원") setSelectedType("corporate");
+    setSelectedType(
+      type === "전체" ? "all" : type === "개인회원" ? "individual" : "corporate"
+    );
     setCurrentPage(1);
     setResetSelections(true);
   };
