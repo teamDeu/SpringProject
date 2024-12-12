@@ -288,15 +288,7 @@ public class JobPostController {
         }
     }
 
-    @GetMapping("/jobpostimage")
-    public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
-        return ResponseEntity.ok(jobPostService.getPostImage(id));
-    }
-    @GetMapping("/jobpost/count")
-    public ResponseEntity<List<Map<String, Object>>> getAllJobPostCounts() {
-        List<Map<String, Object>> jobPostCounts = jobPostService.getAllJobPostCounts();
-        return ResponseEntity.ok(jobPostCounts);
-    }
+
 
 
 }

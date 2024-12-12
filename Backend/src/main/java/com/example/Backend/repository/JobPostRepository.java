@@ -56,7 +56,4 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
             Pageable pageable
     );
 
-
-
-
 }

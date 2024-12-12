@@ -156,11 +156,7 @@ const Review = () => {
                 </LineContainer>
                 <CeoBoxContainer>
                     {sortedData.map((item) => (
-                        <div
-                            key={item.id}
-                            onClick={() => handleCompanyClick(item)} // 클릭 시 이동
-                            style={{ cursor: "pointer" }}
-                        >
+                        <div>
                             <CeoBox data={[item]} />
                         </div>
                     ))}
