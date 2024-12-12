@@ -423,6 +423,60 @@ export const GetNoticesByTarget = async (target) => {
         throw error;
     }
 };
+// 새로운 Notice 생성 API 함수
+export const CreateNotice = async (notice) => {
+    try {
+        const response = await axios.post('http://localhost:8080/api/notices', notice);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating Notice:', error);
+        throw error;
+    }
+};
+
+// Notice 삭제 API 함수
+export const DeleteNotice = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/notices/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting Notice with id ${id}:`, error);
+        throw error;
+    }
+};
+
+// GNotice 생성 API 함수
+export const CreateGNotice = async (gNotice, noticeId) => {
+    console.log("Sending Data to CreateGNotice:", gNotice, noticeId);
+    try {
+        const response = await axios.post(
+            `http://localhost:8080/api/g_notices/notice/${noticeId}`,
+            gNotice
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error creating GNotice:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const GetNoticeIdByTitleAndTarget = async (title, target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/notices/id', {
+            params: { title, target }
+        });
+        return response.data.id;
+    } catch (error) {
+        console.error('Error fetching Notice ID:', error);
+        throw error;
+    }
+};
+
+// 공지사항 세부 정보를 가져오는 API
+export const GetGNoticeDetails = async (id) => {
+    const response = await axios.get(`http://localhost:8080/api/g_notices/${id}`);
+    return response.data;
+  };
 
 
 // 특정 사용자의 관심기업 목록 가져오기

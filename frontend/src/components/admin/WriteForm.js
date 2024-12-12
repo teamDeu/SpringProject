@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import DropdownSelect from "../../components/admin/Select";
-import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq, GetNoticesByTarget  } from "../../api/api"; // CreateGFaq 함수 추가
+import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq, GetNoticesByTarget, CreateNotice, DeleteNotice, CreateGNotice,GetNoticeIdByTitleAndTarget   } from "../../api/api"; // CreateGFaq 함수 추가
 
 const WriteForm = ({
   type,
@@ -62,23 +62,31 @@ const WriteForm = ({
   
     if (type === "notice") {
       const fetchNotices = async () => {
-        setIsLoadingNotice(true);
-        try {
-          const noticesData = await GetNoticesByTarget(memberType === "전체" ? "all" : memberType);
-          const titles = noticesData.map((notice) => notice.title);
-          setNoticeOptions(titles);
-          setSelectedNoticeOption(titles.length > 0 ? titles[0] : "");
-        } catch (error) {
-          console.error("Error fetching Notice titles:", error);
-          setNoticeOptions([]);
-          setSelectedNoticeOption("");
-        } finally {
-          setIsLoadingNotice(false);
-        }
+          setIsLoadingNotice(true);
+          try {
+              // memberType에 따라 API 호출 및 데이터 필터링
+              const noticesData = await GetNoticesByTarget(memberType === "전체" ? "all" : memberType);
+              const filteredNotices = noticesData.filter(notice => {
+                  if (memberType === "전체") {
+                      return notice.target === "전체";
+                  }
+                  return notice.target === memberType;
+              });
+
+              const titles = filteredNotices.map((notice) => notice.title);
+              setNoticeOptions(titles);
+              setSelectedNoticeOption(titles.length > 0 ? titles[0] : "");
+          } catch (error) {
+              console.error("Error fetching Notice titles:", error);
+              setNoticeOptions([]);
+              setSelectedNoticeOption("");
+          } finally {
+              setIsLoadingNotice(false);
+          }
       };
-  
+
       fetchNotices();
-    }
+  }
   }, [memberType, type]);
   
   
@@ -208,48 +216,128 @@ const WriteForm = ({
     }
     
 
-      alert("FAQ가 성공적으로 삭제되었습니다.");
+      alert("성공적으로 삭제되었습니다.");
     } catch (error) {
       console.error("Error deleting FAQ:", error);
-      alert("FAQ 삭제에 실패했습니다. 다시 시도해주세요.");
+      alert("삭제에 실패했습니다.");
     }
   };
 
-  // GFaqs 생성 핸들러
   const handleSubmit = async () => {
-    const question = questionRef.current.value.trim(); // 질문 입력값
-    const answer = contentRef.current.innerHTML.trim(); // 답변 입력값
+    const question = questionRef.current.value.trim(); // 제목 입력값
+    const content = contentRef.current.innerHTML.trim(); // 내용 입력값
 
-    if (!question || !answer) {
-        alert("질문과 답변을 모두 입력해주세요.");
-        return;
-    }
+    if (type === "notice") {
+        if (!question || !content || !selectedNoticeOption) {
+            alert("제목, 내용, 그리고 Notice를 모두 선택해주세요.");
+            return;
+        }
 
-    // 선택된 Faq 제목에 해당하는 Faq 객체 찾기
-    const selectedFaq = faqs.find(faq => faq.title === selectedSecondOption);
-    if (!selectedFaq) {
-        alert("선택된 FAQ를 찾을 수 없습니다.");
-        return;
-    }
+        try {
+            // 선택된 Notice에 해당하는 ID 조회
+            const noticeId = await GetNoticeIdByTitleAndTarget(selectedNoticeOption, memberType);
 
-    const faqId = selectedFaq.id;
+            if (!noticeId) {
+                alert("선택된 Notice가 존재하지 않습니다.");
+                return;
+            }
 
-    // GFaqs 생성
-    try {
-        const gFaq = { question, answer };
-        await CreateGFaq(faqId, gFaq);
-        alert("FAQ가 성공적으로 등록되었습니다.");
-        // 폼 초기화
-        questionRef.current.value = "";
-        contentRef.current.innerHTML = "";
-        // faq.js 페이지로 이동
-        navigate('/faq');
-    } catch (error) {
-        console.error("Error creating GFaq:", error);
-        alert("GFaq 생성에 실패했습니다.");
+            const newGNotice = {
+              title: selectedNoticeOption.trim(),
+              target: memberType.trim(),
+              question: question,
+              answer: content,
+          };
+          
+
+            await CreateGNotice(newGNotice, noticeId); // GNotice 생성
+            alert("공지사항이 성공적으로 등록되었습니다.");
+            questionRef.current.value = "";
+            contentRef.current.innerHTML = "";
+            navigate('/notices');
+        } catch (error) {
+            console.error("Error creating GNotice:", error);
+            alert("공지사항 생성에 실패했습니다.");
+        }
+    } else if (type === "faq") {
+        // FAQ 등록 로직
+        const selectedFaq = faqs.find(faq => faq.title === selectedSecondOption);
+        if (!selectedFaq) {
+            alert("선택된 FAQ를 찾을 수 없습니다.");
+            return;
+        }
+
+        const faqId = selectedFaq.id;
+        try {
+            const gFaq = { question, answer: content };
+            await CreateGFaq(faqId, gFaq);
+            alert("FAQ가 성공적으로 등록되었습니다.");
+            questionRef.current.value = "";
+            contentRef.current.innerHTML = "";
+            navigate('/faq');
+        } catch (error) {
+            console.error("Error creating GFaq:", error);
+            alert("Faq 생성에 실패했습니다.");
+        }
     }
 };
 
+
+
+
+// 새로운 Notice 제목을 추가 및 DB에 저장
+const handleAddNoticeOption = async (newTitle) => {
+  try {
+      const newNotice = { title: newTitle, target: memberType };
+      const createdNotice = await CreateNotice(newNotice);
+      console.log("Created new Notice:", createdNotice);
+
+      setNoticeOptions((prevOptions) => [...prevOptions, createdNotice.title]);
+      setSelectedNoticeOption(createdNotice.title);
+  } catch (error) {
+      console.error("Error creating new Notice:", error);
+      alert("새 Notice를 추가하는 데 실패했습니다. 다시 시도해주세요.");
+  }
+};
+
+// Notice 제목 삭제
+const handleDeleteNoticeOption = async (title) => {
+  try {
+      // 선택된 Notice 찾기
+      const noticesData = await GetNoticesByTarget(memberType === "전체" ? "all" : memberType);
+      const noticeToDelete = noticesData.find(notice => notice.title === title);
+
+      if (!noticeToDelete) {
+          alert("삭제할 Notice를 찾을 수 없습니다.");
+          return;
+      }
+
+      // DB에서 삭제 요청
+      await DeleteNotice(noticeToDelete.id);
+      console.log(`Deleted Notice with id: ${noticeToDelete.id}`);
+
+      // UI 업데이트
+      setNoticeOptions((prevOptions) => prevOptions.filter(option => option !== title));
+      if (selectedNoticeOption === title) {
+          const newOptions = noticeOptions.filter(option => option !== title);
+          const optionIndex = noticeOptions.indexOf(title);
+          let newSelected = "";
+          if (newOptions.length > 0) {
+              if (optionIndex < newOptions.length) {
+                  newSelected = newOptions[optionIndex];
+              } else {
+                  newSelected = newOptions[newOptions.length - 1];
+              }
+          }
+          setSelectedNoticeOption(newSelected);
+      }
+
+      alert("성공적으로 삭제되었습니다.");
+  } catch (error) {
+      console.error("Error deleting Notice:", error);
+      alert("삭제에 실패했습니다.");
+  }
+};
 
   return (
     <Container>
@@ -264,33 +352,36 @@ const WriteForm = ({
         />
         {/* 두 번째 DropdownSelect: FAQ 타이틀 선택 */}
         <DropdownSelect
-          initialOptions={type === "notice" ? noticeOptions : secondSelectOptions} // type에 따라 옵션 선택
-          defaultOption={type === "notice" ? selectedNoticeOption : selectedSecondOption}
-          onChange={(selectedOption) => {
-            if (type === "notice") {
-              setSelectedNoticeOption(selectedOption);
-            } else {
-              setSelectedSecondOption(selectedOption);
-            }
-          }}
-          showPlusButton={true}
-          showDeleteButton={true}
-          width="1270px"
-          margin="0 0 0 32px"
-          onAddOption={handleAddFaqOption} // 새 FAQ 추가
-          onDeleteOption={handleDeleteFaqOption} // FAQ 삭제
+            initialOptions={type === "notice" ? noticeOptions : secondSelectOptions}
+            defaultOption={type === "notice" ? selectedNoticeOption : selectedSecondOption}
+            onChange={(selectedOption) => {
+                if (type === "notice") {
+                    setSelectedNoticeOption(selectedOption);
+                } else {
+                    setSelectedSecondOption(selectedOption);
+                }
+            }}
+            showPlusButton={true}
+            showDeleteButton={true}
+            width="1270px"
+            margin="0 0 0 32px"
+            onAddOption={type === "notice" ? handleAddNoticeOption : handleAddFaqOption}
+            onDeleteOption={type === "notice" ? handleDeleteNoticeOption : handleDeleteFaqOption}
         />
 
 
+
       </Header>
-      {/* 질문 입력 필드 */}
+
+      {/* 질문 또는 제목 입력 필드 */}
       <TitleInput
-        type="text"
-        placeholder="질문을 입력해주세요."
-        isBold={isTitleBold}
-        onChange={handleTitleChange}
-        ref={questionRef} // ref 추가
+          type="text"
+          placeholder={type === "notice" ? "제목을 입력해주세요." : "질문을 입력해주세요."} // type에 따라 placeholder 변경
+          isBold={isTitleBold}
+          onChange={handleTitleChange}
+          ref={questionRef} // ref 추가
       />
+
 
       <ContentBox>
         {/* 답변 입력 필드 */}

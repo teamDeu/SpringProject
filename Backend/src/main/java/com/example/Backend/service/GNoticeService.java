@@ -7,6 +7,7 @@ import com.example.Backend.repository.NoticeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,6 +44,8 @@ public class GNoticeService {
 
         gNotice.setTitle(notice.getTitle());
         gNotice.setTarget(notice.getTarget());
+        gNotice.setCreatedAt(LocalDateTime.now()); // createdAt 값 설정
+
         return gNoticeRepository.save(gNotice);
     }
 
@@ -63,4 +66,10 @@ public class GNoticeService {
         }
         gNoticeRepository.deleteById(id);
     }
+    // ID로 GNotice를 조회
+    public GNotice getGNoticeDetails(Integer id) {
+        return gNoticeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("GNotice not found with id " + id));
+    }
+
 }
