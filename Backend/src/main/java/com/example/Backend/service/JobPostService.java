@@ -27,12 +27,11 @@ public class JobPostService {
     @Autowired
     private JobPostImageRepository jobPostImageRepository;
 
-<<<<<<< HEAD
 
 
-=======
+
+
     public JobPost getJobPostById(Long id) {return jobPostRepository.findJobPostById(id);}
->>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
     public JobPost saveJobPost(JobPost jobPost) {
         return jobPostRepository.save(jobPost);
     }
