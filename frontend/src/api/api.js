@@ -497,3 +497,15 @@ export const GetCandidate = async (postId) =>{
             throw error;
         });
 } 
+
+export const GetCandidate2 = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/candidate2`, {
+            params: { userId }, // Query Parameter 수정
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        throw error;
+    }
+};

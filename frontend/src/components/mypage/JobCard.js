@@ -1,13 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
-const JobCard = ({ company, title, experience, education, location, deadline }) => {
-    console.log("Deadline received by JobCard:", deadline);
+const JobCard = ({ jobId, company, title, experience, education, location, deadline, onSelect }) => {
+    const navigate = useNavigate();
+
+    const handleCheckboxChange = (e) => {
+        onSelect(jobId, e.target.checked); // 체크박스 상태 전달
+    };
+
+    const handleApplyClick = () => {
+        navigate(`/jobdetail/${jobId}`); // 해당 jobId를 사용해 JobDetail 페이지로 이동
+    };
+
     return (
         <Wrapper>
             <CardContainer>
                 <CheckboxContainer>
-                    <input type="checkbox" />
+                    <input type="checkbox" onChange={handleCheckboxChange} />
                 </CheckboxContainer>
                 <ContentContainer>
                     <Company>{company}</Company>
@@ -18,7 +28,7 @@ const JobCard = ({ company, title, experience, education, location, deadline }) 
                 </ContentContainer>
                 <ActionContainer>
                     <Deadline>마감일 {deadline || "미정"}</Deadline>
-                    <ApplyButton>지원하기</ApplyButton>
+                    <ApplyButton onClick={handleApplyClick}>지원하기</ApplyButton>
                 </ActionContainer>
             </CardContainer>
         </Wrapper>
@@ -30,9 +40,9 @@ export default JobCard;
 // Styled Components
 const Wrapper = styled.div`
     display: flex;
-    justify-content: center; /* 가로 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    width: 100%; /* 부모 컨테이너 너비를 채움 */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     margin-bottom: 15px;
 `;
 
@@ -44,8 +54,7 @@ const CardContainer = styled.div`
     border-radius: 12px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 1480px; /* 카드 너비 */
-    height: 100px; /* 카드 높이 */
+    width: 100%;
 `;
 
 const CheckboxContainer = styled.div`
