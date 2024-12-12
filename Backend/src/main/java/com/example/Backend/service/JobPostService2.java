@@ -48,6 +48,7 @@ public class JobPostService2 {
         }
     }
 
+    
     // Retrieve job post with images
     public List<Map<String, Object>> getJobPostWithImages(Long postId) {
         List<Object[]> results = jobPostRepository.getJobPostWithImages(postId);
