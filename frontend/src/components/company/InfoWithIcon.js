@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const InfoWithIcon = ({info,icon}) => {
+const InfoWithIcon = ({type,info,icon}) => {
   return (
     <Container>
         <Imgbox>
@@ -10,10 +10,16 @@ const InfoWithIcon = ({info,icon}) => {
         <InfoBox>
             {info.map((item,index) => {
                 if(index === info.length -1){
-                    return item;
+                    if(type == "userLocation")
+                        return item.name + " " + (item.region == "전체" ? "" : item.region)
+                    else
+                        return item.name;
                 }
                 else
-                    return item + ","
+                    if(type == "userLocation")
+                        return item.name + " " + (item.region == "전체" ? "" : item.region) + ","
+                    else
+                        return item.name + ","
             })}
         </InfoBox>
     </Container>

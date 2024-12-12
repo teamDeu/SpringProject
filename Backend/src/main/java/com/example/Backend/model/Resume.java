@@ -26,7 +26,7 @@ public class Resume {
     private String pdfUrl;
 
     private LocalDate createdAt;
-    private LocalDate  updatedAt;
+    private LocalDate updatedAt;
 
     public Resume() {}
 

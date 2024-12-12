@@ -41,11 +41,12 @@ const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) =>
     setImageFile((prev) => prev.filter((_, i) => i !== index));
   };
   useEffect(() => {
+    console.log(value);
     if(value.length > 0){
       value.forEach((item) => {
         if(item && item.imgPath){
           const imgSrc = `http://localhost:8080/uploads/${item.imgPath}`
-        setImages((prev) => [...prev,imgSrc])
+          setImages((prev) => [...prev,imgSrc])
         const fetchImageFile = async() =>{
           const newImageFile = await createFileFromImgSrc(imgSrc,item.imgName)
           console.log(newImageFile);
@@ -53,9 +54,20 @@ const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) =>
           };
         fetchImageFile();
         }
+        else if(item != undefined){
+          const imgSrc = `http://localhost:8080/uploads/${item}`
+          setImages([imgSrc])
+          const fetchImageFile = async() =>{
+          const newImageFile = await createFileFromImgSrc(imgSrc,item)
+          console.log(newImageFile);
+          setImageFile([newImageFile]);
+          };
+        fetchImageFile();
+        }
       })
     }
   },[value])
+
   useEffect(() => {
     updateImage(imageFile);
   },[imageFile])

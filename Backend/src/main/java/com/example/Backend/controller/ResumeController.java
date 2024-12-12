@@ -1,7 +1,9 @@
 package com.example.Backend.controller;
 
-import com.example.Backend.model.Resume;
-import com.example.Backend.service.ResumeService;
+import com.example.Backend.DTO.UserSearchResponse;
+import com.example.Backend.Util.Util;
+import com.example.Backend.model.*;
+import com.example.Backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,6 +24,20 @@ public class ResumeController {
 
     @Autowired
     private ResumeService resumeService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ResumeSkillService resumeSkillService;
+    @Autowired
+    private ResumeLocationService resumeLocationService;
+    @Autowired
+    private ResumeJobCategoryService resumeJobCategoryService;
+    @Autowired
+    private SkillsService skillsService;
+    @Autowired
+    private LocationService locationService;
+    @Autowired
+    private JobCategoryService jobCategoryService;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -31,6 +48,49 @@ public class ResumeController {
         return resumeService.findAll();
     }
 
+    @GetMapping("/usersearch")
+    public ResponseEntity<List<UserSearchResponse>> getAllUserSearch(){
+        Date date = new Date();
+        List<UserSearchResponse> userSearchResponses = new ArrayList<UserSearchResponse>();
+        AtomicReference<Long> index = new AtomicReference<>(0L);
+        resumeService.findAll().forEach((resume) -> {
+            Integer resumeId = resume.getId();
+            User user = userService.getUserById(resume.getUserId()).get();
+            UserSearchResponse userSearchResponse = new UserSearchResponse();
+            userSearchResponse.setId(index.getAndSet(index.get() + 1));
+            userSearchResponse.setUserName(user.getName());
+            userSearchResponse.setUserAge(Util.calculateAge(user.getBirthDate(),date));
+            userSearchResponse.setUserGender(user.getGender());
+
+
+            List<ResumeSkill> skillIds = resumeSkillService.findByResumeId(resumeId);
+            List<ResumeJobCategory> jobCategorieIds = resumeJobCategoryService.findByResumeId(resumeId);
+            List<ResumeLocation> locationIds = resumeLocationService.findByResumeId(resumeId);
+
+            List<Skills> skills = new ArrayList<Skills>();
+            List<JobCategory> jobCategories = new ArrayList<JobCategory>();
+            List<Location> locations = new ArrayList<Location>();
+            skillIds.forEach((id) -> {
+                skills.add(skillsService.getSkillsById(id.getSkill().getId()).get());
+            });
+
+            jobCategorieIds.forEach((id) -> {
+                jobCategories.add(jobCategoryService.getJobCategoryById(id.getJobCategory().getId()).get());
+            });
+
+            locationIds.forEach((id) -> {
+                locations.add(locationService.getLocationById(id.getLocation().getId()).get());
+            });
+
+            userSearchResponse.setUserSkills(skills);
+            userSearchResponse.setUserCategory(jobCategories);
+            userSearchResponse.setUserLocation(locations);
+            userSearchResponse.setUserRegDate(resume.getUpdatedAt());
+            userSearchResponse.setUserExp(resume.getExperienceYears());
+            userSearchResponses.add(userSearchResponse);
+        });
+        return ResponseEntity.ok(userSearchResponses);
+    }
     // 특정 사용자의 이력서 가져오기
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Resume>> getResumesByUserId(@PathVariable String userId) {
@@ -93,7 +153,7 @@ public class ResumeController {
             file.transferTo(uploadFile);
 
             // 파일 경로 반환
-            return ResponseEntity.ok("/uploads/" + fileName);
+            return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }

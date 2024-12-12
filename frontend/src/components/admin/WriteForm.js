@@ -1,15 +1,18 @@
-// WriteForm.js
-
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import DropdownSelect from "../../components/admin/Select";
-import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq } from "../../api/api"; // CreateGFaq 함수 추가
+import { GetFaqsByTarget, CreateFaq, DeleteFaq, CreateGFaq, GetNoticesByTarget  } from "../../api/api"; // CreateGFaq 함수 추가
 
 const WriteForm = ({
+  type,
+  firstSelectOptions, // 첫 번째 드롭다운 옵션 추가
+  secondSelectOptions: initialSecondSelectOptions, // 변경: 두 번째 드롭다운 옵션 이름 변경
   cancelPath,
   showImageFileButtons,
   isAnnouncementPage,
+  defaultOption,
+  
 }) => {
   const navigate = useNavigate();
   const contentRef = useRef(null);
@@ -19,43 +22,66 @@ const WriteForm = ({
   const [fileList, setFileList] = useState([]);
   const [isEmptyContent, setIsEmptyContent] = useState(true);
 
-  const [memberType, setMemberType] = useState("개인회원");
-  const [secondSelectOptions, setSecondSelectOptions] = useState([]);
+  const [memberType, setMemberType] = useState(defaultOption || "개인회원");
+  const [secondSelectOptions, setSecondSelectOptions] = useState(initialSecondSelectOptions);
   const [selectedSecondOption, setSelectedSecondOption] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [noticeOptions, setNoticeOptions] = useState([]);
+  const [selectedNoticeOption, setSelectedNoticeOption] = useState("");
+  const [isLoadingFaq, setIsLoadingFaq] = useState(false);
+  const [isLoadingNotice, setIsLoadingNotice] = useState(false);
 
-  const [faqs, setFaqs] = useState([]); // Faq 객체 목록 저장
+  const [faqs, setFaqs] = useState([]);
 
   useEffect(() => {
-    const targetMap = {
-      "개인회원": "개인_FAQ",
-      "기업회원": "기업_FAQ",
-    };
-
-    const target = targetMap[memberType];
-    console.log("Fetching FAQs for target:", target);
-
-    const fetchFaqTitles = async () => {
-      setIsLoading(true);
-      try {
-        const faqsData = await GetFaqsByTarget(target);
-        console.log("Fetched FAQs for target:", faqsData);
-        setFaqs(faqsData); // Faq 객체 저장
-        const titles = faqsData.map((faq) => faq.title);
-        console.log("FAQ Titles:", titles);
-        setSecondSelectOptions(titles);
-        setSelectedSecondOption(titles.length > 0 ? titles[0] : "");
-      } catch (error) {
-        console.error("Error fetching FAQ titles:", error);
-        setSecondSelectOptions([]);
-        setSelectedSecondOption("");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFaqTitles();
-  }, [memberType]);
+    if (type === "faq") {
+      const targetMap = {
+        "개인회원": "개인_FAQ",
+        "기업회원": "기업_FAQ",
+      };
+  
+      const target = targetMap[memberType];
+      const fetchFaqTitles = async () => {
+        setIsLoadingFaq(true);
+        try {
+          const faqsData = await GetFaqsByTarget(target);
+          setFaqs(faqsData);
+          const titles = faqsData.map((faq) => faq.title);
+          setSecondSelectOptions(titles);
+          setSelectedSecondOption(titles.length > 0 ? titles[0] : "");
+        } catch (error) {
+          console.error("Error fetching FAQ titles:", error);
+          setSecondSelectOptions([]);
+          setSelectedSecondOption("");
+        } finally {
+          setIsLoadingFaq(false);
+        }
+      };
+  
+      fetchFaqTitles();
+    }
+  
+    if (type === "notice") {
+      const fetchNotices = async () => {
+        setIsLoadingNotice(true);
+        try {
+          const noticesData = await GetNoticesByTarget(memberType === "전체" ? "all" : memberType);
+          const titles = noticesData.map((notice) => notice.title);
+          setNoticeOptions(titles);
+          setSelectedNoticeOption(titles.length > 0 ? titles[0] : "");
+        } catch (error) {
+          console.error("Error fetching Notice titles:", error);
+          setNoticeOptions([]);
+          setSelectedNoticeOption("");
+        } finally {
+          setIsLoadingNotice(false);
+        }
+      };
+  
+      fetchNotices();
+    }
+  }, [memberType, type]);
+  
+  
 
   const handleTitleChange = (e) => {
     setIsTitleBold(e.target.value.trim() !== "");
@@ -217,7 +243,7 @@ const WriteForm = ({
         questionRef.current.value = "";
         contentRef.current.innerHTML = "";
         // faq.js 페이지로 이동
-        navigate('/faq'); // '/faq' 경로를 faq.js에 맞게 수정하세요.
+        navigate('/faq');
     } catch (error) {
         console.error("Error creating GFaq:", error);
         alert("GFaq 생성에 실패했습니다.");
@@ -230,30 +256,32 @@ const WriteForm = ({
       <Header>
         {/* 첫 번째 DropdownSelect: 회원 타입 선택 */}
         <DropdownSelect
-          initialOptions={["개인회원", "기업회원"]}
+          initialOptions={firstSelectOptions}
           defaultOption={memberType}
-          onChange={(selectedOption) => {
-            console.log("Selected member type:", selectedOption);
-            setMemberType(selectedOption);
-          }}
+          onChange={(selectedOption) => setMemberType(selectedOption)}
           showPlusButton={false}
           showDeleteButton={false}
         />
         {/* 두 번째 DropdownSelect: FAQ 타이틀 선택 */}
         <DropdownSelect
-          initialOptions={secondSelectOptions}
-          defaultOption={selectedSecondOption}
+          initialOptions={type === "notice" ? noticeOptions : secondSelectOptions} // type에 따라 옵션 선택
+          defaultOption={type === "notice" ? selectedNoticeOption : selectedSecondOption}
           onChange={(selectedOption) => {
-            console.log("Selected second option:", selectedOption);
-            setSelectedSecondOption(selectedOption);
+            if (type === "notice") {
+              setSelectedNoticeOption(selectedOption);
+            } else {
+              setSelectedSecondOption(selectedOption);
+            }
           }}
           showPlusButton={true}
           showDeleteButton={true}
           width="1270px"
           margin="0 0 0 32px"
-          onAddOption={handleAddFaqOption}
-          onDeleteOption={handleDeleteFaqOption}
+          onAddOption={handleAddFaqOption} // 새 FAQ 추가
+          onDeleteOption={handleDeleteFaqOption} // FAQ 삭제
         />
+
+
       </Header>
       {/* 질문 입력 필드 */}
       <TitleInput
@@ -318,7 +346,9 @@ const WriteForm = ({
         <CancelButton onClick={handleCancel}>취소</CancelButton>
       </ButtonsContainer>
 
-      {isLoading && <LoadingMessage>FAQ 타이틀을 불러오는 중...</LoadingMessage>}
+      {isLoadingFaq && <LoadingMessage>FAQ 타이틀을 불러오는 중...</LoadingMessage>}
+      {isLoadingNotice && <LoadingMessage>공지사항 타이틀을 불러오는 중...</LoadingMessage>}
+
     </Container>
   );
 };
