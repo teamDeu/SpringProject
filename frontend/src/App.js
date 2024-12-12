@@ -54,7 +54,7 @@ import Ceo_Review_Home from './container/yangji/ceo_review_home'
 import Myreview from './container/yangji/myreview'
 import A from './components/yangji/hiddenbox'
 
-import InputCompanyInfo from './container/company/inputCompanyInfo'
+import InputCompanyInfo from './container/company/InputCompanyInfo'
 import UserSearch from './container/company/UserSearch'
 import CompanyManagePost from './container/company/CompanyManagePost'
 import CompanyRegPost from './container/company/CompanyRegPost'

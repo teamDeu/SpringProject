@@ -87,7 +87,7 @@ const Review = () => {
             try {
                 const [companiesResponse, favoriteCountsResponse, jobPostCountsResponse] = await Promise.all([
                     axios.get("http://localhost:8080/api/companies"),
-                    axios.get("http://localhost:8080/api/users-favorites/counts"),
+                    axios.get("http://localhost:8080/api/users_favorites/counts"),
                     axios.get("http://localhost:8080/api/jobpost/count"),
                 ]);
 
@@ -149,8 +149,12 @@ const Review = () => {
                     <Input onSearch={(value) => setSearchQuery(value)} />
                 </InputContainer>
                 <ButtonContainer>
-                    <ReviewButton text="기업 리뷰 등록하기" />
+                    <ReviewButton 
+                        text="기업 리뷰 등록하기" 
+                        onClick={() => alert("서비스 준비중입니다.")} 
+                    />
                 </ButtonContainer>
+
                 <LineContainer>
                     <HorizontalLine />
                 </LineContainer>

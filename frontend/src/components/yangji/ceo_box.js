@@ -132,7 +132,7 @@ const CeoBox = ({ data }) => {
 
                 const updatedFavorites = {};
                 for (const item of data) {
-                    const response = await axios.get("http://localhost:8080/api/favorites/is-favorite", {
+                    const response = await axios.get("http://localhost:8080/api/users_favorites/is-favorite", {
                         params: { userId: sessionId, companyId: item.id },
                     });
                     updatedFavorites[item.id] = response.data; // true or false 반환
@@ -173,13 +173,13 @@ const CeoBox = ({ data }) => {
 
             if (!isFavorite) {
                 // 좋아요 추가
-                await axios.post("http://localhost:8080/api/favorites", {
+                await axios.post("http://localhost:8080/api/users_favorites", {
                     userId: String(sessionId),
                     companyId: String(companyId),
                 });
             } else {
                 // 좋아요 제거
-                await axios.delete("http://localhost:8080/api/favorites", {
+                await axios.delete("http://localhost:8080/api/users_favorites", {
                     params: {
                         userId: String(sessionId),
                         companyId: String(companyId),

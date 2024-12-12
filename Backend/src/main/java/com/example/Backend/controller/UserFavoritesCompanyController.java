@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users-favorites")
+@RequestMapping("/api/users_favorites")
 @CrossOrigin(origins = "http://localhost:3000") // React에서의 요청 허용
 public class UserFavoritesCompanyController {
     private static final Logger logger = LoggerFactory.getLogger(UserFavoritesCompanyController.class);
