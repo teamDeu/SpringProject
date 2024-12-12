@@ -110,25 +110,6 @@ public class JobPostService {
         return jobPostRepository.findJobPostsEndingBetween(startDate, endDate, pageable);
     }
 
-    public List<Map<String, Object>> getJobPostWithImages(Long postId) {
-        List<Object[]> results = jobPostRepository.getJobPostWithImages(postId);
-
-        List<Map<String, Object>> mappedResults = new ArrayList<>();
-        for (Object[] row : results) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("postId", row[0]);
-            map.put("title", row[1]);
-            map.put("companyName", row[2]);
-            map.put("location", row[3]);
-            map.put("employmentType", row[4]);
-            map.put("salary", row[5]);
-            map.put("imgName", row[6]);
-            map.put("imgPath", row[7]);
-            mappedResults.add(map);
-        }
-
-        return mappedResults;
-    }
 
     public Long getJobPostCountByCompanyId(String companyId) {
         return jobPostRepository.countJobPostsByCompanyId(companyId);

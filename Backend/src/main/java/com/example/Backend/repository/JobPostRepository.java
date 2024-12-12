@@ -23,10 +23,6 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
             "FROM JobPost j GROUP BY j.company")
     List<Map<String, Object>> getJobPostCounts();
 
-    @Query("SELECT jp, jpi FROM JobPost jp " +
-            "LEFT JOIN JobPostImage jpi ON jp.id = jpi.jobPost.id " +
-            "WHERE jp.id = :postId")
-    List<Object[]> getJobPostWithImages(@Param("postId") Long postId);
 
     //이 공고 놓치지 마세요
     @Query("SELECT j FROM JobPost j WHERE j.endDate > CURRENT_DATE ORDER BY j.endDate ASC")

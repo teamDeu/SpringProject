@@ -298,9 +298,5 @@ public class JobPostController {
         return ResponseEntity.ok(jobPostCounts);
     }
 
-    @GetMapping("/jobpost/images")
-    public ResponseEntity<List<Map<String, Object>>> getJobPostWithImages() {
-        List<Map<String, Object>> jobPostWithImages = jobPostService.getJobPostWithImages(null); // null 전달
-        return ResponseEntity.ok(jobPostWithImages);
-    }
+
 }
