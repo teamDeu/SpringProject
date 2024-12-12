@@ -306,6 +306,10 @@ public class JobPostController {
         }
     }
 
+    @GetMapping("/jobpostimage")
+    public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
+        return ResponseEntity.ok(jobPostService.getPostImage(id));
+    }
 
 
 

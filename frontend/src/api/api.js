@@ -155,7 +155,9 @@ export const GetIdJobPost = async(id) => {
         .catch(error => {
             console.error('Error fetching data:', error);
             throw error;
-        });
+        }).finally(() => {
+            return postData;
+        })
     
     postData.aboutCompany = {description : postData.aboutCompany , images : postImage}
     return postData;
