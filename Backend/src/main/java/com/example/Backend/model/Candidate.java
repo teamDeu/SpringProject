@@ -1,9 +1,6 @@
 package com.example.Backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +18,20 @@ import java.time.LocalDateTime;
 public class Candidate {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "resume_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Resume resume;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private JobPost jobPost;
+
     @Column(name ="resume_id")
-    private Long resumeId;
+    private Integer resumeId;
 
     @Column(name ="post_id")
     private Long postId;

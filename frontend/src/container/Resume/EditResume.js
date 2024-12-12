@@ -162,8 +162,10 @@ const EditResume  = () => {
     
                     // 프로필 이미지 미리보기
                     if (user.profileImg) {
-                        setPhotoPreview(user.profileImg);
+                        const encodedFileName = encodeURIComponent(user.profileImg);
+                        setPhotoPreview(`http://localhost:8080/images/${encodedFileName}`);
                     }
+                    
                 }
     
                 // 이력서 정보 로드
@@ -214,7 +216,7 @@ const EditResume  = () => {
         if (resumeId && userInfo.id) {
             fetchUserDataAndResume();
         }
-    }, [resumeId, userInfo.id]);
+    }, [userInfo.id]);
     
 
 

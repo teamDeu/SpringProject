@@ -23,6 +23,7 @@ public class JobPost {
     @Column(name = "id")
     private Long id;
 
+
     @Column(name = "company_id")
     private String company;
 

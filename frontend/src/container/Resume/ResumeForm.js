@@ -274,17 +274,24 @@ const ResumeForm = () => {
                 const response = await axios.post("http://localhost:8080/api/resumes/upload", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                const fileUrl = response.data;
     
+                const fileName = response.data; // 파일 이름만 반환
                 setResumeData((prevState) => ({
                     ...prevState,
-                    fileName: fileUrl,
+                    fileName: fileName,
                 }));
+    
+                // **파일 경로 확인 추가**
+                const uploadedFilePath = `/uploads/${fileName}`;
+                console.log("Uploaded file path:", uploadedFilePath);
+    
             } catch (error) {
                 console.error("Resume file upload failed:", error);
             }
         }
     };
+    
+    
     
 
     const handlePhotoChange = async (e) => {

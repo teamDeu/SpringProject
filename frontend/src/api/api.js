@@ -410,6 +410,21 @@ export const DeleteGNotice = async (id) => {
     }
 };
 
+export const GetNoticesByTarget = async (target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/notices', {
+            params: {
+                target: target === "전체" ? "all" : target === "개인회원" ? "individual" : "company",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching notices for target: ${target}`, error);
+        throw error;
+    }
+};
+
+
 // 특정 사용자의 관심기업 목록 가져오기
 export const GetFavoritesByUserId = async (userId) => {
     try {
