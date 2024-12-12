@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import ReviewButton from '../../components/yangji/review_button';
 import JobTopBar from '../../components/JobTopBar';
 import styled from 'styled-components';
@@ -9,6 +9,9 @@ import Selectbox from '../../components/yangji/selectbox';
 import InputBox from '../../components/yangji1/inputbox';
 import FontControlBox from '../../components/yangji1/text';
 import FileUploadComponent from '../../components/yangji1/picture';
+import { waitForSessionId } from '../../context/SessionProvider';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom'; // 추가
 
 
 const Container = styled.div`
@@ -110,6 +113,7 @@ const SelectboxContainer = styled.div`
 `;
 
 const Write1 = () => {
+    const navigate = useNavigate();
     const fileUploaderRef = useRef(null);
     const dropdownOptions1 = Array.from({ length: 2024 - 2015 + 1 }, (_, i) => (2015 + i).toString());
     const dropdownOptions2 = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
@@ -127,12 +131,25 @@ const Write1 = () => {
     const [selectedExperience, setSelectedExperience] = useState(null); // 신입/경력
     const [selectedInterviewType, setSelectedInterviewType] = useState(null); // 직무 유형
     const [selectedInterviewStyle, setSelectedInterviewStyle] = useState(null); // 면접 스타일
+    const [sessionId, setSessionId] = useState(null);
 
-    const handleButtonClick = () => {
-        if (fileUploaderRef.current) {
-            fileUploaderRef.current.upload(); // FileUploadComponent의 handleUpload 실행
-        }
-        
+    useEffect(() => {
+        const fetchSession = async () => {
+          try {
+            const sessionId = await waitForSessionId();
+            setSessionId(sessionId); // 상태에 저장
+          } catch (error) {
+            console.error("Failed to fetch session:", error);
+          }
+        };
+        fetchSession();
+      }, []);
+
+      const handleButtonClick = async () => {
+        const feedbackOptions = ['긍정적', '보통', '부정적'];
+        const difficultyOptions = ['쉬움', '보통', '어려움'];
+        const resultOptions = ['합격', '대기중', '불합격'];
+    
         if (
             companyName1.trim() === '' ||
             companyName2.trim() === '' ||
@@ -146,22 +163,58 @@ const Write1 = () => {
             selectedExperience === null ||
             selectedInterviewType === null ||
             selectedInterviewStyle === null ||
-            selectedYear === "연도 선택" ||
-            selectedMonth === "월 선택"
+            selectedYear === '연도 선택' ||
+            selectedMonth === '월 선택'
         ) {
             alert('모든 항목을 선택해주세요.');
             return;
         }
-
-        const feedbackOptions = ['긍정적', '보통', '부정적'];
-        const difficultyOptions = ['쉬움', '보통', '어려움'];
-        const resultOptions = ['합격', '대기중', '불합격'];
-
-        alert(
-            `등록 요청됨:\n전반적 평가: ${feedbackOptions[selectedFeedback]}\n난이도: ${difficultyOptions[selectedDifficulty]}\n합격 여부: ${resultOptions[selectedResult]}\n경력 상태: ${selectedExperience}\n면접 유형: ${selectedInterviewType}\n면접 스타일: ${selectedInterviewStyle}\n면접 일자: ${selectedYear}년 ${selectedMonth}월\n기업명: ${companyName1}\n직무직업: ${companyName2}\n면접질문1: ${companyName3}\n면접질문2: ${companyName4}\n면접질문3: ${companyName5}\n면접tip: ${companyName6}`
-        );
-        // TODO: 데이터베이스 저장 로직 추가
+    
+        let uploadedFileName = '없음';
+    
+        if (fileUploaderRef.current) {
+            const response = await fileUploaderRef.current.upload();
+            if (response && response.data) {
+                try {
+                    const filePath = response.data.includes(': ')
+                        ? response.data.split(': ')[1]
+                        : response.data;
+                    uploadedFileName = filePath ? filePath.split('\\').pop() : '없음';
+                } catch (error) {
+                    console.error('파일명 처리 오류:', error);
+                    uploadedFileName = '없음';
+                }
+            }
+        }
+    
+        const requestData = {
+            companyName: companyName1,
+            jobCategoryName: companyName2,
+            experience: selectedExperience,
+            interviewDate: `${selectedYear}년${selectedMonth}월`,
+            interviewEvaluation: feedbackOptions[selectedFeedback],
+            interviewDifficulty: difficultyOptions[selectedDifficulty],
+            interviewPassed: resultOptions[selectedResult],
+            interviewType: selectedInterviewType,
+            interviewNumtype: selectedInterviewStyle,
+            interviewQuestion: `${companyName3}.${companyName4}.${companyName5}`,
+            interviewDetail: companyName6,
+            verifyFile: uploadedFileName,
+            userId: sessionId,
+        };
+    
+        try {
+            const response = await axios.post('http://localhost:8080/api/interview-reviews/save', requestData);
+            alert(response.data); // 성공 메시지 알림
+            navigate('/test_review_home1'); // 알림 확인 후 페이지 이동
+        } catch (error) {
+            console.error('Error saving interview review:', error);
+            alert('저장 실패: ' + error.message);
+        }
     };
+    
+    
+    
 
     return (
         <>

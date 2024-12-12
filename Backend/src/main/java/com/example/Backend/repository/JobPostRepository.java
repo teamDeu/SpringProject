@@ -16,6 +16,14 @@ import java.util.Optional;
 public interface JobPostRepository extends JpaRepository<JobPost,Long>{
     List<JobPost> findByCompanyOrderByModifyDateDesc(Company company);
 
+    // 특정 회사 ID의 공고 개수를 가져오는 쿼리
+    @Query("SELECT COUNT(j) FROM JobPost j WHERE j.company = :companyId")
+    Long countJobPostsByCompanyId(@Param("companyId") String companyId);
+
+    @Query("SELECT j.company AS companyId, COUNT(j) AS count " +
+            "FROM JobPost j GROUP BY j.company")
+    List<Map<String, Object>> getJobPostCounts();
+
 
     //이 공고 놓치지 마세요
     @Query("SELECT j FROM JobPost j WHERE j.endDate > CURRENT_DATE ORDER BY j.endDate ASC")
@@ -50,8 +58,7 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
             Pageable pageable
     );
 
-
-
+    JobPost findJobPostById(Long id);
 
 
 

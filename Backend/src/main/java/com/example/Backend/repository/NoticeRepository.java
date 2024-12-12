@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Integer> {
-    Optional<Notice> findByTitleAndTarget(Notice.Target title, Notice.Target target);
+    Optional<Notice> findByTitleAndTarget(String title, Notice.Target target);
 }
+

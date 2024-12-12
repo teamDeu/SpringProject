@@ -47,4 +47,11 @@ public class NoticeService {
         }
         noticeRepository.deleteById(id);
     }
+    // title과 target으로 Notice 조회
+    public Notice getNoticeByTitleAndTarget(String title, Notice.Target target) {
+        return noticeRepository.findByTitleAndTarget(title, target)
+                .orElse(null);
+    }
+
+
 }

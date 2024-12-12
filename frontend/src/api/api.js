@@ -100,6 +100,16 @@ export const PostJobPost = async(jobPost) => {
       }
 }
 
+export const EndJobPost = async(id) => {
+    return await axios.post(`http://localhost:8080/api/jobpost/end?id=${id}`)        
+    .then(response => response.data)
+    .catch(error => {
+        console.error("Error posting job post:", error);
+        throw error;
+    });
+      
+}
+
 //채용정보 데이터를 가져오는 API
 export const GetCompanyJobPosts = (company) => {
     return axios.get('http://localhost:8080/api/companyjobpost',{
@@ -145,7 +155,9 @@ export const GetIdJobPost = async(id) => {
         .catch(error => {
             console.error('Error fetching data:', error);
             throw error;
-        });
+        }).finally(() => {
+            return postData;
+        })
     
     postData.aboutCompany = {description : postData.aboutCompany , images : postImage}
     return postData;
@@ -410,6 +422,75 @@ export const DeleteGNotice = async (id) => {
     }
 };
 
+export const GetNoticesByTarget = async (target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/notices', {
+            params: {
+                target: target === "전체" ? "all" : target === "개인회원" ? "individual" : "company",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching notices for target: ${target}`, error);
+        throw error;
+    }
+};
+// 새로운 Notice 생성 API 함수
+export const CreateNotice = async (notice) => {
+    try {
+        const response = await axios.post('http://localhost:8080/api/notices', notice);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating Notice:', error);
+        throw error;
+    }
+};
+
+// Notice 삭제 API 함수
+export const DeleteNotice = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/notices/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting Notice with id ${id}:`, error);
+        throw error;
+    }
+};
+
+// GNotice 생성 API 함수
+export const CreateGNotice = async (gNotice, noticeId) => {
+    console.log("Sending Data to CreateGNotice:", gNotice, noticeId);
+    try {
+        const response = await axios.post(
+            `http://localhost:8080/api/g_notices/notice/${noticeId}`,
+            gNotice
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error creating GNotice:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const GetNoticeIdByTitleAndTarget = async (title, target) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/notices/id', {
+            params: { title, target }
+        });
+        return response.data.id;
+    } catch (error) {
+        console.error('Error fetching Notice ID:', error);
+        throw error;
+    }
+};
+
+// 공지사항 세부 정보를 가져오는 API
+export const GetGNoticeDetails = async (id) => {
+    const response = await axios.get(`http://localhost:8080/api/g_notices/${id}`);
+    return response.data;
+  };
+
+
 // 특정 사용자의 관심기업 목록 가져오기
 export const GetFavoritesByUserId = async (userId) => {
     try {
@@ -498,13 +579,25 @@ export const GetCandidate = async (postId) =>{
             console.error('Error fetching data:', error);
             throw error;
         });
-} 
+}
 
-export const GetAllResumes = async() => {
-    return await axios.get('http://localhost:8080/api/resumes')
+export const GetCandidate2 = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/candidate2`, {
+            params: { userId }, // Query Parameter 수정
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        throw error;
+    }
+};
+
+export const GetAllUserSearch = async() => {
+    return await axios.get('http://localhost:8080/api/resumes/usersearch')
         .then(response => response.data)
         .catch(error => {
             console.error('Error fetching data:', error);
             throw error;
         });
-}
+    }

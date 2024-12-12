@@ -50,4 +50,25 @@ public class NoticeController {
         noticeService.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/id")
+    public ResponseEntity<Notice> getNoticeIdByTitleAndTarget(
+            @RequestParam String title,
+            @RequestParam String target) {
+        try {
+            Notice.Target targetEnum = Notice.Target.valueOf(target);
+            Notice notice = noticeService.getNoticeByTitleAndTarget(title, targetEnum);
+            if (notice != null) {
+                return ResponseEntity.ok(notice);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+
 }
+

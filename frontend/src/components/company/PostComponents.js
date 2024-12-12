@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import RoundedLabel from './RoundedLabel'
 import TextButton from '../common/TextButton'
 import PostResumeInfo from './PostResumeInfo'
 import { useNavigate } from 'react-router'
-import { DeleteJobPost } from '../../api/api'
+import { DeleteJobPost, EndJobPost } from '../../api/api'
 const tempData = {
     postTitle : "[플레이오]Python 백엔드 개발",
     postStartDate : "2024-11-01",
@@ -27,6 +27,11 @@ const PostComponents = ({data = tempData}) => {
     const endDate = new Date(data.postEndDate);
     const isIng = date.getTime() <= endDate.getTime();
 
+    const handelEnd = (id) => {
+        EndJobPost(id);
+        alert("마감되었습니다.");
+        window.location.reload();
+    }
     const handelDelete = (e) => {
         console.log("click : ",e.target.parentNode.parentNode)
         alert("삭제되었습니다.");
@@ -52,7 +57,7 @@ const PostComponents = ({data = tempData}) => {
             <PostResumeInfo postResumeInfo={data.postResumeInfo}/>
         </InfoSection>
         <ButtonSection>
-            <TextButton fontsize = "18px" color ="#B5B5B5">마감</TextButton>
+            <TextButton onclick = {() => {handelEnd(data.postId)}}fontsize = "18px" color ="#B5B5B5">마감</TextButton>
             <ButtonDivider>|</ButtonDivider>
             <TextButton onclick = {handelModify} fontsize = "18px" color ="#B5B5B5">수정</TextButton>
             <ButtonDivider>|</ButtonDivider>

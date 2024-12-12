@@ -33,12 +33,17 @@ public class GNoticeController {
     // 새로운 GNotice 생성
     @PostMapping("/notice/{noticeId}")
     public ResponseEntity<GNotice> createGNotice(@PathVariable Integer noticeId, @RequestBody GNotice gNotice) {
-        try {
-            return ResponseEntity.ok(gNoticeService.createGNotice(gNotice, noticeId));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+        System.out.println("Received Notice ID: " + noticeId);
+        System.out.println("Received GNotice: " + gNotice);
+        if (gNotice.getTitle() == null || gNotice.getTarget() == null || gNotice.getQuestion() == null || gNotice.getAnswer() == null) {
+            return ResponseEntity.badRequest().body(null);
         }
+        return ResponseEntity.ok(gNoticeService.createGNotice(gNotice, noticeId));
     }
+
+
+
+
 
     // 기존 GNotice 업데이트
     @PutMapping("/{id}")
@@ -56,6 +61,17 @@ public class GNoticeController {
         try {
             gNoticeService.deleteGNotice(id);
             return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // ID로 특정 GNotice 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<GNotice> getGNoticeDetails(@PathVariable Integer id) {
+        try {
+            GNotice gNotice = gNoticeService.getGNoticeDetails(id);
+            return ResponseEntity.ok(gNotice);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

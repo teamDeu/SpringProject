@@ -89,6 +89,7 @@ public class JobPost {
     @Column(name = "views")
     private Long views;
 
+<<<<<<< HEAD
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<JobPostImage> images = new ArrayList<>();
@@ -96,3 +97,6 @@ public class JobPost {
 
 
 }
+=======
+}
+>>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d

@@ -28,9 +28,12 @@ public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
+<<<<<<< HEAD
     @Autowired
     private CompanyService companyService;
 
+=======
+>>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
     public JobPostController(JobPostService jobPostService) {
         this.jobPostService = jobPostService;
     }
@@ -46,6 +49,7 @@ public class JobPostController {
         return ResponseEntity.ok(savedJobPost);
     }
 
+<<<<<<< HEAD
     @PutMapping("/jobpost/{id}/increment-views")
     public ResponseEntity<Void> incrementViews(@PathVariable Long id) {
         try {
@@ -57,7 +61,32 @@ public class JobPostController {
         }
     }
 
+=======
+    @PostMapping("/jobpost/end")
+    public ResponseEntity<JobPost> endJobPost(@RequestParam Integer id)
+    {
+        Date today = new Date();
+        System.out.println("현재 날짜: " + today);
+>>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d
 
+        // Calendar 인스턴스 생성
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        // 하루 빼기
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date yesterday = calendar.getTime();
+        JobPost jobPost = jobPostService.getJobPostById(Long.valueOf(id));
+        jobPost.setEndDate(yesterday);
+        JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
+        return ResponseEntity.ok(savedJobPost);
+    }
+
+    @GetMapping("/jobpost")
+    public ResponseEntity<List<JobPost>> getAllJobPosts(){
+        System.out.println(jobPostService.getAllJobPost());
+        return ResponseEntity.ok(jobPostService.getAllJobPost());
+    }
 
     //이 공고 놓치지 마세요(공고 마감이 가까운 순)
     @GetMapping("/urgent-jobposts")
@@ -333,4 +362,9 @@ public class JobPostController {
     }
 
 
+<<<<<<< HEAD
 }
+=======
+
+}
+>>>>>>> 7af7ce2cd5a7632931d1419d198390c0c067e67d

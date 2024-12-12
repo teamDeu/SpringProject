@@ -55,34 +55,7 @@ const InputArray = [
 
 const CompanyDetail = ({companyInfo,setCompanyInfo}) => {
     const navigate = useNavigate();
-    // 로고 이미지 업데이트
-    const updateImage = (value) => {
-        if (JSON.stringify(companyInfo.logoUrl) !== JSON.stringify(value)) {
-          setCompanyInfo((prev) => ({ ...prev, logoUrl: value }));
-        }
-    };
     // 기업 정보 제출 버튼
-    function regCompanyInfoButton() {
-        const keys = Object.keys(companyInfo);
-        for (let i = 0; i < keys.length; i++) {
-            if (keys[i] === "id" || keys[i] === "pwd") {
-                continue;
-            }
-            if (companyInfo[keys[i]] === "" || companyInfo[keys[i]] === 0) {
-                const type = InputArray.find((item) => item.type === keys[i]);
-                console.log(type.title);
-                alert(`${type.title}을(를) 입력해주세요.`);
-                return;
-            }
-        }
-        // PostCompany로 데이터 전송
-        PostCompany(companyInfo).then(() => {
-            console.log("입력 성공");
-            alert("기업정보가 입력되었습니다.");
-            navigate("/CompanyManagePost");
-        });
-    }
-
     // 입력 값 변경 처리
     const handleInputChange = (type, value) => {
         setCompanyInfo((prevState) => ({
@@ -94,11 +67,12 @@ const CompanyDetail = ({companyInfo,setCompanyInfo}) => {
     return (
         <Container>
             <EditSection>
-                <EditButton onClick={regCompanyInfoButton}>수정</EditButton>
+                <EditButton onClick={()=>{navigate("/InputCompanyInfo")}}>수정</EditButton>
             </EditSection>
             <InputSection>
                 {InputArray.map((input, index) => (
                     <InputWithTitle 
+                        readOnly = {true}
                         key={index} 
                         title={input.title} 
                         placeholder={input.placeholder}
@@ -113,9 +87,10 @@ const CompanyDetail = ({companyInfo,setCompanyInfo}) => {
             <InputTitle>기업 로고 등록</InputTitle>
             <PhotoInputSection>
             <PhotoInput
+                readOnly={true}
                 imageLength={1}
                 value={[companyInfo.logoUrl]} // 기존 logoUrl 상태를 그대로 전달
-                updateImage={(value) => updateImage(value)} // 변경된 값만 반영
+                updateImage={() => {}} // 변경된 값만 반영
                 justifyContent="center"
                 />
             </PhotoInputSection>

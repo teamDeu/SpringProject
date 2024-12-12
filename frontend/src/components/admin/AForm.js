@@ -1,9 +1,8 @@
-// AForm.js
-
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import AddButton from "../../components/admin/AddButton";
-import { GetGNoticesByTarget, DeleteGNotice } from "../../api/api"; // API 함수 임포트
+import NoticeDetails from "../../components/admin/NoticeDetails";
+import { GetGNoticesByTarget, DeleteGNotice, GetGNoticeDetails } from "../../api/api"; // API 함수 임포트
 
 const AFormContainer = styled.div`
   margin-left: 5px;
@@ -89,11 +88,13 @@ const ContentContainer = styled.div`
 const Title = styled.div`
   font-size: 14px; /* 작게 변경 */
   color: #555; /* 회색으로 변경 */
+  cursor: default;
 `;
 
 const Question = styled.div`
   font-size: 16px; /* 크게 변경 */
   font-weight: bold; /* 굵게 변경 */
+  cursor: pointer;
 `;
 
 const DateStyled = styled.div`
@@ -111,28 +112,35 @@ const AForm = ({
   resetSelections,
   setResetSelections,
   hideActions,
+  onShowDetails,
 }) => {
   const [announcements, setAnnouncements] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true); // 로딩 상태 기본값을 true로 설정
-
+  const [selectedNotice, setSelectedNotice] = useState(null);
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // 로딩 시작
       try {
         const data = await GetGNoticesByTarget(selectedType);
         console.log('GNotices Data:', data); // API 응답 데이터 확인
-        setAnnouncements(data || []);
+  
+        // 데이터를 id 기준으로 내림차순 정렬
+        const sortedData = (data || []).sort((a, b) => b.id - a.id);
+  
+        setAnnouncements(sortedData);
       } catch (error) {
         console.error("Error fetching GNotices:", error);
         alert("공지사항을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
       }
       setLoading(false); // 로딩 종료
     };
-
+  
     fetchData();
   }, [selectedType]);
+  
 
   useEffect(() => {
     if (resetSelections) {
@@ -185,11 +193,28 @@ const AForm = ({
   const handleItemCheckbox = (id) => {
     setSelectedItems((prevSelected) =>
       prevSelected.includes(id)
-        ? prevSelected.filter((itemId) => itemId !== id)
-        : [...prevSelected, id]
+        ? prevSelected.filter((itemId) => itemId !== id) // 선택 해제
+        : [...prevSelected, id] // 선택 추가
     );
   };
 
+
+  const handleQuestionClick = async (id) => {
+    try {
+      const response = await GetGNoticeDetails(id); // API 호출
+      const detailsData = {
+        title: response.question, // question을 제목으로 사용
+        content: response.answer, // answer을 내용으로 사용
+        date: response.createdAt ? new Date(response.createdAt).toLocaleDateString() : "날짜 없음", // created_at 변환
+      };
+      onShowDetails(detailsData); // 부모 컴포넌트에 데이터 전달
+    } catch (error) {
+      console.error("Error fetching notice details:", error);
+      alert("공지사항 세부 정보를 가져오는 중 오류가 발생했습니다.");
+    }
+  };
+
+  
   // 필터링 로직: 선택된 타입, 카테고리, 검색어를 기반으로 필터링
   const typeMapping = {
     "all": "전체",
@@ -248,13 +273,24 @@ const AForm = ({
                 )}
                 <ContentContainer>
                   <Title>[{item.title}]</Title>
-                  <Question>{item.question}</Question>
+                  <Question onClick={() => handleQuestionClick(item.id)}>
+                    {item.question}
+                  </Question>
                 </ContentContainer>
-                <DateStyled>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}</DateStyled>
+                <DateStyled>
+                  {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
+                </DateStyled>
               </AnnouncementItem>
             ))}
           </AnnouncementList>
         )
+      )}
+      {selectedNotice && (
+        <NoticeDetails
+          title={selectedNotice.title}
+          content={selectedNotice.answer}
+          onClose={() => setSelectedNotice(null)}
+        />
       )}
     </AFormContainer>
   );

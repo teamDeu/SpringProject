@@ -1,47 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import JobTopBar2 from '../../../components/JobTopBar';
 import JobApplicationStatus from '../../../components/mypage/JobApplicationStatus';
+import { getUserInfo, GetCandidate2 } from '../../../api/api';
 
 const Index = () => {
-    // 지원 내역 데이터
-    const applicationList = [
-        { 
-            company: "지엔에이컴퍼니",
-            title: "채용큐레이터 신입 및 경력 모집",
-            location: "서울 강서구",
-            deadline: "2024-11-13",
-            status: "심사중"
-        },
-        { 
-            company: "지엔에이컴퍼니",
-            title: "채용큐레이터 신입 및 경력 모집",
-            location: "서울 강서구",
-            deadline: "2024-11-13",
-            status: "서류합격"
-        },
-        { 
-            company: "지엔에이컴퍼니",
-            title: "채용큐레이터 신입 및 경력 모집",
-            location: "서울 강서구",
-            deadline: "2024-11-13",
-            status: "불합격"
-        },
-        { 
-            company: "지엔에이컴퍼니",
-            title: "채용큐레이터 신입 및 경력 모집",
-            location: "서울 강서구",
-            deadline: "2024-11-13",
-            status: "심사중"
-        },
-        { 
-            company: "지엔에이컴퍼니",
-            title: "채용큐레이터 신입 및 경력 모집",
-            location: "서울 강서구",
-            deadline: "2024-11-13",
-            status: "서류합격"
-        },
-    ];
+    const [userId, setUserId] = useState(null);
+    const [applicationList, setApplicationList] = useState([]);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const userInfo = await getUserInfo();
+                setUserId(userInfo.id);
+            } catch (error) {
+                console.error("Failed to fetch user info:", error);
+                alert("로그인이 필요합니다.");
+                window.location.href = "/login";
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
+    useEffect(() => {
+        if (!userId) return;
+    
+        const fetchApplicationList = async () => {
+            try {
+                console.log("Sending API request to /candidate2 with userId:", userId);
+                const candidates = await GetCandidate2(userId); // 수정된 Query Parameter 반영
+                console.log("API Response:", candidates);
+                const formattedList = candidates.map((candidate) => ({
+                    company: candidate.companyName,
+                    title: candidate.title,
+                    location: candidate.location,
+                    deadline: candidate.endDate || "마감일 없음",
+                    status: candidate.passType || "상태 없음",
+                }));
+                console.log("Formatted List:", formattedList);
+                setApplicationList(formattedList);
+            } catch (error) {
+                console.error("Failed to fetch application list:", error);
+            }
+        };
+        
+    
+        fetchApplicationList();
+    }, [userId]);
+    
 
     return (
         <Container>
@@ -52,37 +59,43 @@ const Index = () => {
                 <Title>지원 내역</Title>
                 <Subtitle>총 {applicationList.length}건</Subtitle>
                 <ApplicationList>
-                    {applicationList.map((application, index) => (
-                        <JobApplicationStatus
-                            key={index}
-                            company={application.company}
-                            title={application.title}
-                            location={application.location}
-                            deadline={application.deadline}
-                            status={application.status}
-                            statusColor={getStatusColor(application.status)} // 상태 색상 전달
-                            onViewResume={() => alert(`이력서 보기 클릭: ${application.company}`)}
-                        />
-                    ))}
+                    {applicationList.map((application, index) => {
+                        console.log("Rendering Application:", application); // 각 항목 확인
+                        return (
+                            <JobApplicationStatus
+                                key={index}
+                                company={application.company}
+                                title={application.title}
+                                location={application.location}
+                                deadline={application.deadline}
+                                status={application.status}
+                                statusColor={getStatusColor(application.status)}
+                                onViewResume={() => alert(`이력서 보기 클릭: ${application.company}`)}
+                            />
+                        );
+                    })}
                 </ApplicationList>
+
             </PageContent>
         </Container>
     );
 };
 
-// 상태별 색상 반환 함수
 const getStatusColor = (status) => {
     switch (status) {
         case "심사중":
-            return "#1A28F4"; // 파란색
-        case "서류합격":
-            return "#3AD847"; // 초록색
+            return "#FFD700";  // 노란색
+        case "서류 합격":
+            return "#1E90FF";  // 파란색 (서류합격 -> 파란색)
+        case "최종 합격":
+            return "#90EE90";  // 연두색 (최종합격 -> 연두색)
         case "불합격":
-            return "#EA2D2E"; // 빨간색
+            return "#EA2D2E";  // 빨간색 (불합격 -> 빨간색)
         default:
-            return "#000"; // 기본 색상 (검정)
+            return "#000";  // 기본값 검은색
     }
 };
+
 
 export default Index;
 

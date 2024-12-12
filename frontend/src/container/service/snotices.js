@@ -6,6 +6,7 @@ import SearchBar from '../../components/eunhyo/SearchBar ';
 import AForm from "../../components/admin/AForm";
 import Pagination from "../../components/admin/Pagination";
 import SelectBox from '../../components/eunhyo/SelectBox';
+import NoticeDetails from "../../components/admin/NoticeDetails";
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -22,10 +23,9 @@ const GlobalStyle = createGlobalStyle`
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-
 `;
 
 const Content = styled.div`
@@ -39,12 +39,12 @@ const Content = styled.div`
 const Title = styled.h1`
   font-size: 30px;
   font-weight: bold;
-  font-family: 'Nanum Square Neo', sans-serif;
+  font-family: "Nanum Square Neo", sans-serif;
 `;
 
 const ButtonCh = styled.div`
   width: 1360px;
-  margin-left:-20px;
+  margin-left: -20px;
 `;
 
 const SearchBarWrapper = styled.div`
@@ -53,7 +53,7 @@ const SearchBarWrapper = styled.div`
   width: 100%; /* 부모 요소의 전체 너비를 차지 */
   margin-top: 30px; /* SearchBar와 위의 요소 간 간격 */
   position: relative;
-  
+
   &::after {
     content: "";
     position: absolute;
@@ -74,12 +74,20 @@ const FormBox = styled.div`
   padding: 20px;
   box-sizing: border-box;
 `;
-
+const NoticeBox = styled.div`
+  width: 1340px;
+  height: 550px;
+  border: none;
+  margin-top: 20px;
+  margin-left: -20px;
+  padding: 20px;
+  box-sizing: border-box;
+`;
 const PaginationBox = styled.div`
   width: 1400px;
   height: 40px;
-  margin-left:-20px;
-  margin-bottom:10px;
+  margin-left: -20px;
+  margin-bottom: 10px;
   border: none;
   display: flex;
   justify-content: center;
@@ -96,79 +104,105 @@ const SAnnouncements = () => {
   const [selectedType, setSelectedType] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [resetSelections, setResetSelections] = useState(false); // resetSelections 상태 추가
+  const [resetSelections, setResetSelections] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [detailsData, setDetailsData] = useState(null);
   const itemsPerPage = 8;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
 
-    const handleButtonClick = (type) => {
-        if (type === "전체") setSelectedType("all");
-        else if (type === "개인회원") setSelectedType("individual");
-        else if (type === "기업회원") setSelectedType("corporate");
-        setCurrentPage(1); // 페이지를 항상 1로 초기화
-      };
-    
-      const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+  const handleButtonClick = (type) => {
+    if (type === "전체") setSelectedType("all");
+    else if (type === "개인회원") setSelectedType("individual");
+    else if (type === "기업회원") setSelectedType("corporate");
+    setCurrentPage(1);
+  };
 
-    const updateTotalPages = (totalItems) => {
-        const calculatedPages = Math.ceil(totalItems / itemsPerPage);
-        setTotalPages(calculatedPages);
-    };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
-    const handleSearch = (term) => {
-        setSearchTerm(term);
-    };
+  const updateTotalPages = (totalItems) => {
+    const calculatedPages = Math.ceil(totalItems / itemsPerPage);
+    setTotalPages(calculatedPages);
+  };
 
-    const handleSelectCategory = (category) => {
-        setSelectedCategory(category);
-        setCurrentPage(1);
-    };
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleShowDetails = (data) => {
+    setDetailsData(data);
+    setShowDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setShowDetails(false);
+    setDetailsData(null);
+  };
 
   return (
     <>
-       <GlobalStyle />
+      <GlobalStyle />
       <JobTopBar />
       <MainContent>
         <Content>
           <Title>공지사항</Title>
-          <ButtonCh>
-            <ChangeButton2
-              onButtonClick={(buttonLabel) => handleButtonClick(buttonLabel)}
+          {!showDetails ? (
+            <>
+              <ButtonCh>
+              <ChangeButton2
+                activeButton={selectedType} // 부모 상태 전달
+                onButtonClick={(buttonLabel) => handleButtonClick(buttonLabel)}
+              />
+              </ButtonCh>
+              <SearchBarWrapper>
+                <SelectBoxWrapper>
+                  <SelectBox
+                    options={["전체", "이벤트", "안내", "공지"]}
+                    onChange={handleSelectCategory}
+                    defaultValue="전체"
+                  />
+                </SelectBoxWrapper>
+                <SearchBar onSearch={handleSearch} />
+              </SearchBarWrapper>
+              <FormBox>
+                <AForm
+                  selectedType={selectedType}
+                  selectedCategory={selectedCategory}
+                  searchTerm={searchTerm}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  onTotalItemsChange={updateTotalPages}
+                  resetSelections={resetSelections}
+                  setResetSelections={setResetSelections}
+                  hideActions={true}
+                  onShowDetails={handleShowDetails}
+                />
+                <PaginationBox>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </PaginationBox>
+              </FormBox>
+            </>
+          ) : (
+            <NoticeBox>
+            <NoticeDetails
+              title={detailsData.title}
+              content={detailsData.content}
+              date={detailsData.date}
+              onClose={handleCloseDetails}
             />
-          </ButtonCh>
-          <SearchBarWrapper>
-          <SelectBoxWrapper>
-              <SelectBox
-                options={["전체", "이벤트", "안내", "공지"]}
-                onChange={handleSelectCategory}
-                defaultValue="전체"
-              />
-            </SelectBoxWrapper>
-            <SearchBar onSearch={handleSearch} />
-          </SearchBarWrapper>
-          <FormBox>
-          <AForm
-              selectedType={selectedType}
-              selectedCategory={selectedCategory}
-              searchTerm={searchTerm}
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              onTotalItemsChange={updateTotalPages}
-              resetSelections={resetSelections} // 전달
-              setResetSelections={setResetSelections} // 전달
-              hideActions={true}
-          />
-            <PaginationBox>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </PaginationBox>
-          </FormBox>
-
+            </NoticeBox>
+          )}
         </Content>
       </MainContent>
     </>

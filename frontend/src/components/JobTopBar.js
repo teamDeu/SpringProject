@@ -81,7 +81,7 @@ const JobTopBar = () => {
                                 <NavButton>마이페이지</NavButton>
                                 <DropdownContent>
                                     <Link to="/mp5">
-                                    <DropdownButton>스크랩/관심기업</DropdownButton>
+                                    <DropdownButton>스크랩</DropdownButton>
                                     </Link>
                                     <Link to="/mp6">
                                     <DropdownButton>지원내역</DropdownButton>
@@ -129,7 +129,7 @@ const JobTopBar = () => {
                                 <NavItem>
                                     <NavButton>고객센터</NavButton>
                                     <DropdownContent>
-                                        <Link to="/sannouncements">
+                                        <Link to="/snotices">
                                             <DropdownButton>공지사항</DropdownButton>
                                         </Link>
                                         <Link to="/sfaq">

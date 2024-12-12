@@ -91,7 +91,7 @@ const Index = () => {
                     localStorage.removeItem('savedId');
                 }
 
-                navigate('/InputCompanyInfo', { state: { id: form.id } });
+                navigate('/main', { state: { id: form.id } });
             }
         } catch (error) {
             console.error('로그인 실패: ', error);

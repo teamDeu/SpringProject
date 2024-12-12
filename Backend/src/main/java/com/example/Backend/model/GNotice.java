@@ -40,7 +40,8 @@ public class GNotice {
     private String answer;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
     // 관계 설정: Notice
     @ManyToOne(fetch = FetchType.LAZY)
