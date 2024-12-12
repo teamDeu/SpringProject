@@ -1,5 +1,6 @@
 package com.example.Backend.repository;
 
+import com.example.Backend.model.Company;
 import com.example.Backend.model.JobPost;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface JobPostRepository extends JpaRepository<JobPost,Long>{
-    List<JobPost> findByCompanyOrderByModifyDateDesc(String company);
+    List<JobPost> findByCompanyOrderByModifyDateDesc(Company company);
 
 
     //이 공고 놓치지 마세요
@@ -37,7 +38,8 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
 
     //조회수가 높은 공고
     @Query("SELECT j FROM JobPost j ORDER BY j.views DESC")
-    List<JobPost> findTopJobPostsByViews(Pageable pageable);
+    List<JobPost> findAllJobPostsByViews();
+
 
 
     //마감이 얼마 남지 않은 공고
@@ -47,6 +49,10 @@ public interface JobPostRepository extends JpaRepository<JobPost,Long>{
             @Param("endDate") Date endDate,
             Pageable pageable
     );
+
+
+
+
 
 
 

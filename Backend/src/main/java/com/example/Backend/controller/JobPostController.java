@@ -4,6 +4,7 @@ import com.example.Backend.Util.Util;
 import com.example.Backend.model.Company;
 import com.example.Backend.model.JobPost;
 import com.example.Backend.model.JobPostImage;
+import com.example.Backend.service.CompanyService;
 import com.example.Backend.service.JobPostService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +28,8 @@ public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
+    @Autowired
+    private CompanyService companyService;
 
     public JobPostController(JobPostService jobPostService) {
         this.jobPostService = jobPostService;
@@ -41,6 +44,17 @@ public class JobPostController {
         System.out.println(jobPost);
         JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
         return ResponseEntity.ok(savedJobPost);
+    }
+
+    @PutMapping("/jobpost/{id}/increment-views")
+    public ResponseEntity<Void> incrementViews(@PathVariable Long id) {
+        try {
+            jobPostService  .incrementViews(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 
@@ -59,6 +73,7 @@ public class JobPostController {
             map.put("company", post.getCompanyName());
             map.put("region", post.getLocation());
             map.put("experience", post.getExperience());
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("education", post.getEducation());
 
             // Date를 LocalDateTime으로 변환 후 포맷
@@ -90,6 +105,7 @@ public class JobPostController {
             map.put("region", post.getLocation());
             map.put("experience", post.getExperience());
             map.put("education", post.getEducation());
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("views", post.getViews());
 
             if (post.getEndDate() != null) {
@@ -120,6 +136,7 @@ public class JobPostController {
             map.put("company", post.getCompanyName());
             map.put("region", post.getLocation());
             map.put("experience", post.getExperience());
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("education", post.getEducation());
             map.put("postDate", post.getPostDate().toString());
 
@@ -146,7 +163,7 @@ public class JobPostController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", post.getId());
             map.put("companyName", post.getCompanyName());
-            map.put("logo", post.getCompany()); // 로고 URL
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("description", post.getAboutCompany());
             map.put("title",post.getTitle());
             map.put("views", post.getViews());
@@ -158,8 +175,8 @@ public class JobPostController {
 
     //조회수가 높은 공고
     @GetMapping("/popular-jobposts2")
-    public ResponseEntity<List<Map<String, Object>>> getTopJobPostsByViews() {
-        List<JobPost> jobPosts = jobPostService.getTopJobPostsByViews(9); // 조회수 높은 9개의 공고
+    public ResponseEntity<List<Map<String, Object>>> getAllJobPostsByViews() {
+        List<JobPost> jobPosts = jobPostService.getAllJobPostsByViews(); // 조회수 기준 모든 공고 반환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
@@ -168,6 +185,7 @@ public class JobPostController {
             map.put("title", post.getTitle());
             map.put("company", post.getCompanyName());
             map.put("region", post.getLocation());
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("views", post.getViews());
             map.put("salary", post.getSalary());
 
@@ -187,6 +205,7 @@ public class JobPostController {
     }
 
 
+
     //마감이 얼마 남지 않은 공고
     @GetMapping("/urgent-jobposts2")
     public ResponseEntity<List<Map<String, Object>>> getUrgentJobPosts() {
@@ -198,6 +217,7 @@ public class JobPostController {
             map.put("id", post.getId());
             map.put("title", post.getTitle());
             map.put("company", post.getCompanyName());
+            map.put("logoUrl", post.getCompany().getLogoUrl());
             map.put("region", post.getLocation());
             map.put("salary", post.getSalary());
             map.put("deadline", post.getEndDate() != null
@@ -212,17 +232,38 @@ public class JobPostController {
 
 
 
+
+
     @GetMapping("/companyjobpost")
-    public ResponseEntity<List<JobPost>> getJobPosts(@RequestParam String company){
-        System.out.println(jobPostService.getJobPostByCompany(company));
-        return ResponseEntity.ok(jobPostService.getJobPostByCompany(company));
+    public ResponseEntity<List<JobPost>> getJobPosts(@RequestParam String companyId) {
+        Optional<Company> companyOpt = companyService.getCompanyById(companyId);
+        if (companyOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<JobPost> jobPosts = jobPostService.getJobPostByCompany(companyOpt.get());
+        return ResponseEntity.ok(jobPosts);
     }
 
+
     @GetMapping("/idjobpost")
-    public ResponseEntity<JobPost> getJobPost(@RequestParam Long id){
-        System.out.println(jobPostService.findById(id));
-        return ResponseEntity.ok(jobPostService.findById(id).get());
+    public ResponseEntity<JobPost> getJobPost(@RequestParam Long id) {
+        Optional<JobPost> jobPostOpt = jobPostService.findByIdWithImages(id);
+        if (jobPostOpt.isPresent()) {
+            JobPost jobPost = jobPostOpt.get();
+
+            // 이미지를 하나로 제한
+            if (jobPost.getImages() != null && !jobPost.getImages().isEmpty()) {
+                List<JobPostImage> singleImageList = jobPost.getImages().subList(0, 1);
+                jobPost.setImages(singleImageList);
+            }
+
+            return ResponseEntity.ok(jobPost);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+
 
 
 
@@ -265,6 +306,8 @@ public class JobPostController {
             return ResponseEntity.status(500).build();
         }
     }
+
+
     @DeleteMapping("/jobpost/{id}")
     @ResponseBody
     public ResponseEntity<?> deleteJobPost(@PathVariable Long id) {
@@ -288,4 +331,6 @@ public class JobPostController {
     public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
         return ResponseEntity.ok(jobPostService.getPostImage(id));
     }
+
+
 }

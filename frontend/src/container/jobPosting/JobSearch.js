@@ -191,6 +191,7 @@ const JobSearch = () => {
 
     const [jobCategories, setJobCategories] = useState([]);
     const [skills, setSkills] = useState([]);
+    const BACKEND_URL = "http://localhost:8080/uploads";
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -271,12 +272,22 @@ const JobSearch = () => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("Latest job posts:", data);
-                setLatestAdvertisements(data);
+        
+                // 각 공고에 대한 이미지 경로를 가져오기
+                const updatedAds = data.map((ad) => ({
+                    ...ad,
+                    logoUrl: ad.logoUrl
+                        ? `${BACKEND_URL}/${ad.logoUrl}` // logoUrl이 있으면 설정
+                        : 'https://via.placeholder.com/50', // 기본 이미지 설정
+                }));
+        
+                console.log("Latest job posts:", updatedAds);
+                setLatestAdvertisements(updatedAds);
             } catch (error) {
                 console.error('Error fetching latest job posts:', error);
             }
         };
+        
         fetchLatestJobPosts();
 
         const fetchPopularJobPosts = async () => {
@@ -286,12 +297,22 @@ const JobSearch = () => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("Popular job posts:", data);
-                setPopularAdvertisements(data);
+        
+                // 각 공고에 대한 이미지 경로를 가져오기
+                const updatedAds = data.map((ad) => ({
+                    ...ad,
+                    logoUrl: ad.logoUrl
+                        ? `${BACKEND_URL}/${ad.logoUrl}` // logoUrl이 있으면 설정
+                        : 'https://via.placeholder.com/50', // 기본 이미지 설정
+                }));
+        
+                console.log("Popular job posts:", updatedAds);
+                setPopularAdvertisements(updatedAds);
             } catch (error) {
                 console.error('Error fetching popular job posts:', error);
             }
         };
+        
         fetchPopularJobPosts();
 
         const fetchUrgentJobPosts = async () => {
@@ -303,22 +324,13 @@ const JobSearch = () => {
                 const data = await response.json();
 
                 // 회사 로고 URL을 가져오기 위한 추가 fetch 요청
-                const updatedAds = await Promise.all(
-                    data.map(async (ad) => {
-                        const companyId = ad.company; // 회사 ID 사용
-                        try {
-                            const companyResponse = await fetch(`http://localhost:8080/api/companies/${companyId}`);
-                            if (companyResponse.ok) {
-                                const companyData = await companyResponse.json();
-                                return { ...ad, logoUrl: companyData.logoUrl }; // 로고 URL 추가
-                            }
-                        } catch (err) {
-                            console.error(`Failed to fetch logo for company ID: ${companyId}`, err);
-                        }
-                        return { ...ad, logoUrl: null }; // 로고 URL 없는 경우
-                    })
-                );
-
+                const updatedAds = data.map((ad) => ({
+                    ...ad,
+                    logoUrl: ad.logoUrl
+                        ? `${BACKEND_URL}/${ad.logoUrl}` // logoUrl이 있으면 설정
+                        : 'https://via.placeholder.com/50', // 기본 이미지 설정
+                }));
+    
                 setAdvertisements(updatedAds);
             } catch (error) {
                 console.error('Error fetching urgent job posts:', error);
@@ -339,6 +351,8 @@ const JobSearch = () => {
 
         return diffInDays <= 7; // 마감일이 7일 이내면 true 반환
     };
+
+    
 
 
     // AdDeadline 스타일 조건을 반환하는 함수
@@ -796,7 +810,7 @@ const JobSearch = () => {
                     {latestAdvertisements.map((ad) => (
                         <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
                                 <AdHeader>
-                                    <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
+                                <AdLogo src={ad.logoUrl || 'https://via.placeholder.com/50'} alt={`${ad.companyName} 로고`} />
                                     <Bookmark
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -834,7 +848,7 @@ const JobSearch = () => {
                     {popularAdvertisements.map((ad) => (
                         <AdCard key={ad.id} onClick={() => handleCardClick(ad.id)}>
                                 <AdHeader>
-                                    <AdLogo src={ad.logo || 'https://via.placeholder.com/50'} alt={`${ad.company} 로고`} />
+                                <AdLogo src={ad.logoUrl || 'https://via.placeholder.com/50'} alt={`${ad.companyName} 로고`} />
                                     <Bookmark
                                         onClick={(e) => {
                                             e.stopPropagation();

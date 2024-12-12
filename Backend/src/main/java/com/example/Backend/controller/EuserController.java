@@ -4,6 +4,9 @@ import com.example.Backend.model.Euser;
 import com.example.Backend.service.EuserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,8 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,52 +68,48 @@ public class EuserController {
         try {
             // 원본 파일명 가져오기
             String originalFileName = file.getOriginalFilename();
-            if (originalFileName == null || originalFileName.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file name.");
-            }
 
-            // 파일 저장 경로 생성 (원본 파일명 그대로 사용)
-            String uploadPath = uploadDir + File.separator + originalFileName;
-            File uploadFile = new File(uploadPath);
+            // 파일 저장 경로
+            File uploadFile = new File(uploadDir + File.separator + originalFileName);
 
-            // 동일 파일명이 존재할 경우 에러 처리 (또는 덮어쓰기)
-            if (uploadFile.exists()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("File with the same name already exists.");
-            }
+            // 디렉토리가 존재하지 않으면 생성
+            uploadFile.getParentFile().mkdirs();
 
             // 파일 저장
-            uploadFile.getParentFile().mkdirs();
             file.transferTo(uploadFile);
 
-            // 데이터베이스에 파일명만 저장
+            // e_users에 파일명만 저장
             euser.setProfileImg(originalFileName);
             euserService.save(euser);
 
-            return ResponseEntity.ok(originalFileName); // 파일명 반환
+            return ResponseEntity.ok(originalFileName); // 파일명만 반환
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }
     }
 
 
-    @GetMapping("/images/{fileName}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String fileName) {
-        try {
-            // URL 디코딩
-            String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8.toString());
-            String filePath = "C:/springProject/SpringProject/frontend/src/container/Resume/ProImg/" + decodedFileName;
-            File imgFile = new File(filePath);
 
-            if (!imgFile.exists()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+
+    @GetMapping("/uploads/{fileName}")
+    public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
+        try {
+            // 한글 파일 이름 디코딩
+            String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8.toString());
+            Path filePath = Paths.get("C:/springProject/SpringProject/Backend/uploads").resolve(decodedFileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
             }
 
-            byte[] imageData = Files.readAllBytes(imgFile.toPath());
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG) // 적절한 MIME 타입 설정
-                    .body(imageData);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

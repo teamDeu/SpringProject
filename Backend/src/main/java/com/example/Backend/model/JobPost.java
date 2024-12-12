@@ -1,5 +1,6 @@
 package com.example.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CurrentTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,8 +26,10 @@ public class JobPost {
     private Long id;
 
 
-    @Column(name = "company_id")
-    private String company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false) // 외래키 설정
+    @JsonBackReference
+    private Company company;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;
@@ -84,4 +88,11 @@ public class JobPost {
 
     @Column(name = "views")
     private Long views;
+
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<JobPostImage> images = new ArrayList<>();
+
+
+
 }

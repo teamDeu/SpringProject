@@ -17,7 +17,6 @@ import Delw from './img/Delw.png';
 const EditResume  = () => {
 
     const { id: resumeId } = useParams(); // URL에서 resumeId 추출
-    const [loading, setLoading] = useState(true);
 
     const [photoPreview, setPhotoPreview] = useState(null);
     const [desiredLocations, setDesiredLocations] = useState([]);
@@ -37,6 +36,7 @@ const EditResume  = () => {
     const [selectedRegion, setSelectedRegion] = useState(""); // 선택된 행정구역 (region)
 
     const [resumeFile, setResumeFile] = useState(null);
+    const BACKEND_URL = "http://localhost:8080/uploads";
 
     const [userInfo, setUserInfo] = useState({
         id: "",
@@ -162,25 +162,13 @@ const EditResume  = () => {
     
                     // 프로필 이미지 미리보기
                     if (user.profileImg) {
-                        const encodedFileName = encodeURIComponent(user.profileImg);
-                        setPhotoPreview(`http://localhost:8080/images/${encodedFileName}`);
+                        const encodedFileName = encodeURIComponent(user.profileImg); // 파일 이름 인코딩
+                        setPhotoPreview(`${BACKEND_URL}/${encodedFileName}`);
                     }
                     
                 }
     
-                // 이력서 정보 로드
-                const resumeResponse = await axios.get(`http://localhost:8080/api/resumes/${resumeId}`);
-                if (resumeResponse.status === 200) {
-                    const { title, description, experienceYears, summary, pdfUrl } = resumeResponse.data;
-                    setResumeData((prevState) => ({
-                        ...prevState,
-                        title,
-                        description,
-                        experienceYears: experienceYears || "",
-                        summary,
-                        fileName: pdfUrl || "",
-                    }));
-                }
+            
 
                 // 지역 정보 로드
                 const locationResponse = await axios.get(`http://localhost:8080/api/resume-locations/${resumeId}`);
@@ -219,6 +207,27 @@ const EditResume  = () => {
     }, [userInfo.id]);
     
 
+    useEffect(() => {
+        const fetchResume = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/resumes/${resumeId}`);
+                if (response.status === 200) {
+                    const { title, description, experienceYears, summary, pdfUrl } = response.data;
+                    setResumeData({
+                        title,
+                        description,
+                        experienceYears: experienceYears || "",
+                        summary,
+                        fileName: pdfUrl || "",
+                    });
+                }
+            } catch (error) {
+                console.error("이력서 데이터를 가져오는 중 오류 발생:", error);
+            }
+        };
+
+        fetchResume();
+    }, [resumeId]);
 
 
     // 이력서 저장 핸들러
@@ -339,32 +348,37 @@ const EditResume  = () => {
     
 
     const handlePhotoChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append("file", file);
-    
-            try {
-                const response = await axios.post(`http://localhost:8080/api/eusers/${userInfo.id}/upload-profile-img`, formData, {
+    const file = e.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await axios.post(
+                `http://localhost:8080/api/eusers/${userInfo.id}/upload-profile-img`,
+                formData,
+                {
                     headers: { "Content-Type": "multipart/form-data" },
-                });
-                const imageUrl = response.data;
-    
-                setUserInfo((prevState) => ({
-                    ...prevState,
-                    profileImg: imageUrl,
-                }));
-    
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setPhotoPreview(reader.result);
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                console.error("Profile image upload failed:", error);
-            }
+                }
+            );
+
+            // 백엔드에서 반환된 파일명 저장
+            const fileName = response.data;
+            setUserInfo((prevState) => ({
+                ...prevState,
+                profileImg: fileName,
+            }));
+
+            // 미리보기 설정
+            const imageUrl = `${BACKEND_URL}/${encodeURIComponent(fileName)}`;
+            setPhotoPreview(imageUrl);
+        } catch (error) {
+            console.error("프로필 이미지 업로드 실패:", error);
         }
-    };
+    }
+};
+
+    
     
     
 
@@ -619,7 +633,7 @@ const EditResume  = () => {
                             <FileUploadInput 
                                 type="text"
                                 placeholder="이력서 및 자기소개서 파일을 등록해주세요."
-                                value={resumeFile ? resumeFile.name : ""}
+                                value={resumeData.fileName ? decodeURIComponent(resumeData.fileName) : ""}
                                 readOnly
                             />
                             <FileInputLabel>

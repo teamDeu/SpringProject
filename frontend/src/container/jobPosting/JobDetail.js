@@ -25,7 +25,7 @@ const JobDetail = () => {
     const [userId, setUserId] = useState(null);
     const [resumes, setResumes] = useState([]);
     const [selectedResumeId, setSelectedResumeId] = useState(null);
-   
+    const BACKEND_URL = "http://localhost:8080/uploads";
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,10 +53,14 @@ const JobDetail = () => {
                 console.log("Resumes:", resumesResponse.data);
                 setResumes(resumesResponse.data);
 
-                // 현재 job 정보를 가져옴
                 const jobResponse = await axios.get(`http://localhost:8080/api/idjobpost?id=${jobId}`);
-                setJob(jobResponse.data);
-                
+                const jobData = jobResponse.data;
+
+                // 이미지가 있는 경우 첫 번째 이미지만 사용
+                setJob({
+                    ...jobData,
+                    images: jobData.images || [], // 이미지 리스트를 추가
+                });
 
                 // 즐겨찾기 상태 확인
                 const favoriteResponse = await axios.get("http://localhost:8080/api/favorites/check", {
@@ -73,6 +77,13 @@ const JobDetail = () => {
 
         fetchData();
     }, [jobId]);
+
+    useEffect(() => {
+        // views 증가 API 호출
+        axios.put(`http://localhost:8080/api/jobpost/${jobId}/increment-views`)
+            .catch((error) => console.error('Error incrementing views:', error));
+    }, [jobId]);
+    
 
     if (isLoading) {
         return <Container>Loading...</Container>;
@@ -114,23 +125,18 @@ const JobDetail = () => {
             return;
         }
     
+        const formData = new FormData();
+        formData.append("postId", jobId);
+        formData.append("resumeId", selectedResumeId);
+    
+        if (uploadedFiles.length > 0) {
+            formData.append("file", uploadedFiles[0]); // 첫 번째 파일만 전송
+        }
+    
         try {
-            // postId를 숫자로 변환
-            const numericPostId = Number(jobId);
-    
-            if (isNaN(numericPostId)) {
-                alert("유효한 채용 공고 ID가 아닙니다.");
-                return;
-            }
-    
-            const requestData = {
-                postId: numericPostId, // 숫자로 변환된 postId
-                resumeId: selectedResumeId,
-            };
-    
-            console.log("Request Data:", requestData);
-    
-            const response = await axios.post("http://localhost:8080/api/candidate/apply", requestData);
+            const response = await axios.post("http://localhost:8080/api/candidate/apply", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
     
             if (response.status === 200) {
                 alert("지원이 완료되었습니다!");
@@ -143,6 +149,7 @@ const JobDetail = () => {
             alert("지원 중 오류가 발생했습니다.");
         }
     };
+    
     
     
     
@@ -452,19 +459,19 @@ const JobDetail = () => {
                 <CompanySection>
                     <SectionTitle>기업/서비스 소개</SectionTitle>
                     <ImageCarousel>
-                        {job.companyDescription && job.companyDescription.images ? (
+                        {job.images && job.images.length > 0 ? (
                             <>
-                                <Arrow onClick={handlePrevImage}>&lt;</Arrow>
+                                
                                 <ImageWrapper>
                                     <img
-                                        src={job.companyDescription.images[currentImageIndex]}
+                                        src={`http://localhost:8080/uploads/${job.images[currentImageIndex].imgPath}`}
                                         alt={`기업 소개 이미지 ${currentImageIndex + 1}`}
                                     />
                                 </ImageWrapper>
-                                <Arrow onClick={handleNextImage}>&gt;</Arrow>
+                                
                             </>
                         ) : (
-                            <p>이미지를 불러올 수 없습니다.</p>
+                            <p>등록된 이미지가 없습니다.</p>
                         )}
                     </ImageCarousel>
 

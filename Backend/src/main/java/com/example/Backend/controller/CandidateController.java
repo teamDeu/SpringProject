@@ -41,16 +41,27 @@ public class CandidateController {
     }
 
     @PostMapping("/apply")
-    public ResponseEntity<Candidate> applyForJob(@RequestBody Map<String, Object> requestData) {
+    public ResponseEntity<Candidate> applyForJob(
+            @RequestParam("postId") Long postId,
+            @RequestParam("resumeId") Integer resumeId,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
-            Long postId = ((Number) requestData.get("postId")).longValue();
-            Integer resumeId = (Integer) requestData.get("resumeId");
-
             Candidate candidate = new Candidate();
-            candidate.setId(System.currentTimeMillis()); // 수동으로 ID 설정 (예: 현재 시간 사용)
             candidate.setPostId(postId);
             candidate.setResumeId(resumeId);
-            candidate.setExtraFile(null); // 초기값 설정
+
+            // 파일이 존재하는 경우
+            if (file != null && !file.isEmpty()) {
+                String originalFilename = file.getOriginalFilename();
+                candidate.setExtraFile(originalFilename);
+
+                // 파일 저장 로직
+                String uploadDir = System.getProperty("user.dir") + "/uploads";
+                String filePath = uploadDir + "/" + originalFilename;
+                file.transferTo(new java.io.File(filePath));
+            } else {
+                candidate.setExtraFile(null); // 파일이 없으면 null 설정
+            }
 
             Candidate savedCandidate = candidateService.saveCandidate(candidate);
             return ResponseEntity.ok(savedCandidate);
@@ -59,6 +70,7 @@ public class CandidateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
 

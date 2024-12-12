@@ -12,10 +12,10 @@ import BpnumberIcon from './img/BpnumberIcon.png';
 import JobTopBar from '../../components/JobTopBar';
 import BbirthIcon from './img/BbirthIcon.png';
 import Delw from './img/Delw.png';
+import FileUploadComponent from '../../components/yangji1/picture';
 
 const ResumeForm = () => {
 
-    const [photoPreview, setPhotoPreview] = useState(null);
     const [desiredLocations, setDesiredLocations] = useState([]);
 
     const [jobCategories, setJobCategories] = useState([]); // JobCategory 데이터 저장
@@ -33,6 +33,8 @@ const ResumeForm = () => {
     const [selectedRegion, setSelectedRegion] = useState(""); // 선택된 행정구역 (region)
 
     const [resumeFile, setResumeFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [photoPreview, setPhotoPreview] = useState(null);
 
     const [userInfo, setUserInfo] = useState({
         id: "",
@@ -267,6 +269,8 @@ const ResumeForm = () => {
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
+            setResumeFile(file);
+            setIsUploading(true); // 업로드 상태 시작
             const formData = new FormData();
             formData.append("file", file);
     
@@ -275,21 +279,22 @@ const ResumeForm = () => {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
     
-                const fileName = response.data; // 파일 이름만 반환
+                const fileName = response.data;
                 setResumeData((prevState) => ({
                     ...prevState,
                     fileName: fileName,
                 }));
     
-                // **파일 경로 확인 추가**
-                const uploadedFilePath = `/uploads/${fileName}`;
-                console.log("Uploaded file path:", uploadedFilePath);
-    
+                console.log("Uploaded file:", fileName);
             } catch (error) {
                 console.error("Resume file upload failed:", error);
+                alert("파일 업로드에 실패했습니다.");
+            } finally {
+                setIsUploading(false); // 업로드 상태 종료
             }
         }
     };
+    
     
     
     
@@ -943,6 +948,7 @@ const FileUploadInput = styled.input`
     border: 1.2px solid #B5B5B5;
     border-radius: 10px;
     outline: none;
+    color: ${({ value }) => (value ? "#000000" : "#BABABA")};
 
     &::placeholder {
         color: #BABABA; 

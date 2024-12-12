@@ -29,6 +29,9 @@ public class JobPostService {
 
     @Autowired
     private JobPostImageRepository jobPostImageRepository;
+
+
+
     public JobPost saveJobPost(JobPost jobPost) {
         return jobPostRepository.save(jobPost);
     }
@@ -41,7 +44,7 @@ public class JobPostService {
         return jobPostRepository.findAll();
     }
 
-    public List<JobPost> getJobPostByCompany(String company){
+    public List<JobPost> getJobPostByCompany(Company company){
         return jobPostRepository.findByCompanyOrderByModifyDateDesc(company);
     }
 
@@ -64,9 +67,33 @@ public class JobPostService {
         }
     }
 
-    public List<JobPostImage> getPostImage(Long id){
-        return jobPostImageRepository.findByPostId(id);
+
+
+    public Optional<JobPost> findByIdWithImages(Long id) {
+        return jobPostRepository.findById(id).map(jobPost -> {
+            List<JobPostImage> images = jobPostImageRepository.findByPostId(id);
+            jobPost.setImages(images);
+            return jobPost;
+        });
     }
+
+
+
+    public JobPost saveJobPostWithImages(JobPost jobPost, List<JobPostImage> images) {
+        if (images != null) {
+            for (JobPostImage image : images) {
+                image.setJobPost(jobPost);
+            }
+            jobPost.setImages(images);
+        }
+        return jobPostRepository.save(jobPost);
+    }
+
+    public List<JobPostImage> getPostImage(Long postId) {
+        return jobPostImageRepository.findByPostId(postId);
+    }
+
+
 
     // 이 공고 놓치지 마세요
     public List<JobPost> getTop9JobPostsByDeadline() {
@@ -93,10 +120,10 @@ public class JobPostService {
     }
 
     //조회수가 높은 공고
-    public List<JobPost> getTopJobPostsByViews(int limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        return jobPostRepository.findTopJobPostsByViews(pageable);
+    public List<JobPost> getAllJobPostsByViews() {
+        return jobPostRepository.findAllJobPostsByViews();
     }
+
 
     LocalDate currentDate = LocalDate.now();
     LocalDate oneWeekLater = currentDate.plusDays(7);
@@ -112,6 +139,22 @@ public class JobPostService {
         Pageable pageable = PageRequest.of(0, limit);
         return jobPostRepository.findJobPostsEndingBetween(startDate, endDate, pageable);
     }
+
+    @Transactional
+    public void incrementViews(Long id) {
+        Optional<JobPost> jobPostOpt = jobPostRepository.findById(id);
+        if (jobPostOpt.isPresent()) {
+            JobPost jobPost = jobPostOpt.get();
+            jobPost.setViews(jobPost.getViews() + 1);
+            jobPostRepository.save(jobPost);
+        } else {
+            throw new RuntimeException("JobPost not found with ID: " + id);
+        }
+    }
+
+    
+
+
 
 
 

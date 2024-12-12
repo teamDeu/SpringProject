@@ -82,8 +82,8 @@ public class ResumeController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadResumeFile(@RequestParam("file") MultipartFile file) {
         try {
-            // 고유한 파일 이름 생성
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            // 원본 파일 이름 가져오기
+            String fileName = file.getOriginalFilename();
             File uploadFile = new File(uploadDir + File.separator + fileName);
 
             // 디렉터리가 존재하지 않으면 생성
@@ -92,12 +92,19 @@ public class ResumeController {
             // 파일 저장
             file.transferTo(uploadFile);
 
-            // 파일 경로 반환
+            // 데이터베이스에 저장할 Resume 객체 생성
+            Resume resume = new Resume();
+            resume.setPdfUrl(fileName); // 파일명만 저장
+            resumeService.save(resume); // ResumeService를 통해 저장
+
+            // 파일명 반환
             return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file.");
         }
     }
+
+
 
     // 기존 이력서 수정
     @PutMapping("/{id}")

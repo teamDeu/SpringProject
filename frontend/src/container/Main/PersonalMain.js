@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import JobTopBar from '../../components/JobTopBar';
 import Eye from './img/eye.png';
-import Hlogo from './img/Hlogo.png';
-import Aa from './img/aa.png';
-import Aa2 from './img/aa2.png';
+
 import Co from './img/co.jpg';
 
 function PersonalMain() {
@@ -15,6 +13,8 @@ function PersonalMain() {
     const [urgentJobPosts, setUrgentJobPosts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
+    const BACKEND_URL = "http://localhost:8080/uploads";
+    
 
     useEffect(() => {
         axios
@@ -83,13 +83,14 @@ function PersonalMain() {
                         <CompanyCarousel>
                             {companies.slice(currentIndex, currentIndex + 5).map((company, index) => (
                                 <CompanyCard key={index} onClick={() => handleCompanyClick(company.id)}>
-                                    <Logo src={company.logo} alt={`${company.companyName} 로고`} />
+                                    <Logo src={`${BACKEND_URL}/${company.logoUrl}`} alt={`${company.companyName} 로고`} />
                                     <CompanyName>{company.companyName}</CompanyName>
                                     <Description>{company.title}</Description>
                                     <Views>{company.views} views</Views>
                                 </CompanyCard>
                             ))}
                         </CompanyCarousel>
+
                         <Arrow onClick={handleNextImage} disabled={currentIndex >= companies.length - 5}>
                             &gt;
                         </Arrow>
@@ -103,7 +104,8 @@ function PersonalMain() {
                 <JobPostingsContainer>
                     {popularJobPosts.map((job, index) => (
                         <JobPostingCard key={index} onClick={() => handleJobPostingClick(job.id)}>
-                            <JobLogo src={job.logo || Co} alt={`${job.company} 로고`} />
+                            {/* 기존 `logo` -> `logoUrl`로 수정 */}
+                            <JobLogo src={`${BACKEND_URL}/${job.logoUrl}`} alt={`${job.company} 로고`} />
                             <JobTitle>{job.title}</JobTitle>
                             <p>{job.company}</p>
                             <p>{job.salary || '연봉 정보 없음'}</p>
@@ -118,7 +120,7 @@ function PersonalMain() {
                 <JobPostingsContainer>
                     {urgentJobPosts.map((job, index) => (
                         <JobPostingCard key={index} onClick={() => handleJobPostingClick(job.id)}>
-                            <JobLogo src={job.logo || Co} alt={`${job.company} 로고`} />
+                            <JobLogo src={`${BACKEND_URL}/${job.logoUrl}`} alt={`${job.company} 로고`} />
                             <JobTitle>{job.title}</JobTitle>
                             <p>{job.company}</p>
                             <p>{job.salary || '연봉 정보 없음'}</p>
@@ -198,9 +200,9 @@ const CompanyCard = styled.div`
 `;
 
 const Logo = styled.img`
-    width: 60px;
-    height: 60px;
-    margin-bottom: 20px;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 40px;
 `;
 
 const CompanyName = styled.h3`
@@ -292,10 +294,9 @@ const JobImage = styled.img`
 `;
 
 const JobLogo = styled.img`
-    width: 100px; /* 
-    max-width: 100px;
-    height: 120px; 
-    margin-bottom: 15px;
+    width: 120px; 
+    height: 80px; 
+    margin-bottom: 30px;
     margin-top: 15px;
     object-fit: contain;
 `;
