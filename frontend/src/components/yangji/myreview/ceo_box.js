@@ -108,7 +108,7 @@ const LargeText = styled.div`
     font-weight: 700;
     position: absolute;
     top: 20px;
-    left: 50px;
+    left: 70px;
     color: ${({ textType }) =>
         textType === '현직원'
             ? '#92D2D4'
@@ -122,7 +122,7 @@ const SmallText = styled.div`
     font-weight: 700;
     position: absolute;
     top: 50px;
-    left: 50px;
+    left: 40px;
     color: #666;
 `;
 
@@ -131,36 +131,47 @@ const BoxImage = styled.img`
     height: 20px;
     position: absolute;
     top: 29px;
-    left: 120px;
+    left: 50px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 `;
 
-const CeoBox = ({ companyImage, companyName, hiringCount, date, onDelete, registrationStatus,textType ,textType1}) => {
-    const boxImageSrc = textType === '현직원' ? '/img/realceo.png' : '/img/beforeceo.png';
+const CeoBox = ({ data, onDelete }) => {
+    const BACKEND_URL = "http://localhost:8080/uploads";
     return (
-        <Container>
-            <Image src={companyImage} alt="No Image" />
-            <InfoContainer>
-                <CompanyName>{companyName}</CompanyName>
-                <HiringInfo>현재 채용중 {hiringCount}건</HiringInfo>
-            </InfoContainer>
-            <RightContainer></RightContainer>
-            <DateText>{date}</DateText>
-            <StatusImage
-                src="/img/trashcan.png"
-                alt="Delete Icon"
-                onClick={onDelete}
-            />
-            <RegistrationStatus status={registrationStatus}>
-                {registrationStatus}
-            </RegistrationStatus>
-            <LargeBox>
-                <LargeText textType={textType}>{textType}</LargeText>
-                <BoxImage src={boxImageSrc} alt="Box Image" />
-                <SmallText textType1={textType1}>{textType1}</SmallText>
-            </LargeBox>
-        </Container>
+        <>
+            {data.map((item) => (
+                <Container key={item.id}>
+                    <Image src={`${BACKEND_URL}/${item.logoUrl}`} alt="No Image" />
+                    <InfoContainer>
+                        <CompanyName>{item.companyName}</CompanyName>
+                        <HiringInfo>현재 채용중 {item.jobPostCount || 0}건</HiringInfo>
+                    </InfoContainer>
+                    <RightContainer></RightContainer>
+                    <DateText>{item.ceoRegister}</DateText>
+                    <StatusImage
+                        src="/img/trashcan.png"
+                        alt="Delete Icon"
+                        onClick={() => onDelete(item.id)} // 해당 ID로 삭제
+                    />
+                    <RegistrationStatus status={item.status}>
+                        {item.status}
+                    </RegistrationStatus>
+                    <LargeBox>
+                        <BoxImage
+                            src={
+                                item.ceoJob === '현직원'
+                                    ? '/img/realceo.png'
+                                    : '/img/beforeceo.png'
+                            }
+                            alt="Box Image"
+                        />
+                        <LargeText textType={item.ceoJob}>{item.ceoJob}</LargeText>
+                        <SmallText>{item.ceoMent}</SmallText>
+                    </LargeBox>
+                </Container>
+            ))}
+        </>
     );
 };
 

@@ -84,4 +84,5 @@ public class JobPost {
 
     @Column(name = "views")
     private Long views;
+
 }

@@ -8,6 +8,7 @@ const Container = styled.div`
     height: auto;
     margin-bottom: 1px;
     font-family: 'Nanum Square Neo', sans-serif;
+    
 `;
 
 const OuterBox = styled.div`
@@ -21,6 +22,7 @@ const OuterBox = styled.div`
     align-items: center;
     padding: 0 20px;
     box-sizing: border-box;
+    
 `;
 
 const CompanyName = styled.div`

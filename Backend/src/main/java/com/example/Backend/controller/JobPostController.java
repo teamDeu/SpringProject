@@ -27,7 +27,6 @@ public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
-
     public JobPostController(JobPostService jobPostService) {
         this.jobPostService = jobPostService;
     }
@@ -43,7 +42,30 @@ public class JobPostController {
         return ResponseEntity.ok(savedJobPost);
     }
 
+    @PostMapping("/jobpost/end")
+    public ResponseEntity<JobPost> endJobPost(@RequestParam Integer id)
+    {
+        Date today = new Date();
+        System.out.println("현재 날짜: " + today);
 
+        // Calendar 인스턴스 생성
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        // 하루 빼기
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date yesterday = calendar.getTime();
+        JobPost jobPost = jobPostService.getJobPostById(Long.valueOf(id));
+        jobPost.setEndDate(yesterday);
+        JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
+        return ResponseEntity.ok(savedJobPost);
+    }
+
+    @GetMapping("/jobpost")
+    public ResponseEntity<List<JobPost>> getAllJobPosts(){
+        System.out.println(jobPostService.getAllJobPost());
+        return ResponseEntity.ok(jobPostService.getAllJobPost());
+    }
 
     //이 공고 놓치지 마세요(공고 마감이 가까운 순)
     @GetMapping("/urgent-jobposts")
@@ -288,4 +310,7 @@ public class JobPostController {
     public ResponseEntity<List<JobPostImage>> getJobPostImage(@RequestParam Long id){
         return ResponseEntity.ok(jobPostService.getPostImage(id));
     }
+
+
+
 }

@@ -17,3 +17,4 @@ public interface InterviewReviewRepository extends JpaRepository<InterviewReview
     List<Object[]> getInterviewReviewsWithDetails();
 
 }
+

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const JobApplicationStatus = ({ company, title, location, deadline, status, statusColor, onViewResume }) => {
+    console.log("JobApplicationStatus Props:", { company, title, location, deadline, status, statusColor }); // 전달받은 props 확인
     return (
         <Wrapper>
             <Card>
@@ -15,7 +16,6 @@ const JobApplicationStatus = ({ company, title, location, deadline, status, stat
                 </Info>
                 <StatusWrapper>
                     <Status style={{ color: statusColor }}>{status}</Status>
-                    <ViewResume onClick={onViewResume}>[이력서 보기]</ViewResume>
                 </StatusWrapper>
             </Card>
         </Wrapper>
@@ -41,7 +41,8 @@ const Card = styled.div`
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
-    width: 1480px; /* 카드 너비 */
+    width: 100%; /* 카드 너비 */
+    max-width: 1480px;
     height: 100px; /* 카드 높이 */
 `;
 
@@ -80,14 +81,4 @@ const StatusWrapper = styled.div`
 const Status = styled.div`
     font-size: 16px;
     font-weight: bold;
-`;
-
-const ViewResume = styled.div`
-    font-size: 14px;
-    color: #888;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;

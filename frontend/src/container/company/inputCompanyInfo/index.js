@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
 import JobTopBar from '../../../components/JobTopBar';
 import InputWithTitle from '../../../components/company/InputWithTitle';
@@ -7,8 +7,9 @@ import InputTitle from '../../../components/company/InputTitle';
 import FilledButton from '../../../components/FilledButton';
 import MainContent from '../../../components/common/MainContent';
 import { useLocation, useNavigate } from 'react-router';
-import { PostCompany } from '../../../api/api';
+import { GetCompanyInfo, PostCompany } from '../../../api/api';
 import PhotoInput from '../../../components/company/PhotoInput';
+import { waitForSessionId } from '../../../context/SessionProvider';
 
 const InputArray = [
     { 
@@ -62,9 +63,20 @@ const Index = () => {
     const updateImage = (value) => {
         setCompanyInfo((prev) => ({...prev,logoUrl : value}))
     }
-    console.log(id);
+    const [sessionId,setSessionId] = useState();
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId);
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
     const [companyInfo,setCompanyInfo] = useState({ 
-        id : id || "als981209",
+        id : sessionId || "als981209",
         pwd : "",
         companyName: "Test", // String
         industry: "", // String
@@ -76,6 +88,21 @@ const Index = () => {
         managerPhone: "", // String
         logoUrl :"",
     })
+
+    useEffect(() => {
+        const fetchData = async () => {
+          if (sessionId) {
+            try {
+              const data = await GetCompanyInfo(sessionId); // API 호출
+              console.log("getCompnay : ",data);
+              setCompanyInfo(data); // 기존 상태를 유지하며 업데이트
+            } catch (error) {
+              console.error("Error fetching company info:", error);
+            }
+          }
+        };
+        fetchData();
+      }, [sessionId]);
     function regCompanyInfoButton(){
 
         const keys = Object.keys(companyInfo)
@@ -127,7 +154,7 @@ const Index = () => {
                 <FileSection>
                     <InputTitle>기업 로고 등록</InputTitle>
                     <PhotoInputSection>
-                    <PhotoInput imageLength={1} updateImage = {(value)=>{updateImage(value)}} justifyContent={"center"}/>
+                    <PhotoInput value ={[companyInfo.logoUrl]} imageLength={1} updateImage = {(value)=>{updateImage(value)}} justifyContent={"center"}/>
                     </PhotoInputSection>
                     
                 </FileSection>

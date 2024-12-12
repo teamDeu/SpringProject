@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CeoBox from '../../components/yangji/myreview/ceo_box';
 import styled from 'styled-components';
+import axios from 'axios';
+import { waitForSessionId } from '../../context/SessionProvider';
 
 const Container = styled.div`
     position: relative;
@@ -21,43 +23,88 @@ const TestBoxContainer = styled.div`
 `;
 
 const Review2 = () => {
-    const numberOfBoxes = 8; // 데이터베이스에서 가져온 값
-    const statusOptions = ['등록대기중', '등록완료', '등록취소'];
-    const textTypeOptions = ['현직원', '전직원'];
-    const [dummyData, setDummyData] = useState(
-        Array.from({ length: numberOfBoxes }, (_, index) => ({
-            id: index + 1, // 고유 id 추가
-            companyImage: `/img/company-logo${index + 1}.png`,
-            companyName: `회사 이름 ${index + 1}`,
-            hiringCount: Math.floor(Math.random() * 10) + 1,
-            date: `2024.10.${27 - index}`,
-            registrationStatus: statusOptions[Math.floor(Math.random() * statusOptions.length)],
-            textType: textTypeOptions[Math.floor(Math.random() * textTypeOptions.length)], // 현직원 또는 전직원 랜덤 설정
-            textType1:"밥이 존맛탱",
-        }))
-    );
+    const [data, setData] = useState([]);
+    const [jobPostCounts, setJobPostCounts] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [sessionId, setSessionId] = useState(null); // sessionId 상태 추가
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const sessionId = await waitForSessionId();
+                setSessionId(sessionId); // sessionId 저장
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [companiesResponse, jobPostCountsResponse, reviewsResponse] = await Promise.all([
+                    axios.get("http://localhost:8080/api/companies"),
+                    axios.get("http://localhost:8080/api/jobpost/count"),
+                    axios.get("http://localhost:8080/api/ceo-reviews"),
+                ]);
+    
+                console.log("Companies Response:", companiesResponse.data);
+                console.log("Job Post Counts Response:", jobPostCountsResponse.data);
+                console.log("Reviews Response:", reviewsResponse.data);
+    
+                setData(companiesResponse.data);
+                setJobPostCounts(jobPostCountsResponse.data);
+                setReviews(reviewsResponse.data.map((review) => ({
+                    ...review,
+                    companyId: review.companyId || review.company_id, // 필드 매칭
+                })));
+            } catch (error) {
+                console.error("데이터 가져오는데 실패:", error);
+            }
+        };
+    
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        console.log("Session ID:", sessionId); // sessionId 확인
+        console.log("Reviews Data:", reviews); // reviews 확인
+        console.log("Merged Data Before Filter:", data); // 병합된 데이터 확인
+    }, [sessionId, reviews, data]);
+    
+    
+
+    const mergedData = data
+    .map((company) => {
+        const review = reviews.find((r) => r.companyId === company.id) || {};
+        const jobPostCount = jobPostCounts.find((count) => count.companyId === company.id)?.count || 0;
+
+        return {
+            ...company,
+            jobPostCount,
+            status: review.status || "N/A",
+            ceoMent: review.ceoMent || "코멘트 없음",
+            ceoJob: review.ceoJob || "미확인",
+            ceoRegister: review.ceoRegister || "등록 정보 없음",
+            userId: review.userId || null, // userId 추가
+        };
+    })
+    .filter((item) => String(item.userId) === String(sessionId));
+
+    
 
     const handleDelete = (id) => {
         if (window.confirm('정말 삭제하시겠습니까?')) {
-            setDummyData((prevData) => prevData.filter((item) => item.id !== id));
+            setData((prevData) => prevData.filter((item) => item.id !== id));
         }
     };
 
     return (
         <Container>
             <TestBoxContainer>
-                {dummyData.map((data) => (
-                    <CeoBox
-                        key={data.id} // React에서 key를 추가해야 성능 최적화
-                        companyImage={data.companyImage}
-                        companyName={data.companyName}
-                        hiringCount={data.hiringCount}
-                        date={data.date}
-                        onDelete={() => handleDelete(data.id)} // 삭제 기능 연결
-                        registrationStatus={data.registrationStatus}
-                        textType={data.textType} // textType 전달
-                        textType1={data.textType1}
-                    />
+                {mergedData.map((item) => (
+                    <CeoBox key={item.id} data={[item]} onDelete={handleDelete} />
                 ))}
             </TestBoxContainer>
         </Container>

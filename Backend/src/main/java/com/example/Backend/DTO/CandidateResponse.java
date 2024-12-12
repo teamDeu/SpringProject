@@ -33,5 +33,8 @@ public class CandidateResponse {
         this.passType = passType;
     }
 
+
+
+
     // Getter와 Setter
 }

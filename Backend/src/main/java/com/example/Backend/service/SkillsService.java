@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SkillsService {
@@ -14,6 +15,9 @@ public class SkillsService {
 
     public List<Skills> getAllSkills(){
         return skillsRepository.findAll();
+    }
+    public Optional<Skills> getSkillsById(Long id){
+        return skillsRepository.findById(id);
     }
 
 }

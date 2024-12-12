@@ -100,6 +100,16 @@ export const PostJobPost = async(jobPost) => {
       }
 }
 
+export const EndJobPost = async(id) => {
+    return await axios.post(`http://localhost:8080/api/jobpost/end?id=${id}`)        
+    .then(response => response.data)
+    .catch(error => {
+        console.error("Error posting job post:", error);
+        throw error;
+    });
+      
+}
+
 //채용정보 데이터를 가져오는 API
 export const GetCompanyJobPosts = (company) => {
     return axios.get('http://localhost:8080/api/companyjobpost',{
@@ -145,7 +155,9 @@ export const GetIdJobPost = async(id) => {
         .catch(error => {
             console.error('Error fetching data:', error);
             throw error;
-        });
+        }).finally(() => {
+            return postData;
+        })
     
     postData.aboutCompany = {description : postData.aboutCompany , images : postImage}
     return postData;
@@ -567,13 +579,25 @@ export const GetCandidate = async (postId) =>{
             console.error('Error fetching data:', error);
             throw error;
         });
-} 
+}
 
-export const GetAllResumes = async() => {
-    return await axios.get('http://localhost:8080/api/resumes')
+export const GetCandidate2 = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/candidate2`, {
+            params: { userId }, // Query Parameter 수정
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching candidates:", error);
+        throw error;
+    }
+};
+
+export const GetAllUserSearch = async() => {
+    return await axios.get('http://localhost:8080/api/resumes/usersearch')
         .then(response => response.data)
         .catch(error => {
             console.error('Error fetching data:', error);
             throw error;
         });
-}
+    }

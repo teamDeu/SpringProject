@@ -7,7 +7,7 @@ import Tab from '../../../components/company/Tab'
 import FilledButton from '../../../components/FilledButton'
 import DataTable from '../../../components/company/DataTable'
 import ChangeButton from '../../../components/company/ChangeButton'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { GetCandidate } from '../../../api/api'
 const triangleRightIcon = process.env.PUBLIC_URL + '/icons/triangle-right.png';
 
@@ -72,26 +72,30 @@ const AlertText = styled.div`
 `
 
 
-const CandidateManageButtons = ({value = "심사중" , data}) => {
-    const buttonColor = {
-        심사중 : "black",
-        "서류 합격" : "blue",
-        "최종 합격" : "green",
-        "불합격" : "red",
-    }
-    console.log("여기서확인중",value);
-    const color = buttonColor[value] || "black"; // 기본값을 "black"으로 설정
-    return (
-        <ButtonArticle>
-        <ChangeButton data = {data} title = "합격 여부" defaultValue = {{title : value , color : color}} options ={[
-          {title :"심사중", color : buttonColor["심사중"]},{title : "서류 합격" , color : buttonColor["서류 합격"]},{title : "최종 합격" , color : buttonColor["최종 합격"]},{title : "불합격" , color :buttonColor["불합격"]}
-        ]}/>
-        <Button>이력서 보기 <img src ={triangleRightIcon}/></Button>
-        <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
-        </ButtonArticle>
-    )
-}
+
 const Index = () => {
+    const navigate = useNavigate();
+    const CandidateManageButtons = ({value = "심사중" , data}) => {
+        const buttonColor = {
+            심사중 : "black",
+            "서류 합격" : "blue",
+            "최종 합격" : "green",
+            "불합격" : "red",
+        }
+        console.log("여기서확인중",value);
+        const color = buttonColor[value] || "black"; // 기본값을 "black"으로 설정
+        return (
+            <ButtonArticle>
+            <ChangeButton data = {data} title = "합격 여부" defaultValue = {{title : value ? value : "심사중" , color : color}} options ={[
+              {title :"심사중", color : buttonColor["심사중"]},{title : "서류 합격" , color : buttonColor["서류 합격"]},{title : "최종 합격" , color : buttonColor["최종 합격"]},{title : "불합격" , color :buttonColor["불합격"]}
+            ]}/>
+            <Button onClick={() => {navigate(`/editresume/${data.resumeId}`)}}>이력서 보기 <img src ={triangleRightIcon}/></Button>
+            <Button>포트폴리오 보기 <img src ={triangleRightIcon}/></Button>
+            </ButtonArticle>
+        )
+    }
+
+   
     const [candidateData , setCandidateData] = useState([])
     const [formattedData , setFormattedData] = useState([])
     const setFormattedDataItems = (items) => {

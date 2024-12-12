@@ -33,4 +33,6 @@ public class ResumeService {
     public void deleteById(Integer id) {
         resumeRepository.deleteById(id);
     }
+
+
 }

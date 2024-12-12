@@ -74,22 +74,28 @@ const TestBoxContainer = styled.div`
     width: 100%;
 `;
 
+
 const Review2 = () => {
     const dropdownOptions1 = ["전체", "합격", "대기중", "불합격"];
     const dropdownOptions2 = [
-        "전체", // "전체" 옵션 추가
-        "서버/백엔드 개발자",
-        "프론트엔드 개발자",
-        "웹 풀스택 개발자",
-        "게임 클라이언트 개발자",
-        "DBA",
-        "개발 PM",
-        "안드로이드 개발자",
-        "iOS 개발자",
-        "크로스플랫폼 앱개발자",
-        "빅데이터 엔지니어",
-        "인공지능/머신러닝",
+        "전체",
+        '서버/백엔드 개발자',
+        '프론트엔드 개발자',
+        '데이터 엔지니어',
+        '게임 개발자',
+        '데이터 사이언티스트',
+        '데브옵스 엔지니어',
+        '안드로이드 개발자',
+        'iOS 개발자',
+        'QA 엔지니어',
+        'AI/머신러닝 엔지니어',
+        '풀스택 개발자',
+        '시스템 엔지니어',
+        '보안 엔지니어',
+        '네트워크 엔지니어',
+        'DBA(Database Administrator)',
     ];
+
 
     const [selectedStatus, setSelectedStatus] = useState("전체");
     const [selectedJob, setSelectedJob] = useState("전체");
@@ -156,7 +162,6 @@ const Review2 = () => {
                     <HorizontalLine />
                 </LineContainer>
                 <TestBoxContainer>
-                    {/* TestBox는 필터링된 데이터를 전달받아 자체적으로 렌더링 */}
                     <TestBox data={filteredData} />
                 </TestBoxContainer>
             </Container>
