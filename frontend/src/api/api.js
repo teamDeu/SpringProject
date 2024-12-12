@@ -100,6 +100,16 @@ export const PostJobPost = async(jobPost) => {
       }
 }
 
+export const EndJobPost = async(id) => {
+    return await axios.post(`http://localhost:8080/api/jobpost/end?id=${id}`)        
+    .then(response => response.data)
+    .catch(error => {
+        console.error("Error posting job post:", error);
+        throw error;
+    });
+      
+}
+
 //채용정보 데이터를 가져오는 API
 export const GetCompanyJobPosts = (company) => {
     return axios.get('http://localhost:8080/api/companyjobpost',{

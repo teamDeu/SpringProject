@@ -20,7 +20,7 @@ async function createFileFromImgSrc(imgSrc, fileName = 'image.jpg') {
   }
 }
 
-const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) => {
+const PhotoInput = ({readOnly,updateImage , imageLength , justifyContent ,value = []}) => {
   const [images, setImages] = useState([]);
   const [imageFile,setImageFile] = useState([]);
   const handleImageUpload = (event) => {
@@ -54,15 +54,15 @@ const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) =>
           };
         fetchImageFile();
         }
-        else if(item != undefined){
+        else if(item != undefined && typeof item == "string"){
+          console.log("item = " , item);
           const imgSrc = `http://localhost:8080/uploads/${item}`
           setImages([imgSrc])
           const fetchImageFile = async() =>{
           const newImageFile = await createFileFromImgSrc(imgSrc,item)
-          console.log(newImageFile);
           setImageFile([newImageFile]);
           };
-        fetchImageFile();
+          fetchImageFile();
         }
       })
     }
@@ -87,15 +87,15 @@ const PhotoInput = ({updateImage , imageLength , justifyContent ,value = []}) =>
         {images.map((image, index) => (
           <ImageWrapper key={index}>
             <Image src={image} alt={`Uploaded ${index}`} />
-            <RemoveButton onClick={() => handleRemoveImage(index)}>×</RemoveButton>
+            {readOnly || <RemoveButton onClick={() => handleRemoveImage(index)}>×</RemoveButton>}
           </ImageWrapper>
         ))}
       </ImageContainer>
         <LabelContainer disabled={images.length >= imageLength}>
-            <FileLabel htmlFor="file-upload" disabled={images.length >= imageLength}>
+            {readOnly || <FileLabel htmlFor="file-upload" disabled={images.length >= imageLength}>
             <Icon src = {addIcon}/>
             {images.length >= imageLength ? `업로드 제한 (${imageLength}개)` : "파일 선택"}
-            </FileLabel>
+            </FileLabel>}
         </LabelContainer>
       </FileInputWrapper>
       

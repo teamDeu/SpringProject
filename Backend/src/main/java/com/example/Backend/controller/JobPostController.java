@@ -27,7 +27,6 @@ public class JobPostController {
 
     @Autowired
     JobPostService jobPostService;
-
     public JobPostController(JobPostService jobPostService) {
         this.jobPostService = jobPostService;
     }
@@ -39,6 +38,25 @@ public class JobPostController {
         System.out.println(date);
         jobPost.setModifyDate(date);
         System.out.println(jobPost);
+        JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
+        return ResponseEntity.ok(savedJobPost);
+    }
+
+    @PostMapping("/jobpost/end")
+    public ResponseEntity<JobPost> endJobPost(@RequestParam Integer id)
+    {
+        Date today = new Date();
+        System.out.println("현재 날짜: " + today);
+
+        // Calendar 인스턴스 생성
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        // 하루 빼기
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date yesterday = calendar.getTime();
+        JobPost jobPost = jobPostService.getJobPostById(Long.valueOf(id));
+        jobPost.setEndDate(yesterday);
         JobPost savedJobPost = jobPostService.saveJobPost(jobPost);
         return ResponseEntity.ok(savedJobPost);
     }

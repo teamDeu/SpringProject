@@ -21,6 +21,8 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
+    public Company getPwdById(String id) {return companyRepository.findPwdById(id);}
+
     public Company saveCompany(Company company) {
         return companyRepository.save(company);
     }

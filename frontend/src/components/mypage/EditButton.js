@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const EditButton = () => {
+const EditButton = ({link = "/mp2"}) => {
     return (
-        <StyledLink to="/mp2">수정</StyledLink>
+        <StyledLink to={link}>수정</StyledLink>
     );
 };
 

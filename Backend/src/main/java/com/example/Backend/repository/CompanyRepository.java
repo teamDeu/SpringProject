@@ -31,4 +31,6 @@ public interface CompanyRepository extends JpaRepository<Company, String> {
             nativeQuery = true)
     List<Object[]> getCompanyFavoriteCounts();
     Optional<Company> findByCompanyName(String companyName);
+
+    Company findPwdById(String id);
 }

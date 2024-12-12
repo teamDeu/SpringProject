@@ -20,7 +20,7 @@ const CompanyInfo = ({companyInfo,setCompanyInfo}) => {
                     <Section>
                         <SectionTitleWrapper>
                             <SectionTitle>기본 정보</SectionTitle>
-                            <EditButton>수정</EditButton>
+                            <EditButton link='/InputCompanyInfo'>수정</EditButton>
                         </SectionTitleWrapper>
                         <Row>
                             <IDInput label="아이디" value={companyInfo.id} />

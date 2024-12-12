@@ -26,6 +26,8 @@ public class JobPostService {
 
     @Autowired
     private JobPostImageRepository jobPostImageRepository;
+
+    public JobPost getJobPostById(Long id) {return jobPostRepository.findJobPostById(id);}
     public JobPost saveJobPost(JobPost jobPost) {
         return jobPostRepository.save(jobPost);
     }

@@ -38,20 +38,14 @@ const Index = () => {
         logoUrl: "",
     });
 
-    // 로고 이미지 업데이트
-    const updateImage = (value) => {
-        if (JSON.stringify(companyInfo.logoUrl) !== JSON.stringify(value)) {
-          setCompanyInfo((prev) => ({ ...prev, logoUrl: value }));
-        }
-      };
-
     // 데이터 가져오기
     useEffect(() => {
         const fetchData = async () => {
           if (sessionId) {
             try {
               const data = await GetCompanyInfo(sessionId); // API 호출
-              setCompanyInfo((prev) => ({ ...prev, ...data })); // 기존 상태를 유지하며 업데이트
+              console.log("getCompnay : ",data);
+              setCompanyInfo(data); // 기존 상태를 유지하며 업데이트
             } catch (error) {
               console.error("Error fetching company info:", error);
             }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,14 +75,17 @@ public class CompanyController {
     // 회사 정보 저장
     @PostMapping("/api/company")
     public ResponseEntity<Company> saveCompany(@RequestBody Company company) {
+        Company currentCompany = companyService.getPwdById(company.getId());
+        company.setPwd(currentCompany.getPwd());
         Company savedCompany = companyService.saveCompany(company);
+
         return ResponseEntity.ok(savedCompany);
     }
 
     @PostMapping("/api/companylogo/{companyId}")
     public ResponseEntity<Company> saveCompanyLogo(
             @PathVariable String companyId,
-            @RequestParam("image") MultipartFile file){
+            @RequestParam("image") MultipartFile file) throws IOException {
 
         Company company = companyService.getCompanyById(companyId).get();
         String uploadDir = System.getProperty("user.dir") + "/uploads";
@@ -90,6 +94,9 @@ public class CompanyController {
         String uniqueFilename = Util.generateUniqueFilename(uploadDir, Objects.requireNonNull(originalFilename));
         company.setLogoUrl(uniqueFilename);
         companyService.saveCompany(company);
+
+        String filePath = uploadDir + "/" + uniqueFilename;
+        file.transferTo(new java.io.File(filePath));
 
     return ResponseEntity.ok(company);
     }
