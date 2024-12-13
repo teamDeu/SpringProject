@@ -13,6 +13,7 @@ import JobTopBar from '../../components/JobTopBar';
 import BbirthIcon from './img/BbirthIcon.png';
 import Delw from './img/Delw.png';
 import FileUploadComponent from '../../components/yangji1/picture';
+import { useNavigate } from 'react-router';
 
 const ResumeForm = () => {
 
@@ -140,7 +141,7 @@ const ResumeForm = () => {
   
 
 
-
+    const naviagate = useNavigate();
     // 이력서 저장 핸들러
     const handleSave = async () => {
         try {
@@ -237,8 +238,8 @@ const ResumeForm = () => {
             );
 
             alert("이력서가 성공적으로 저장되었습니다!");
-
-            window.location.reload()
+            naviagate("/myresume")
+            
         } catch (error) {
             console.error("이력서 저장 중 오류 발생:", error);
             alert("이력서 저장에 실패했습니다. 다시 시도해주세요.");

@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/interview-reviews")
-public class InterviewReviewController {
+public class    InterviewReviewController {
 
     @Autowired
     private InterviewReviewService interviewReviewService;
