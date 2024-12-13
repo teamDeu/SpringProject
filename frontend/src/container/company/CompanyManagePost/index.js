@@ -143,7 +143,7 @@ useEffect(() => {
 export default Index
 
 const Container = styled.div`
-
+      font-family: 'Nanum Square Neo', sans-serif;
 `
 
 const TitleSection  = styled.section`

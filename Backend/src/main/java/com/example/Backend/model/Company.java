@@ -52,8 +52,4 @@ public class Company {
 
     @Column(name = "logo_url")
     private String logoUrl;
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<JobPost> jobPosts = new ArrayList<>();
 }

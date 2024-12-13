@@ -38,6 +38,7 @@ import Notices from './container/admin/notices';
 import Areview from './container/admin/areview';
 import Faqwrite from './container/admin/faqwrite';
 import Awrite from './container/admin/awrite';
+import styled from 'styled-components';
 
 
 import Mp1 from './container/mypage/mp1';
@@ -68,7 +69,9 @@ function App() {
   
 
   return (
-    
+    <FontBox>
+
+
         <BrowserRouter basename={process.env.PUBLIC_URL }>
           <GlobalStyle/>
           <GlobalFont/>
@@ -131,7 +134,7 @@ function App() {
             <Route path="/company-detail" element={<CompanyDetail />} /> {/* 상세 페이지 */}
           </Routes>
         </BrowserRouter>
-        
+      </FontBox>
   );
 }
 
@@ -148,3 +151,6 @@ function JobSearchWrapper() {
   return <JobSearch onJobSelect={handleJobSelect} />;
 }
 
+const FontBox = styled.div`
+      font-family: 'Nanum Square Neo', sans-serif;
+`

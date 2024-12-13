@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.util.ArrayList;
@@ -73,7 +74,9 @@ public class JobPost {
     @Column(name = "about_company", columnDefinition = "TEXT")
     private String aboutCompany;
 
+
     @Column(name = "post_date")
+    @CreationTimestamp
     private Date postDate;
 
     @Column(name = "is_featured")

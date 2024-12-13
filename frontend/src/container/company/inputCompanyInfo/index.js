@@ -168,7 +168,9 @@ const Index = () => {
 
 export default Index;
 
-const Container = styled.div``
+const Container = styled.div`
+        font-family: 'Nanum Square Neo', sans-serif;
+`
 
 
 const TitleSection = styled.section`

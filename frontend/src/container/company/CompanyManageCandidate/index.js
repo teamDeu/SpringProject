@@ -11,7 +11,9 @@ import { useLocation, useNavigate } from 'react-router'
 import { GetCandidate } from '../../../api/api'
 const triangleRightIcon = process.env.PUBLIC_URL + '/icons/triangle-right.png';
 
-const Container = styled.div``
+const Container = styled.div`
+
+`
 
 const TitleSection = styled.section`
     width : 100%;
@@ -69,6 +71,7 @@ const AlertText = styled.div`
     text-align : center;
     padding : 30px;
     font-size : 30px;
+    
 `
 
 
