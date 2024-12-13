@@ -83,29 +83,41 @@ const Amember = () => {
   }, [selectedFilter, memberData]);
 
   const handleSearch = () => {
-    if (selectedFilter === "전체") {
+    if (!searchQuery.trim()) {
+      // 검색어가 없을 경우 전체 데이터를 반환
       setFilteredData(memberData);
       setCurrentPage(1);
       return;
     }
-
+  
     const filtered = memberData.filter((member) => {
-      const targetField =
-        selectedFilter === "회원ID"
-          ? member.id.toString()
-          : selectedFilter === "회원구분"
-          ? member.type
-          : selectedFilter === "이름"
-          ? member.name
-          : selectedFilter === "생년월일"
-          ? member.dob
-          : member.phone;
-
-      return (
-        targetField &&
-        targetField.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      let targetField = "";
+  
+      switch (selectedFilter) {
+        case "회원ID":
+          targetField = member.id?.toString() || "";
+          break;
+        case "회원구분":
+          targetField = member.type || "";
+          break;
+        case "이름":
+          targetField = member.name || "";
+          break;
+        case "생년월일":
+          targetField = member.dob || "";
+          break;
+        case "전화번호":
+          targetField = member.phone || "";
+          break;
+        default:
+          // '전체' 필터일 경우 모든 필드 검색
+          targetField = `${member.id || ""} ${member.type || ""} ${member.name || ""} ${member.dob || ""} ${member.phone || ""}`;
+      }
+  
+      // 대소문자 변환 후 검색어 포함 여부 확인
+      return targetField.toLowerCase().includes(searchQuery.toLowerCase());
     });
+  
     setFilteredData(filtered);
     setCurrentPage(1);
   };
