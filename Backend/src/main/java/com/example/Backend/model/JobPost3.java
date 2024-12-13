@@ -18,15 +18,18 @@ import java.util.List;
 @Setter
 @Data
 @Table(name = "c_job_posts")
-public class JobPost {
+public class JobPost3 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "company_id")
-    private String company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false) // 외래키 설정
+    @JsonBackReference
+    private Company company;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;

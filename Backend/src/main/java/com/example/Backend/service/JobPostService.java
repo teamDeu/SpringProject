@@ -1,10 +1,7 @@
 package com.example.Backend.service;
 
 import com.example.Backend.model.*;
-import com.example.Backend.repository.JobPostImageRepository;
-import com.example.Backend.repository.JobPostImageRepository2;
-import com.example.Backend.repository.JobPostRepository;
-import com.example.Backend.repository.JobPostRepository2;
+import com.example.Backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,16 +20,21 @@ public class JobPostService {
     @Autowired
     private JobPostRepository2 jobPostRepository2;
 
-
-    public JobPostService(JobPostRepository jobPostRepository) {
-        this.jobPostRepository = jobPostRepository;
-    }
+    @Autowired
+    private JobPostRepository3 jobPostRepository3;
 
     @Autowired
     private JobPostImageRepository2 jobPostImageRepository2;
 
     @Autowired
     private JobPostImageRepository jobPostImageRepository;
+
+
+
+    public JobPostService(JobPostRepository jobPostRepository) {
+        this.jobPostRepository = jobPostRepository;
+    }
+
 
 
 
@@ -51,7 +53,7 @@ public class JobPostService {
         return jobPostRepository.findAll();
     }
 
-    public List<JobPost> getJobPostByCompany(Company company){
+    public List<JobPost> getJobPostByCompany(String company){
         return jobPostRepository.findByCompanyOrderByModifyDateDesc(company);
     }
 
@@ -103,32 +105,32 @@ public class JobPostService {
 
 
     // 이 공고 놓치지 마세요
-    public List<JobPost> getTop9JobPostsByDeadline() {
+    public List<JobPost3> getTop9JobPostsByDeadline() {
         Pageable pageable = PageRequest.of(0, 9);
-        return jobPostRepository.findTop9ByOrderByEndDateAsc(pageable);
+        return jobPostRepository3.findTop9ByOrderByEndDateAsc(pageable);
     }
 
     //지금 눈 여겨볼 공고
-    public List<JobPost> getTop9JobPostsByViews() {
+    public List<JobPost3> getTop9JobPostsByViews() {
         Pageable pageable = PageRequest.of(0, 9);
-        return jobPostRepository.findTop9ByOrderByViewsDesc(pageable);
+        return jobPostRepository3.findTop9ByOrderByViewsDesc(pageable);
     }
 
     //회원님을 위한 오늘의 공고
-    public List<JobPost> getTop9LatestJobPosts() {
+    public List<JobPost3> getTop9LatestJobPosts() {
         Pageable pageable = PageRequest.of(0, 9); // 상위 9개 공고
-        return jobPostRepository.findTop9ByOrderByPostDateDesc(pageable);
+        return jobPostRepository3.findTop9ByOrderByPostDateDesc(pageable);
     }
 
     //많은 회원들이 눈 여결 볼 공고
-    public List<JobPost> getTop10FeaturedCompanies() {
+    public List<JobPost3> getTop10FeaturedCompanies() {
         Pageable pageable = PageRequest.of(0, 10);
-        return jobPostRepository.findTop10ByIsFeaturedTrueOrderByViewsDesc(pageable);
+        return jobPostRepository3.findTop10ByIsFeaturedTrueOrderByViewsDesc(pageable);
     }
 
     //조회수가 높은 공고
-    public List<JobPost> getAllJobPostsByViews() {
-        return jobPostRepository.findAllJobPostsByViews();
+    public List<JobPost3> getAllJobPostsByViews() {
+        return jobPostRepository3.findAllJobPostsByViews();
     }
 
 
@@ -136,7 +138,7 @@ public class JobPostService {
     LocalDate oneWeekLater = currentDate.plusDays(7);
 
     //마감이 얼마 남지 않은 공고
-    public List<JobPost> getJobPostsEndingSoon(int limit) {
+    public List<JobPost3> getJobPostsEndingSoon(int limit) {
         LocalDate currentDate = LocalDate.now();
         LocalDate oneWeekLater = currentDate.plusDays(7);
 
@@ -144,7 +146,7 @@ public class JobPostService {
         Date endDate = Date.from(oneWeekLater.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         Pageable pageable = PageRequest.of(0, limit);
-        return jobPostRepository.findJobPostsEndingBetween(startDate, endDate, pageable);
+        return jobPostRepository3.findJobPostsEndingBetween(startDate, endDate, pageable);
     }
 
     @Transactional

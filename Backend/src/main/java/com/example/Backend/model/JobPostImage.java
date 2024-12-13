@@ -16,7 +16,7 @@ public class JobPostImage {
     @Column(name ="id")
     private Long id;
 
-    @Column(name = "post_id", insertable = false, updatable = false) // 외래키 설정 및 중복 매핑 방지
+    @Column(name = "post_id") // 외래키 설정 및 중복 매핑 방지
     private Long postId;
 
     @Column(name="img_name")
@@ -24,9 +24,4 @@ public class JobPostImage {
 
     @Column(name ="img_path")
     private String imgPath;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id")
-    @JsonBackReference
-    private JobPost jobPost;
 }

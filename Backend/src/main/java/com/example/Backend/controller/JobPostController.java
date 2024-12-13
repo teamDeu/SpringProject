@@ -84,7 +84,7 @@ public class JobPostController {
     //이 공고 놓치지 마세요(공고 마감이 가까운 순)
     @GetMapping("/urgent-jobposts")
     public ResponseEntity<List<Map<String, Object>>> getTop9UrgentJobPosts() {
-        List<JobPost> jobPosts = jobPostService.getTop9JobPostsByDeadline();
+        List<JobPost3> jobPosts = jobPostService.getTop9JobPostsByDeadline();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -116,7 +116,7 @@ public class JobPostController {
     //지금 눈 여겨볼 공고(조회수 높은 순)
     @GetMapping("/popular-jobposts")
     public ResponseEntity<List<Map<String, Object>>> getTop9PopularJobPosts() {
-        List<JobPost> jobPosts = jobPostService.getTop9JobPostsByViews();
+        List<JobPost3> jobPosts = jobPostService.getTop9JobPostsByViews();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
@@ -148,7 +148,7 @@ public class JobPostController {
     //회원님만을 위한 오늘의 공고(최근에 등록한 순)
     @GetMapping("/latest-jobposts")
     public ResponseEntity<List<Map<String, Object>>> getTop9LatestJobPosts() {
-        List<JobPost> jobPosts = jobPostService.getTop9LatestJobPosts();
+        List<JobPost3> jobPosts = jobPostService.getTop9LatestJobPosts();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
@@ -179,7 +179,7 @@ public class JobPostController {
     //많은 회원들이 눈 여결 볼 공고
     @GetMapping("/featured-companies")
     public ResponseEntity<List<Map<String, Object>>> getTop10FeaturedCompanies() {
-        List<JobPost> jobPosts = jobPostService.getTop10FeaturedCompanies();
+        List<JobPost3> jobPosts = jobPostService.getTop10FeaturedCompanies();
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
             Map<String, Object> map = new HashMap<>();
@@ -198,7 +198,7 @@ public class JobPostController {
     //조회수가 높은 공고
     @GetMapping("/popular-jobposts2")
     public ResponseEntity<List<Map<String, Object>>> getAllJobPostsByViews() {
-        List<JobPost> jobPosts = jobPostService.getAllJobPostsByViews(); // 조회수 기준 모든 공고 반환
+        List<JobPost3> jobPosts = jobPostService.getAllJobPostsByViews(); // 조회수 기준 모든 공고 반환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
@@ -231,7 +231,7 @@ public class JobPostController {
     //마감이 얼마 남지 않은 공고
     @GetMapping("/urgent-jobposts2")
     public ResponseEntity<List<Map<String, Object>>> getUrgentJobPosts() {
-        List<JobPost> jobPosts = jobPostService.getJobPostsEndingSoon(9);
+        List<JobPost3> jobPosts = jobPostService.getJobPostsEndingSoon(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<Map<String, Object>> response = jobPosts.stream().map(post -> {
@@ -262,7 +262,7 @@ public class JobPostController {
         if (companyOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        List<JobPost> jobPosts = jobPostService.getJobPostByCompany(companyOpt.get());
+        List<JobPost> jobPosts = jobPostService.getJobPostByCompany(companyId);
         return ResponseEntity.ok(jobPosts);
     }
 
@@ -294,6 +294,7 @@ public class JobPostController {
     public ResponseEntity<List<String>> saveJobPostImage(
             @PathVariable Long jobPostId,
             @RequestParam("files")MultipartFile[] files) {
+        System.out.println("jobPostId:" + jobPostId);
         System.out.println(Arrays.toString(files));
         JobPost jobPost = jobPostService.findById(jobPostId)
                 .orElseThrow(() -> new RuntimeException("JobPost not found"));

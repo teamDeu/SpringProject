@@ -83,7 +83,7 @@ export const PostJobPost = async(jobPost) => {
         });
 
     const jobPostId = savedJobPost.id;
-    
+    console.log("jobPostId",jobPostId);
     const formData = new FormData();
     for (let i = 0; i < images.length; i++) {
         formData.append("files", images[i]);
@@ -112,11 +112,7 @@ export const EndJobPost = async(id) => {
 
 //채용정보 데이터를 가져오는 API
 export const GetCompanyJobPosts = (company) => {
-    return axios.get('http://localhost:8080/api/companyjobpost',{
-        params: {
-            company : company
-        }
-    })
+    return axios.get(`http://localhost:8080/api/companyjobpost?companyId=${company}`)
         .then(response => response.data)
         .catch(error => {
             console.error('Error fetching data:', error);
