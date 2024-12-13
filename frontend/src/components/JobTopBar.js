@@ -69,7 +69,7 @@ const JobTopBar = () => {
                             <NavItem>
                                 <NavButton>고객센터</NavButton>
                                 <DropdownContent>
-                                    <Link to="/sannouncements">
+                                    <Link to="/snotices">
                                         <DropdownButton>공지사항</DropdownButton>
                                     </Link>
                                     <Link to="/sfaq">
