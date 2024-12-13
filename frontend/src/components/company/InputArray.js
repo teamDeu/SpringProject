@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import InputArrayTitle from './InputArrayTitle';
 
-const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, value }) => {
+const InputArray = ({ title, placeholder, mainInput = "", updateValue = () => {}, value }) => {
     const [inputs, setInputs] = useState([{ id: Date.now(), value: '' }]);
     const [mainInputValue, setMainInputValue] = useState({ type: 'main', value: '' });
     const [isComposing, setIsComposing] = useState(false); // 한글 입력 조합 상태
@@ -31,8 +31,10 @@ const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, val
     useEffect(() => {
         const updatedValue = mainInput ? [...inputs, mainInputValue] : inputs;
         updateValue(updatedValue);
-        const lastInput = inputRefs.current[inputRefs.current.length - 1].element;
-            lastInput?.focus();
+
+        // 마지막 입력 요소에 포커스
+        const lastInput = inputRefs.current[inputRefs.current.length - 1]?.element;
+        lastInput?.focus();
     }, [inputs, mainInputValue, mainInput]);
 
     // 유틸리티: Input 추가
@@ -74,7 +76,7 @@ const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, val
             inputRefs.current.push({ id, element });
         }
     };
-    
+
     const handleCompositionStart = () => setIsComposing(true);
     const handleCompositionEnd = () => setIsComposing(false);
 
@@ -86,6 +88,7 @@ const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, val
                 {/* Main Input */}
                 {mainInput && (
                     <MainInput
+                        ref={(el) => setInputRef(el, 'main')} // ref 설정
                         value={mainInputValue.value}
                         onChange={handleMainChange}
                         placeholder={mainInput}
@@ -95,7 +98,7 @@ const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, val
                 {/* Sub Inputs */}
                 {inputs.map((input) => (
                     <InputItem key={input.id}>
-                         · <Input
+                        · <Input
                             ref={(el) => setInputRef(el, input.id)} // ref 설정
                             value={input.value}
                             placeholder={placeholder}
@@ -110,6 +113,7 @@ const InputArray = ({ title, placeholder, mainInput, updateValue = () => {}, val
         </Container>
     );
 };
+
 
 export default InputArray;
 
