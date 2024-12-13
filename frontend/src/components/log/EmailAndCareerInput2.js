@@ -32,6 +32,8 @@ const Container = styled.div`
 `;
 
 const Label = styled.label`
+    font-family: 'Nanum Square Neo', sans-serif;
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 80px;
     font-size: 16px;
     color: #333;

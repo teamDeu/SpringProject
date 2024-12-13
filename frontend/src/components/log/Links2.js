@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link as RouterLink } from 'react-router-dom'; // Link를 RouterLink로 설정
 
 const LinkContainer = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     text-align: center;
     font-size: 16px;
     color: #888;

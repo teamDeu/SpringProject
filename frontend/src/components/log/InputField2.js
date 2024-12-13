@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Input = styled.input`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 531px;
     height: 70px;
     margin: 5px 0;

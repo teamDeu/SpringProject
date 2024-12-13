@@ -66,12 +66,14 @@ const ContentContainer = styled.div`
 `;
 
 const Company = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 14px;
     color: #333;
     margin-bottom: 4px;
 `;
 
 const Title = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     font-weight: bold;
     color: #000;
@@ -79,6 +81,7 @@ const Title = styled.div`
 `;
 
 const Details = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 14px;
     color: #666;
 `;
@@ -90,12 +93,14 @@ const ActionContainer = styled.div`
 `;
 
 const Deadline = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 14px;
     color: #888;
     margin-bottom: 8px;
 `;
 
 const ApplyButton = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 168px;
     padding: 8px;
     font-size: 18px;

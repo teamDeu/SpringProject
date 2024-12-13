@@ -8,6 +8,7 @@ const CheckboxContainer = styled.div`
 `;
 
 const CheckboxLabel = styled.label`
+    font-family: 'Nanum Square Neo', sans-serif;
     display: flex;
     align-items: center;
     font-size: 20px;

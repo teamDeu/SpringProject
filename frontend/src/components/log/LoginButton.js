@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Button = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 531px;
     height: 78px;
     margin: 10px 0;

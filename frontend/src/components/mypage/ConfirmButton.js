@@ -8,6 +8,7 @@ const ConfirmButton = ({ children, onClick }) => {
 export default ConfirmButton;
 
 const Button = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     box-sizing: border-box;
     width: 94.91px;
     height: 53px;

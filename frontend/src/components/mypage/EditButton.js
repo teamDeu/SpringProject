@@ -11,6 +11,7 @@ const EditButton = ({link = "/mp2"}) => {
 export default EditButton;
 
 const StyledLink = styled(Link)`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 77px;
     height: 43px;
     border: 1px solid #B5B5B5;

@@ -9,6 +9,7 @@ const TabContainer = styled.div`
 `;
 
 const Tab = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-family: 'NanumSquare Neo';
     flex: 1;
     padding: 10px;

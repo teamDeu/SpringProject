@@ -178,6 +178,7 @@ const SectionTitleWrapper = styled.div`
 `;
 
 const SectionTitle = styled.h3`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 20px;
     font-weight: bold;
     color: #333;

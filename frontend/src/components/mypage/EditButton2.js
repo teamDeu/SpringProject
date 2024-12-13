@@ -8,6 +8,7 @@ const EditButton2 = ({ onClick }) => {
 export default EditButton2;
 
 const Button = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 77px;
     height: 43px;
     border: 1px solid #B5B5B5;
