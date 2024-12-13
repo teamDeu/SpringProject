@@ -127,11 +127,7 @@ const Index = () => {
                                 readOnly
                             />
                         </Row>
-                        <DeleteAccountWrapper>
-                            <DeleteAccountButton onClick={handleDeleteAccount}>
-                                회원탈퇴
-                            </DeleteAccountButton>
-                        </DeleteAccountWrapper>
+
                     </Section>
                 </FormContainer>
             </PageContent>
@@ -194,21 +190,3 @@ const Row = styled.div`
     margin-bottom: 15px;
 `;
 
-const DeleteAccountWrapper = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-`;
-
-const DeleteAccountButton = styled.button`
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 14px;
-    cursor: pointer;
-    text-decoration: underline;
-
-    &:hover {
-        color: #333;
-    }
-`;

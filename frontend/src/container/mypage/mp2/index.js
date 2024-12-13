@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom'; // useNavigate 가져오기
 import JobTopBar from '../../../components/JobTopBar';
 import EmailAndCareerInput from '../../../components/log/EmailAndCareerInput2';
 import PasswordInput from '../../../components/mypage/PasswordInput';
@@ -7,9 +8,10 @@ import EditButton from '../../../components/mypage/EditButton2';
 import IDInput from '../../../components/mypage/IDinput';
 import GenderSelect from '../../../components/log/GenderSelect';
 import EducationSelect from '../../../components/log/EducationSelect';
-import { getUserInfo, updateUserInfo } from '../../../api/api'; // 수정 API 추가
+import { getUserInfo, updateUserInfo } from '../../../api/api';
 
 const Index = () => {
+    const navigate = useNavigate(); // useNavigate 훅 초기화
     const [userInfo, setUserInfo] = useState({
         id: '',
         password: '',
@@ -44,12 +46,12 @@ const Index = () => {
         try {
             await updateUserInfo(userInfo);
             alert('정보가 성공적으로 저장되었습니다.');
+            navigate('/mp1'); // MP1으로 이동
         } catch (error) {
             console.error('Failed to update user info:', error);
             alert('정보 저장에 실패했습니다.');
         }
     };
-    
 
     return (
         <Container>
@@ -103,8 +105,6 @@ const Index = () => {
                                 onChange={(value) => handleChange('birthDate', value)}
                             />
                         </Row>
-
-
                     </Section>
 
                     <Section>
