@@ -30,6 +30,7 @@ const Container = styled.div`
 `;
 
 const Label = styled.label`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 60px;
     font-size: 16px;
     color: #333;
@@ -66,6 +67,7 @@ const KakaoIcon = styled.div`
 `;
 
 const SocialText = styled.span`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     color: #333;
 `;

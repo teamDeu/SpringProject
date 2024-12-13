@@ -30,12 +30,14 @@ const FormContainer = styled.div`
 `;
 
 const Title = styled.h3`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
 `;
 
 const SubmitButton = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 100px;
     padding: 10px;
     background-color: #003366;

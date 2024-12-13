@@ -8,6 +8,7 @@ const CancelButton = ({ children }) => {
 export default CancelButton;
 
 const Button = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     box-sizing: border-box;
     width: 94.91px;
     height: 53px;

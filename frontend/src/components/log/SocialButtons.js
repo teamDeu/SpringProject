@@ -8,6 +8,7 @@ const SocialContainer = styled.div`
 `;
 
 const SocialButton = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 60px;
     height: 60px;
     border: none;

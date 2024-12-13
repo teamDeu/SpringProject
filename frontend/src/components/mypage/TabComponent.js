@@ -31,6 +31,7 @@ const TabContainer = styled.div`
 `;
 
 const Tab = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     font-weight: ${({ isActive }) => (isActive ? 'bold' : 'normal')};
     color: ${({ isActive }) => (isActive ? '#000' : '#888')};

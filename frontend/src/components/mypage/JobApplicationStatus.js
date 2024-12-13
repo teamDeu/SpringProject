@@ -53,17 +53,20 @@ const Info = styled.div`
 `;
 
 const Company = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 14px;
     color: #666;
 `;
 
 const Title = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     font-weight: bold;
     color: #333;
 `;
 
 const Details = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     display: flex;
     gap: 15px;
     font-size: 14px;
@@ -79,6 +82,7 @@ const StatusWrapper = styled.div`
 `;
 
 const Status = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     font-weight: bold;
 `;

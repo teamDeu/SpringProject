@@ -68,6 +68,7 @@ const Content = styled.div`
 `;
 
 const CompanyName = styled.p`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 16px;
     font-weight: bold;
     color: #333;
@@ -75,11 +76,13 @@ const CompanyName = styled.p`
 `;
 
 const JobCount = styled.span`
+    font-family: 'Nanum Square Neo', sans-serif;
     font-size: 14px;
     color: #888;
 `;
 
 const DeleteButton = styled.button`
+    font-family: 'Nanum Square Neo', sans-serif;
     background: none;
     border: none;
     color: #ff4d4d;

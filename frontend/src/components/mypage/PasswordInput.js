@@ -41,6 +41,7 @@ const Container = styled.div`
 `;
 
 const Label = styled.label`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 80px;
     font-size: 16px;
     color: #333;
@@ -62,6 +63,7 @@ const Input = styled.input`
 `;
 
 const IconContainer = styled.div`
+    font-family: 'Nanum Square Neo', sans-serif;
     cursor: pointer;
     margin-right: 10px;
     color: #888;
@@ -71,6 +73,7 @@ const IconContainer = styled.div`
 `;
 
 const ChangeButton = styled(Link)` // Link로 변경
+    font-family: 'Nanum Square Neo', sans-serif;
     padding: 5px 10px;
     border: 1px solid #ddd;
     border-radius: 4px;

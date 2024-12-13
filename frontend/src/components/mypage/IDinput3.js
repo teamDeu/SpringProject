@@ -28,6 +28,7 @@ const Container = styled.div`
 `;
 
 const Label = styled.label`
+    font-family: 'Nanum Square Neo', sans-serif;
     width: 60px;
     font-size: 16px;
     color: #333;
@@ -39,6 +40,7 @@ const Divider = styled.span`
 `;
 
 const Input = styled.input`
+    font-family: 'Nanum Square Neo', sans-serif;
     flex: 1;
     padding: 8px;
     border: none;
