@@ -50,7 +50,7 @@ const ContentBox = styled.div`
   padding-top: 0px;
   padding-left:5px;
   width: 1360px;
-  height:600px;
+  height:500px;
   border-bottom: 1px solid #ccc;
   font-family: "Nanum Square Neo", sans-serif;
   margin-top : 20px;
