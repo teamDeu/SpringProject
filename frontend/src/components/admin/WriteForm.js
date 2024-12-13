@@ -415,24 +415,7 @@ const handleDeleteNoticeOption = async (title) => {
       <BottomDiv>
 
       
-      {showImageFileButtons ? (
-        <ImageFileButtons>
-          <ImageButton>
-            <Icon src="/icons/picture.png" alt="사진" />
-            사진
-            <HiddenInput
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-          </ImageButton>
-          <FileButton>
-            <Icon src="/icons/file.png" alt="파일" />
-            파일
-            <HiddenInput type="file" onChange={handleFileUpload} />
-          </FileButton>
-        </ImageFileButtons>
-      ): <div></div>}
+      <div></div>
 
       <ButtonsContainer isAnnouncement={isAnnouncementPage}>
         <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
